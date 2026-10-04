@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
@@ -24,8 +25,17 @@ class Settings(BaseSettings):
         "http://127.0.0.1:3000",
     ]
 
-    # Database
-    DATABASE_URL: str = "sqlite:///./app.db"
+    # Database: Always resolve to backend/app.db
+    DATABASE_URL: str = ""
+
+    @model_validator(mode="after")
+    def resolve_database_url(self):
+        # Guarantee absolute path to backend/app.db to prevent CWD confusion
+        db_path = BASE_DIR / "app.db"
+        if not self.DATABASE_URL or "./app.db" in self.DATABASE_URL:
+            # Use forward slashes for SQLite URI
+            self.DATABASE_URL = f"sqlite:///{db_path.as_posix()}"
+        return self
 
     # Security (JWT & Password Hashing)
     SECRET_KEY: str = "dev_secret_key_antigravity_notariado_guatemala_2026_umg"
