@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import audit, auth, health, users
+from app.api.v1.endpoints import audit, auth, cases, clients, health, legal_entities, users
 
 api_router = APIRouter()
 
@@ -13,4 +13,13 @@ api_router.include_router(
 )
 api_router.include_router(
     audit.router, prefix="/audit", tags=["Auditoría y Trazabilidad"]
+)
+api_router.include_router(
+    clients.router, prefix="/clients", tags=["Clientes (Personas Individuales)"]
+)
+api_router.include_router(
+    legal_entities.router, prefix="/legal-entities", tags=["Personas Jurídicas"]
+)
+api_router.include_router(
+    cases.router, prefix="/cases", tags=["Expedientes Notariales"]
 )
