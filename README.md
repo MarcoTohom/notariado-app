@@ -180,7 +180,7 @@ Objetivo: Sistema de identidad completo con JWT + Argon2, control de acceso basa
 
 ---
 
-### FASE 3 — Gestion de Clientes y Expedientes — COMPLETADA (commits 5d745a5, PENDIENTE_HASH)
+### FASE 3 — Gestion de Clientes y Expedientes — COMPLETADA (commits 5d745a5, 395259f)
 
 Objetivo: CRUD completo de clientes (personas individuales y juridicas) y expedientes notariales con UI.
 
@@ -310,6 +310,8 @@ notariado-app/
 |---|---|---|
 | 209c9cb | Fase 1 | Base modular: FastAPI, SQLite, Alembic, React, Tailwind, test suite |
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
+| 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |
+| 395259f | Fase 3 | Frontend clientes/expedientes, RHF+Zod+TanStack Query, vitest, lint backend |
 
 ---
 
