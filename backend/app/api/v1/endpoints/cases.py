@@ -42,8 +42,12 @@ def list_cases(
     _: Annotated[User, Depends(require_permission("cases:read"))],
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
-    search: str | None = Query(default=None, description="Buscar por número, título o descripción"),
-    case_type: str | None = Query(default=None, description="Filtrar por tipo de escritura"),
+    search: str | None = Query(
+        default=None, description="Buscar por número, título o descripción"
+    ),
+    case_type: str | None = Query(
+        default=None, description="Filtrar por tipo de escritura"
+    ),
     case_status: str | None = Query(default=None, alias="status"),
     assigned_user_id: str | None = Query(default=None),
 ) -> CaseListResponse:
@@ -71,7 +75,9 @@ def get_case(
 ) -> CaseResponse:
     db_case = get_case_by_id(db, case_id)
     if not db_case:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Expediente no encontrado.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Expediente no encontrado."
+        )
     return db_case
 
 

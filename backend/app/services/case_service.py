@@ -38,10 +38,9 @@ def _next_case_sequence(db: Session) -> int:
     Uses MAX() on existing case numbers to be safe even when transactions
     from previous test runs share the same in-memory database.
     """
-    import re
     from sqlalchemy import func
 
-    year = datetime.now().year
+    year = datetime.now(timezone.utc).year
     prefix = f"EXP-{year}-"
 
     # Query the maximum case_number for this year
@@ -60,7 +59,6 @@ def _next_case_sequence(db: Session) -> int:
         seq = 1
 
     return seq
-
 
 
 def _ensure_client_exists(db: Session, client_id: str) -> Client:

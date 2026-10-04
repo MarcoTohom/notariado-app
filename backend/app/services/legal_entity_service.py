@@ -8,7 +8,6 @@ from app.models.user import User
 from app.schemas.legal_entity import LegalEntityCreate, LegalEntityUpdate
 from app.services.audit_service import record_audit
 
-
 # ---------------------------------------------------------------------------
 # Read
 # ---------------------------------------------------------------------------

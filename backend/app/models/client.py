@@ -1,8 +1,14 @@
-﻿from sqlalchemy import String, Text
+from typing import TYPE_CHECKING
+
+from sqlalchemy import String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 from app.models.base import IdentifiableMixin
+
+if TYPE_CHECKING:
+    from app.models.case_party import CaseParty
+    from app.models.legal_entity import LegalEntity
 
 
 class ClientTypeEnum:

@@ -17,7 +17,7 @@ Este sistema es una solución tecnológica integral orientada a bufetes jurídic
 ## 2. Pila Tecnológica (Stack)
 
 * **Backend:** Python 3.12+ (probado en Python 3.14), FastAPI, SQLAlchemy 2.x, Alembic, SQLite, Pydantic v2, PyJWT, Argon2-cffi, python-docx, docxtpl, pandas, openpyxl, pypdf, pytest, Ruff.
-* **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React, Axios.
+* **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React, Axios, React Router 6, React Hook Form + Zod, TanStack Query, Vitest + React Testing Library.
 * **Automatización:** Scripts PowerShell nativos para Windows 10/11 (`dev.ps1`, `test.ps1`, `seed.ps1`, `backup.ps1`).
 
 ---
@@ -180,20 +180,39 @@ Objetivo: Sistema de identidad completo con JWT + Argon2, control de acceso basa
 
 ---
 
-### FASE 3 — Gestion de Clientes y Expedientes — PENDIENTE
+### FASE 3 — Gestion de Clientes y Expedientes — COMPLETADA (commits 5d745a5, PENDIENTE_HASH)
 
 Objetivo: CRUD completo de clientes (personas individuales y juridicas) y expedientes notariales con UI.
 
-| Tarea | Estado |
-|---|---|
-| Endpoints GET/POST/PUT/DELETE /clients | Pendiente |
-| Endpoints GET/POST/PUT/DELETE /legal-entities | Pendiente |
-| Endpoints GET/POST/PUT/DELETE /cases | Pendiente |
-| Endpoints POST/DELETE /cases/{id}/parties | Pendiente |
-| Vistas React: ClientsPage, CasesPage | Pendiente |
-| Formulario de cliente con validacion DPI/NIT | Pendiente |
-| Formulario de expediente con asignacion de partes | Pendiente |
-| Pruebas de integracion para clientes y expedientes | Pendiente |
+#### Backend — API REST (commit 5d745a5, endurecido con lint/format en esta entrega)
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| Endpoints /clients | OK | GET/POST/PUT/DELETE paginado con busqueda por nombre, DPI o NIT |
+| Endpoints /legal-entities | OK | CRUD con representante legal vinculado a cliente individual |
+| Endpoints /cases | OK | CRUD con correlativo EXP-YYYY-##### automatico |
+| Endpoints /cases/{id}/parties | OK | POST/DELETE de comparecientes con rol |
+| client_service.py / case_service.py / legal_entity_service.py | OK | Logica de negocio, auditoria y validaciones |
+| test_clients_api.py / test_cases_api.py | OK | Pruebas de integracion del ciclo completo |
+| Calidad (ruff check + ruff format) | OK | Corregidos F821/F401/I001/DTZ005 heredados del commit base |
+
+#### Frontend — Vistas React (esta entrega)
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| React Router 6 + RequireAuth | OK | Rutas /clientes y /expedientes protegidas por sesion y permiso granular |
+| ClientsPage | OK | Pestañas individuales/juridicas, busqueda debounced, paginacion, baja logica con confirmacion |
+| ClientFormModal | OK | RHF + Zod: mascara DPI 13 digitos, validacion NIT/email/fecha, DPI inmutable en edicion |
+| LegalEntityFormModal | OK | Datos registrales (registro, folio, libro) y representante legal con autocompletado |
+| CasesPage | OK | Filtros por tipo/estado, busqueda, paginacion, cancelacion con confirmacion |
+| CaseFormModal | OK | Apertura con constructor de comparecientes iniciales (cliente + rol + notas) |
+| CaseDetailModal | OK | Ficha del expediente, agregar/quitar comparecientes, cambio de estado |
+| ClientSearchSelect | OK | Autocompletado de clientes por nombre/DPI reutilizable en formularios |
+| TanStack Query | OK | Cacheo, invalidacion y estados de carga de las consultas API |
+| Vitest + React Testing Library | OK | 25 pruebas: invariantes DPI/NIT (validators) y formulario de cliente |
+| scripts/test.ps1 | OK | Ahora ejecuta ruff, pytest, vitest y build de produccion |
+
+**Verificacion E2E manual ejecutada:** login demo -> alta de cliente (DPI 2345678901202) -> alta de persona juridica con representante legal -> apertura de expediente EXP-2026-00001 con compareciente COMPRADOR -> gestion de comparecientes y estado desde el modal de detalle.
 
 ---
 
@@ -270,8 +289,12 @@ notariado-app/
 ├── frontend/                   # Interfaz React + TypeScript + Vite
 │   └── src/
 │       ├── components/         # Navbar, LoginModal, UserManagementModal, SystemHealthBadge
+│       │   └── common/         # ClientSearchSelect, ConfirmDialog
 │       ├── context/            # AuthContext
-│       ├── services/           # api.ts (authAPI, usersAPI)
+│       ├── features/           # dashboard/, clients/, cases/ (paginas y modales)
+│       ├── lib/                # validators.ts (Zod), labels.ts (catalogos)
+│       ├── services/           # api.ts (auth, users, clients, legal-entities, cases)
+│       ├── test/               # setup Vitest + Testing Library
 │       └── types/              # index.ts
 ├── docs/                       # Documentacion formal de arquitectura, scrum y tesis
 ├── scripts/                    # dev.ps1, test.ps1, seed.ps1, backup.ps1

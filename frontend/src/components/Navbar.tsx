@@ -1,23 +1,34 @@
 import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { LoginModal } from "./LoginModal";
 import { UserManagementModal } from "./UserManagementModal";
-import { 
-  Scale, 
-  FileText, 
-  Users, 
-  FolderOpen, 
-  FlaskConical, 
-  LogIn, 
+import {
+  Scale,
+  FileText,
+  Users,
+  FolderOpen,
+  FlaskConical,
+  LogIn,
   LogOut,
   User as UserIcon,
   ShieldCheck
 } from "lucide-react";
 
+const navLinkBase =
+  "px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5";
+
 export const Navbar: React.FC = () => {
   const { user, logout, hasPermission } = useAuth();
   const [loginOpen, setLoginOpen] = useState(false);
   const [managementOpen, setManagementOpen] = useState(false);
+
+  const linkClass = ({ isActive }: { isActive: boolean }) =>
+    `${navLinkBase} ${
+      isActive
+        ? "bg-slate-800 text-white"
+        : "text-slate-400 hover:text-slate-200 hover:bg-slate-800"
+    }`;
 
   return (
     <>
@@ -39,22 +50,29 @@ export const Navbar: React.FC = () => {
           </div>
 
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
-            <a href="#dashboard" className="px-3 py-1.5 rounded-lg text-slate-200 hover:text-white hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            <NavLink to="/" end className={linkClass}>
               <FileText className="w-4 h-4 text-brand-500" />
               Panel
-            </a>
-            <a href="#clientes" className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors flex items-center gap-1.5">
-              <Users className="w-4 h-4" />
-              Clientes
-            </a>
-            <a href="#expedientes" className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors flex items-center gap-1.5">
-              <FolderOpen className="w-4 h-4" />
-              Expedientes
-            </a>
-            <a href="#experimento" className="px-3 py-1.5 rounded-lg text-amber-400 hover:text-amber-300 hover:bg-slate-800 transition-colors flex items-center gap-1.5">
+            </NavLink>
+            {hasPermission("clients:read") && (
+              <NavLink to="/clientes" className={linkClass}>
+                <Users className="w-4 h-4" />
+                Clientes
+              </NavLink>
+            )}
+            {hasPermission("cases:read") && (
+              <NavLink to="/expedientes" className={linkClass}>
+                <FolderOpen className="w-4 h-4" />
+                Expedientes
+              </NavLink>
+            )}
+            <span
+              className="px-3 py-1.5 rounded-lg text-slate-600 flex items-center gap-1.5 cursor-not-allowed"
+              title="Disponible en la Fase 6 del proyecto"
+            >
               <FlaskConical className="w-4 h-4" />
               Módulo Tesis
-            </a>
+            </span>
           </nav>
 
           <div className="flex items-center gap-3">

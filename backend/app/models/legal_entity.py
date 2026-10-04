@@ -1,8 +1,13 @@
-﻿from sqlalchemy import ForeignKey, String, Text
+from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 from app.models.base import IdentifiableMixin
+
+if TYPE_CHECKING:
+    from app.models.client import Client
 
 
 class SocietyTypeEnum:
@@ -25,9 +30,7 @@ class LegalEntity(Base, IdentifiableMixin):
     __tablename__ = "legal_entities"
 
     # --- Identificación de la Entidad ---
-    business_name: Mapped[str] = mapped_column(
-        String(200), nullable=False, index=True
-    )
+    business_name: Mapped[str] = mapped_column(String(200), nullable=False, index=True)
     trade_name: Mapped[str | None] = mapped_column(String(200), nullable=True)
     nit: Mapped[str] = mapped_column(
         String(20), unique=True, nullable=False, index=True

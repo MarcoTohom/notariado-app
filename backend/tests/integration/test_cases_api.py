@@ -1,12 +1,10 @@
 """Integration tests for GET/POST/PUT/DELETE /cases endpoint and parties."""
 
-import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.security import get_password_hash
 from app.models.user import User
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -40,7 +38,9 @@ def _auth(token: str) -> dict:
     return {"Authorization": f"Bearer {token}"}
 
 
-def _create_client(client: TestClient, token: str, dpi: str, first: str = "Test") -> str:
+def _create_client(
+    client: TestClient, token: str, dpi: str, first: str = "Test"
+) -> str:
     resp = client.post(
         "/api/v1/clients",
         json={"first_name": first, "last_name": "Apellido", "dpi": dpi},
@@ -210,8 +210,12 @@ def test_add_duplicate_party_rejected(client: TestClient, db_session: Session):
     case_id = create_resp.json()["id"]
 
     party_payload = {"client_id": client_id, "party_role": "VENDEDOR"}
-    client.post(f"/api/v1/cases/{case_id}/parties", json=party_payload, headers=_auth(token))
-    dup_resp = client.post(f"/api/v1/cases/{case_id}/parties", json=party_payload, headers=_auth(token))
+    client.post(
+        f"/api/v1/cases/{case_id}/parties", json=party_payload, headers=_auth(token)
+    )
+    dup_resp = client.post(
+        f"/api/v1/cases/{case_id}/parties", json=party_payload, headers=_auth(token)
+    )
     assert dup_resp.status_code == 400
 
 

@@ -1,4 +1,4 @@
-﻿from app.models.audit import AuditLog
+from app.models.audit import AuditLog
 from app.models.base import IdentifiableMixin
 from app.models.case import Case
 from app.models.case_party import CaseParty

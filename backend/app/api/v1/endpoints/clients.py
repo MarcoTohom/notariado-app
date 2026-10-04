@@ -1,11 +1,16 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, get_db, require_permission
+from app.api.deps import get_db, require_permission
 from app.models.user import User
-from app.schemas.client import ClientCreate, ClientListResponse, ClientResponse, ClientUpdate
+from app.schemas.client import (
+    ClientCreate,
+    ClientListResponse,
+    ClientResponse,
+    ClientUpdate,
+)
 from app.services.client_service import (
     create_client,
     delete_client_logical,
@@ -13,7 +18,6 @@ from app.services.client_service import (
     get_clients,
     update_client,
 )
-from fastapi import HTTPException
 
 router = APIRouter()
 
@@ -29,7 +33,9 @@ def list_clients(
     _: Annotated[User, Depends(require_permission("clients:read"))],
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
-    search: str | None = Query(default=None, description="Buscar por nombre, DPI o NIT"),
+    search: str | None = Query(
+        default=None, description="Buscar por nombre, DPI o NIT"
+    ),
     status_filter: str | None = Query(default=None, alias="status"),
 ) -> ClientListResponse:
     total, items = get_clients(
@@ -50,7 +56,9 @@ def get_client(
 ) -> ClientResponse:
     db_client = get_client_by_id(db, client_id)
     if not db_client:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Cliente no encontrado.")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Cliente no encontrado."
+        )
     return db_client
 
 

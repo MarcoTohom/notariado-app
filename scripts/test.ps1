@@ -15,8 +15,16 @@ if ($LASTEXITCODE -ne 0) {
     exit $LASTEXITCODE
 }
 
-Write-Host "`n=== 3. Compilacion y Verificacion de Tipos Frontend (tsc & vite) ===" -ForegroundColor Cyan
+Write-Host "`n=== 3. Pruebas Unitarias Frontend (Vitest + React Testing Library) ===" -ForegroundColor Cyan
 Set-Location $FrontendPath
+npm.cmd run test
+
+if ($LASTEXITCODE -ne 0) {
+    Write-Host "Fallo en pruebas frontend." -ForegroundColor Red
+    exit $LASTEXITCODE
+}
+
+Write-Host "`n=== 4. Compilacion y Verificacion de Tipos Frontend (tsc & vite) ===" -ForegroundColor Cyan
 npm.cmd run build
 
 if ($LASTEXITCODE -ne 0) {

@@ -1,12 +1,10 @@
 """Integration tests for GET/POST/PUT/DELETE /clients endpoint."""
 
-import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
 from app.core.security import get_password_hash
 from app.models.user import User
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -112,7 +110,11 @@ def test_list_clients(client: TestClient, db_session: Session):
     for i in range(2):
         client.post(
             "/api/v1/clients",
-            json={"first_name": f"Cliente{i}", "last_name": "Test", "dpi": f"100000000000{i}"},
+            json={
+                "first_name": f"Cliente{i}",
+                "last_name": "Test",
+                "dpi": f"100000000000{i}",
+            },
             headers=_auth_headers(token),
         )
 
@@ -172,7 +174,9 @@ def test_delete_client_logical(client: TestClient, db_session: Session):
     )
     client_id = create_resp.json()["id"]
 
-    del_resp = client.delete(f"/api/v1/clients/{client_id}", headers=_auth_headers(token))
+    del_resp = client.delete(
+        f"/api/v1/clients/{client_id}", headers=_auth_headers(token)
+    )
     assert del_resp.status_code == 200
     assert del_resp.json()["status"] == "INACTIVE"
 

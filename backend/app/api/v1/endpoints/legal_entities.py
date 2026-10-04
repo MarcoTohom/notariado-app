@@ -3,7 +3,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_current_user, get_db, require_permission
+from app.api.deps import get_db, require_permission
 from app.models.user import User
 from app.schemas.legal_entity import (
     LegalEntityCreate,
@@ -33,7 +33,9 @@ def list_legal_entities(
     _: Annotated[User, Depends(require_permission("clients:read"))],
     skip: int = Query(default=0, ge=0),
     limit: int = Query(default=50, ge=1, le=200),
-    search: str | None = Query(default=None, description="Buscar por razón social, NIT o nombre comercial"),
+    search: str | None = Query(
+        default=None, description="Buscar por razón social, NIT o nombre comercial"
+    ),
     society_type: str | None = Query(default=None),
     status_filter: str | None = Query(default=None, alias="status"),
 ) -> LegalEntityListResponse:

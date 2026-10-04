@@ -1,11 +1,14 @@
-﻿import re
-from datetime import datetime
+from datetime import datetime, timezone
+from typing import TYPE_CHECKING
 
 from sqlalchemy import DateTime, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 from app.models.base import IdentifiableMixin
+
+if TYPE_CHECKING:
+    from app.models.case_party import CaseParty
 
 
 class CaseTypeEnum:
@@ -77,5 +80,5 @@ class Case(Base, IdentifiableMixin):
 
     @staticmethod
     def generate_case_number(sequence: int) -> str:
-        year = datetime.now().year
+        year = datetime.now(timezone.utc).year
         return f"EXP-{year}-{sequence:05d}"

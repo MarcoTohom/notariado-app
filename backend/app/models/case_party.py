@@ -1,8 +1,14 @@
-﻿from sqlalchemy import ForeignKey, String, Text
+from typing import TYPE_CHECKING
+
+from sqlalchemy import ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 from app.models.base import IdentifiableMixin
+
+if TYPE_CHECKING:
+    from app.models.case import Case
+    from app.models.client import Client
 
 
 class PartyRoleEnum:
@@ -35,9 +41,7 @@ class CaseParty(Base, IdentifiableMixin):
     client_id: Mapped[str] = mapped_column(
         String(36), ForeignKey("clients.id"), nullable=False, index=True
     )
-    party_role: Mapped[str] = mapped_column(
-        String(30), nullable=False, index=True
-    )
+    party_role: Mapped[str] = mapped_column(String(30), nullable=False, index=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     order_index: Mapped[int | None] = mapped_column(default=0)
 
