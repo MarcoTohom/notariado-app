@@ -6,6 +6,7 @@ import { UserManagementModal } from "./UserManagementModal";
 import {
   Scale,
   FileText,
+  FileStack,
   Users,
   FolderOpen,
   FlaskConical,
@@ -66,14 +67,20 @@ export const Navbar: React.FC = () => {
                 Expedientes
               </NavLink>
             )}
+            {hasPermission("templates:read") && (
+              <NavLink to="/plantillas" className={linkClass}>
+                <FileStack className="w-4 h-4" />
+                Plantillas
+              </NavLink>
+            )}
+            {hasPermission("templates:read") && <NavLink to="/formularios" className={linkClass}>Formularios</NavLink>}
             <span
               className="px-3 py-1.5 rounded-lg text-slate-600 flex items-center gap-1.5 cursor-not-allowed"
-              title="Disponible en la Fase 6 del proyecto"
+              title="Disponible en la Fase 11 del proyecto"
             >
               <FlaskConical className="w-4 h-4" />
               Módulo Tesis
             </span>
-            {hasPermission("templates:read") && <NavLink to="/formularios" className={linkClass}>Formularios</NavLink>}
           </nav>
 
           <div className="flex items-center gap-3">

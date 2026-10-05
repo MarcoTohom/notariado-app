@@ -8,6 +8,7 @@ import { DashboardPage } from "./features/dashboard/DashboardPage";
 import { ClientsPage } from "./features/clients/ClientsPage";
 import { CasesPage } from "./features/cases/CasesPage";
 import { FieldsPage } from "./features/fields/FieldsPage";
+import { TemplatesPage } from "./features/templates/TemplatesPage";
 import { Loader2, LockKeyhole, ShieldX, LogIn } from "lucide-react";
 
 const queryClient = new QueryClient({
@@ -122,8 +123,16 @@ export const App: React.FC = () => {
                   </RequireAuth>
                 }
               />
-              <Route path="*" element={<Navigate to="/" replace />} />
+              <Route
+                path="/plantillas"
+                element={
+                  <RequireAuth permission="templates:read">
+                    <TemplatesPage />
+                  </RequireAuth>
+                }
+              />
               <Route path="/formularios" element={<RequireAuth permission="templates:read"><FieldsPage /></RequireAuth>} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Route>
           </Routes>
         </BrowserRouter>

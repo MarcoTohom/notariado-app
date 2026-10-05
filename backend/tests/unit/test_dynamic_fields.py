@@ -273,17 +273,31 @@ def test_relation_and_file_validate_with_authoritative_resolvers():
 
 
 def test_readonly_relation_cannot_be_used_to_forge_autofill():
-    definitions = [field("relation", "cliente", source="clients", readonly=True,
-                         options_json={"autofill": {"dpi": "dpi"}}), field("dpi", "dpi")]
+    definitions = [
+        field(
+            "relation",
+            "cliente",
+            source="clients",
+            readonly=True,
+            options_json={"autofill": {"dpi": "dpi"}},
+        ),
+        field("dpi", "dpi"),
+    ]
     calls = []
+
     def lookup(source, value):
         calls.append(value)
         return SimpleNamespace(dpi="0000000000101")
-    result = validate_values(definitions, {"cliente":"forged", "dpi":"1111111111111"},
-                             previous={"cliente":"original"}, relation=lookup)
+
+    result = validate_values(
+        definitions,
+        {"cliente": "forged", "dpi": "1111111111111"},
+        previous={"cliente": "original"},
+        relation=lookup,
+    )
     assert not result.errors
     assert set(calls) == {"original"}
-    assert result.values == {"cliente":"original", "dpi":"0000000000101"}
+    assert result.values == {"cliente": "original", "dpi": "0000000000101"}
 
 
 @pytest.mark.parametrize("pattern", [r"a{999999999}", r"a{0,100}a{0,100}", r"\Aabc\Z"])

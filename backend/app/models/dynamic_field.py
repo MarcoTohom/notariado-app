@@ -21,6 +21,8 @@ class Template(Base, IdentifiableMixin):
     __tablename__ = "templates"
     name: Mapped[str] = mapped_column(String(150))
     case_type: Mapped[str] = mapped_column(String(30))
+    description: Mapped[str | None] = mapped_column(Text, nullable=True)
+    status: Mapped[str] = mapped_column(String(20), default="ACTIVE")
 
 
 class TemplateVersion(Base, IdentifiableMixin):
@@ -29,6 +31,15 @@ class TemplateVersion(Base, IdentifiableMixin):
     template_id: Mapped[str] = mapped_column(ForeignKey("templates.id"), index=True)
     version_number: Mapped[int] = mapped_column(Integer)
     status: Mapped[str] = mapped_column(String(30), default="FIELD_DEFINITION")
+    # --- Metadatos de archivo DOCX (Fase 5; nulos en versiones JSON de Fase 4) ---
+    file_path: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    original_filename: Mapped[str | None] = mapped_column(String(200), nullable=True)
+    file_hash: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    file_size: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    notes: Mapped[str | None] = mapped_column(Text, nullable=True)
+    uploaded_by_id: Mapped[str | None] = mapped_column(
+        String(36), ForeignKey("users.id"), nullable=True
+    )
 
 
 class TemplateField(Base, IdentifiableMixin):
@@ -57,6 +68,7 @@ class TemplateField(Base, IdentifiableMixin):
     calculated: Mapped[bool] = mapped_column(Boolean, default=False)
     calculation_expression: Mapped[str | None] = mapped_column(String(500))
     docx_variable: Mapped[str | None] = mapped_column(String(150))
+    auto_detected: Mapped[bool] = mapped_column(Boolean, default=False)
     display_order: Mapped[int] = mapped_column(Integer, default=0)
     help_text: Mapped[str | None] = mapped_column(Text)
     active: Mapped[bool] = mapped_column(Boolean, default=True)

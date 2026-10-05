@@ -8,6 +8,7 @@ from app.api.v1.endpoints import (
     dynamic_fields,
     health,
     legal_entities,
+    templates,
     users,
 )
 
@@ -34,4 +35,7 @@ api_router.include_router(
 )
 api_router.include_router(
     cases.router, prefix="/cases", tags=["Expedientes Notariales"]
+)
+api_router.include_router(
+    templates.router, prefix="/templates", tags=["Plantillas DOCX"]
 )

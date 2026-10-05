@@ -80,3 +80,18 @@ export const SOCIETY_TYPE_LABELS: Record<string, string> = Object.fromEntries(
 export const MARITAL_STATUS_LABELS: Record<string, string> = Object.fromEntries(
   MARITAL_STATUS_OPTIONS.map((o) => [o.value, o.label])
 );
+
+/** Estados del versionamiento inmutable de plantillas DOCX (Fase 5). */
+export const DOCX_VERSION_STATUS_LABELS: Record<string, string> = {
+  BORRADOR: "Borrador",
+  ACTIVA: "Activa",
+  ARCHIVADA: "Archivada",
+  FIELD_DEFINITION: "Definición de campos",
+};
+
+export const DOCX_VERSION_STATUS_COLORS: Record<string, string> = {
+  BORRADOR: "bg-amber-50 text-amber-700 border-amber-200",
+  ACTIVA: "bg-emerald-50 text-emerald-700 border-emerald-200",
+  ARCHIVADA: "bg-slate-100 text-slate-500 border-slate-300",
+  FIELD_DEFINITION: "bg-brand-50 text-brand-700 border-brand-200",
+};

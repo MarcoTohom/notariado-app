@@ -1,6 +1,6 @@
 import io
-from zipfile import ZipFile
 from uuid import uuid4
+from zipfile import ZipFile
 
 import pytest
 from pypdf import PdfWriter
@@ -330,45 +330,120 @@ def test_closed_cases_wrong_type_and_preview_does_not_persist(client, db_session
 
 def test_csv_and_zip_attachments_and_nested_path(client, auth):
     headers = auth()
-    definitions = [{"key":"bienes","label":"Bienes","field_type":"list","options_json":{"fields":[
-        {"key":"archivo","label":"Archivo","field_type":"file"},
-    ]}}]
-    _, _, path = create(client,headers,definitions)
-    csv = client.post(f"{path}/files?field=bienes.0.archivo",headers=headers,
-                      files={"file":("sintetico.csv",b"nombre,valor\nEjemplo,10","text/csv")})
-    assert csv.status_code == 201,csv.text
-    saved = client.put(path,headers=headers,json={"values":{"bienes":[{}, {"archivo":csv.json()["id"]}]}})
-    assert saved.status_code == 200,saved.text
-    for suffix,member in [(".docx","word/document.xml"),(".xlsx","xl/workbook.xml")]:
+    definitions = [
+        {
+            "key": "bienes",
+            "label": "Bienes",
+            "field_type": "list",
+            "options_json": {
+                "fields": [
+                    {"key": "archivo", "label": "Archivo", "field_type": "file"},
+                ]
+            },
+        }
+    ]
+    _, _, path = create(client, headers, definitions)
+    csv = client.post(
+        f"{path}/files?field=bienes.0.archivo",
+        headers=headers,
+        files={"file": ("sintetico.csv", b"nombre,valor\nEjemplo,10", "text/csv")},
+    )
+    assert csv.status_code == 201, csv.text
+    saved = client.put(
+        path,
+        headers=headers,
+        json={"values": {"bienes": [{}, {"archivo": csv.json()["id"]}]}},
+    )
+    assert saved.status_code == 200, saved.text
+    for suffix, member in [
+        (".docx", "word/document.xml"),
+        (".xlsx", "xl/workbook.xml"),
+    ]:
         contents = io.BytesIO()
-        with ZipFile(contents,"w") as archive:
-            archive.writestr(member,"<document/>")
-            archive.writestr("[Content_Types].xml","<Types/>")
-        response = client.post(f"{path}/files?field=bienes.0.archivo",headers=headers,
-                               files={"file":(f"sintetico{suffix}",contents.getvalue(),"application/octet-stream")})
-        assert response.status_code == 201,response.text
+        with ZipFile(contents, "w") as archive:
+            archive.writestr(member, "<document/>")
+            archive.writestr("[Content_Types].xml", "<Types/>")
+        response = client.post(
+            f"{path}/files?field=bienes.0.archivo",
+            headers=headers,
+            files={
+                "file": (
+                    f"sintetico{suffix}",
+                    contents.getvalue(),
+                    "application/octet-stream",
+                )
+            },
+        )
+        assert response.status_code == 201, response.text
     invalid = io.BytesIO()
-    with ZipFile(invalid,"w") as archive:
-        archive.writestr("word/document.xml","<broken")
-        archive.writestr("[Content_Types].xml","<Types/>")
-    response=client.post(f"{path}/files?field=bienes.0.archivo",headers=headers,
-                         files={"file":("invalido.docx",invalid.getvalue(),"application/octet-stream")})
-    assert response.status_code==422
-    for name,content in [("invalid.csv",b"\xff\x00"),("invalid.docx",b"not a zip")]:
-        assert client.post(f"{path}/files?field=bienes.0.archivo",headers=headers,
-                           files={"file":(name,content,"application/octet-stream")}).status_code==422
-    assert client.post(f"{path}/files?field=missing",headers=headers,
-                       files={"file":("a.csv",b"a,b","text/csv")}).status_code==404
+    with ZipFile(invalid, "w") as archive:
+        archive.writestr("word/document.xml", "<broken")
+        archive.writestr("[Content_Types].xml", "<Types/>")
+    response = client.post(
+        f"{path}/files?field=bienes.0.archivo",
+        headers=headers,
+        files={
+            "file": ("invalido.docx", invalid.getvalue(), "application/octet-stream")
+        },
+    )
+    assert response.status_code == 422
+    for name, content in [("invalid.csv", b"\xff\x00"), ("invalid.docx", b"not a zip")]:
+        assert (
+            client.post(
+                f"{path}/files?field=bienes.0.archivo",
+                headers=headers,
+                files={"file": (name, content, "application/octet-stream")},
+            ).status_code
+            == 422
+        )
+    assert (
+        client.post(
+            f"{path}/files?field=missing",
+            headers=headers,
+            files={"file": ("a.csv", b"a,b", "text/csv")},
+        ).status_code
+        == 404
+    )
 
 
 def test_invalid_schema_is_not_persisted(client, db_session, auth):
-    headers=auth()
+    headers = auth()
     invalid = [
-        [{"key":"a","label":"A","field_type":"currency","min_value":"not-a-number"}],
-        [{"key":"a","label":"A","field_type":"computed","calculation_expression":"missing + 1"}],
-        [{"key":"a","label":"A","field_type":"select","options_json":{"choices":[{"label":"A","value":"x"},{"label":"B","value":"x"}]}}],
+        [
+            {
+                "key": "a",
+                "label": "A",
+                "field_type": "currency",
+                "min_value": "not-a-number",
+            }
+        ],
+        [
+            {
+                "key": "a",
+                "label": "A",
+                "field_type": "computed",
+                "calculation_expression": "missing + 1",
+            }
+        ],
+        [
+            {
+                "key": "a",
+                "label": "A",
+                "field_type": "select",
+                "options_json": {
+                    "choices": [
+                        {"label": "A", "value": "x"},
+                        {"label": "B", "value": "x"},
+                    ]
+                },
+            }
+        ],
     ]
     for fields in invalid:
-        response=client.post(f"{BASE}/definitions",headers=headers,json={"name":"Inválido","case_type":"COMPRAVENTA","fields":fields})
-        assert response.status_code==422,response.text
-    assert db_session.query(TemplateVersion).count()==0
+        response = client.post(
+            f"{BASE}/definitions",
+            headers=headers,
+            json={"name": "Inválido", "case_type": "COMPRAVENTA", "fields": fields},
+        )
+        assert response.status_code == 422, response.text
+    assert db_session.query(TemplateVersion).count() == 0

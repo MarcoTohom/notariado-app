@@ -231,18 +231,48 @@ cd ..
 
 La numeración sigue [MASTER_PLAN.md](docs/MASTER_PLAN.md), que define 11 fases.
 
-### FASES 5 y 6 — Plantillas DOCX y Motor de Reglas — PENDIENTES
+### FASE 5 — Repositorio y Versionamiento de Plantillas DOCX — COMPLETADA (commit PENDIENTE_HASH)
 
-Objetivo: Carga de plantillas .docx con Jinja2, extraccion lexica de variables y motor de consistencia documental (RULE-001 a RULE-020).
+Objetivo: Carga de plantillas .docx con marcadores Jinja2, extracción léxica automática de variables, versionamiento inmutable con una única versión vigente y render de prueba verificado.
+
+#### Backend — API /templates y extractor léxico (skill docx-template)
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| Migración phase5_templates | OK | templates(+description, +status), template_versions(+file_path, +hash SHA-256, +size, +notes, +uploaded_by), template_fields(+auto_detected) |
+| POST /templates | OK | Multipart: validación .docx, 10 MB máx., integridad OpenXML (zip, sin macros, sin XXE), almacenamiento UUID |
+| POST /templates/{id}/versions | OK | Versiones inmutables v1, v2… jamás se sobrescriben |
+| POST /templates/{id}/versions/{vid}/activate | OK | Una única versión ACTIVA por plantilla; las demás quedan ARCHIVADAS (solo lectura) |
+| Extractor Jinja2 | OK | Regex de variables `{{ }}`, bucles `{% for %}`, condicionales `{% if %}` en párrafos y tablas |
+| Sugerencia de tipos | OK | Heurística dpi/nit/currency/date/name/textarea/list/boolean + etiquetas legibles |
+| Render de prueba (docxtpl) | OK | POST /versions/{vid}/preview con contexto 100% sintético y verificación python-docx de cero placeholders residuales (RULE-017) |
+| GET /templates, GET /templates/{id}, DELETE /templates/{id} | OK | Listado paginado, detalle con versiones y campos, baja lógica conservando historial |
+| test_jinja_extraction.py | OK | 24 pruebas unitarias: extracción, tipos, contexto sintético, residuales, sanitización |
+| test_templates_api.py | OK | 9 pruebas de integración: flujo completo, seguridad de carga, RBAC, activación única, preview |
+
+#### Frontend — Vista TemplatesPage
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| TemplatesPage | OK | Búsqueda debounced, filtro por tipo de escritura, paginación, baja lógica con confirmación |
+| TemplateUploadModal | OK | RHF + Zod: nombre obligatorio, validación de archivo .docx (extensión, 10 MB) incluso con metadatos inválidos |
+| TemplateDetailModal | OK | Historial de versiones con hash/tamaño/notas, campos detectados, activación, subida de nueva versión |
+| Render de prueba en UI | OK | Botón "Probar render" con resultado (cero placeholders) y descarga del DOCX generado |
+| Vitest | OK | 8 pruebas del modal de carga (validadores de archivo y FormData) |
+
+**Verificación E2E ejecutada:** carga vía UI de plantilla sintética (14 variables detectadas con tipos correctos) → activación v1 → render de prueba con bucle `{% for testigo %}` y condicional `{% if %}` → descarga del DOCX sin placeholders residuales.
+
+---
+
+### FASE 6 — Motor de Reglas Notariales — PENDIENTE
+
+Objetivo: Motor de consistencia documental (RULE-001 a RULE-020) con panel interactivo de inconsistencias.
 
 | Tarea | Estado |
 |---|---|
-| Modelo Template y TemplateVersion | Base creada en fase 4; carga DOCX pendiente |
-| Endpoint POST /templates (carga de archivo) | Pendiente |
-| Extraccion de variables Jinja2 (docx-template skill) | Pendiente |
 | Motor de reglas RULE-001 a RULE-020 | Pendiente |
 | Endpoint POST /validations/run | Pendiente |
-| Vista React: TemplatesPage | Pendiente |
+| Panel de inconsistencias con "Ir al campo" | Pendiente |
 | Pruebas del motor de reglas | Pendiente |
 
 ---
@@ -288,27 +318,27 @@ notariado-app/
 ├── backend/                    # API FastAPI, SQLAlchemy, SQLite
 │   ├── alembic/                # Migraciones de base de datos
 │   ├── app/
-│   │   ├── api/v1/endpoints/   # auth.py, users.py, audit.py, health.py
+│   │   ├── api/v1/endpoints/   # auth, users, audit, health, clients, cases, legal_entities, dynamic_fields, templates
 │   │   ├── core/               # config.py, security.py, roles.py
 │   │   ├── db/                 # Sesion y base SQLAlchemy
-│   │   ├── models/             # User, Client, LegalEntity, Case, CaseParty, AuditLog
+│   │   ├── models/             # User, Client, LegalEntity, Case, CaseParty, AuditLog, dynamic_field (Template*)
 │   │   ├── repositories/       # Capa de acceso a datos
 │   │   ├── rules/              # Motor de reglas RULE-001 a RULE-020
-│   │   ├── schemas/            # Esquemas Pydantic v2
-│   │   ├── services/           # user_service, client_service, audit_service
+│   │   ├── schemas/            # Esquemas Pydantic v2 (client, case, legal_entity, dynamic_field, template)
+│   │   ├── services/           # user, client, case, legal_entity, audit, dynamic_field, template_docx
 │   │   └── utils/              # seed_users.py
 │   ├── tests/
-│   │   ├── integration/        # test_auth_api, test_users_api, test_audit_api
-│   │   └── unit/               # test_security, test_config
+│   │   ├── integration/        # auth, users, audit, clients, cases, dynamic_fields, templates
+│   │   └── unit/               # security, config, dynamic_fields, jinja_extraction
 │   └── requirements.txt
 ├── frontend/                   # Interfaz React + TypeScript + Vite
 │   └── src/
 │       ├── components/         # Navbar, LoginModal, UserManagementModal, SystemHealthBadge
 │       │   └── common/         # ClientSearchSelect, ConfirmDialog
 │       ├── context/            # AuthContext
-│       ├── features/           # dashboard/, clients/, cases/ (paginas y modales)
-│       ├── lib/                # validators.ts (Zod), labels.ts (catalogos)
-│       ├── services/           # api.ts (auth, users, clients, legal-entities, cases)
+│       ├── features/           # dashboard/, clients/, cases/, fields/, templates/
+│       ├── lib/                # validators.ts (Zod), labels.ts, format.ts
+│       ├── services/           # api.ts (auth, users, clients, legal-entities, cases, templates)
 │       ├── test/               # setup Vitest + Testing Library
 │       └── types/              # index.ts
 ├── docs/                       # Documentacion formal de arquitectura, scrum y tesis
@@ -327,6 +357,8 @@ notariado-app/
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |
 | 395259f | Fase 3 | Frontend clientes/expedientes, RHF+Zod+TanStack Query, vitest, lint backend |
+| a056427 | Fase 4 | Motor de 20 campos tipados, DynamicForm, persistencia por expediente, e2e Playwright |
+| PENDIENTE_HASH | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
 
 ---
 
