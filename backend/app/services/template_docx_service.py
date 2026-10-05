@@ -266,8 +266,27 @@ def _register_detected_fields(
     order = 0
     item_prefixes = tuple(f"{item}." for item in extraction.loop_item_prefixes())
 
-    # 1) Colecciones de bucles como campos tipo lista.
+    # 1) Colecciones de bucles como campos tipo lista, con los subcampos
+    #    inferidos de las variables del item (comp.nombre -> "nombre").
+    #    options_json.fields es obligatorio para el motor de formularios.
     for loop in extraction.loops:
+        subfields = []
+        sub_taken: set[str] = set()
+        for index, variable in enumerate(
+            v for v in extraction.variables if v.startswith(f"{loop['item']}.")
+        ):
+            leaf = variable.split(".", 1)[1]
+            subfields.append(
+                {
+                    "key": _field_key(leaf, sub_taken),
+                    "label": humanize_label(leaf),
+                    "field_type": suggest_field_type(leaf),
+                    "required": False,
+                    "nullable": True,
+                    "options_json": {},
+                    "display_order": index,
+                }
+            )
         db.add(
             TemplateField(
                 template_version_id=version_id,
@@ -276,7 +295,7 @@ def _register_detected_fields(
                 field_type="list",
                 required=False,
                 nullable=True,
-                options_json={},
+                options_json={"fields": subfields},
                 source="manual",
                 docx_variable=loop["collection"],
                 auto_detected=True,

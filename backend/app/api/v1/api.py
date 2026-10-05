@@ -10,6 +10,7 @@ from app.api.v1.endpoints import (
     legal_entities,
     templates,
     users,
+    validations,
 )
 
 api_router = APIRouter()
@@ -38,4 +39,7 @@ api_router.include_router(
 )
 api_router.include_router(
     templates.router, prefix="/templates", tags=["Plantillas DOCX"]
+)
+api_router.include_router(
+    validations.router, prefix="/validations", tags=["Motor de Reglas Notariales"]
 )

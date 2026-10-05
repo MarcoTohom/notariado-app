@@ -264,16 +264,35 @@ Objetivo: Carga de plantillas .docx con marcadores Jinja2, extracción léxica a
 
 ---
 
-### FASE 6 — Motor de Reglas Notariales — PENDIENTE
+### FASE 6 — Motor de Reglas Notariales (RULE-001..RULE-020) — COMPLETADA (commit PENDIENTE_HASH)
 
-Objetivo: Motor de consistencia documental (RULE-001 a RULE-020) con panel interactivo de inconsistencias.
+Objetivo: Motor de consistencia documental que contrasta los valores del expediente contra las fichas maestras de clientes y la normativa notarial guatemalteca, con panel interactivo de inconsistencias.
 
-| Tarea | Estado |
-|---|---|
-| Motor de reglas RULE-001 a RULE-020 | Pendiente |
-| Endpoint POST /validations/run | Pendiente |
-| Panel de inconsistencias con "Ir al campo" | Pendiente |
-| Pruebas del motor de reglas | Pendiente |
+#### Backend — app/rules/ + API /validations
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| Motor de 20 reglas | OK | Estructurales (001-003), consistencia cruzada con ficha maestra (004-006, 020), fechas/montos (007-008), registrales RGP (009-011), geográficas (012-013), incisos (014-016), placeholders (017), aritmética (018), adjuntos (019) |
+| Conversor número→letras | OK | Español hasta 999,999,999 + montos con centavos XX/100 (RULE-008, Art. 30 Código de Notariado) |
+| Catálogo geográfico GT | OK | 22 departamentos con municipios; RULE-012 error si no existe, RULE-013 error si el municipio es de otro departamento / warning si no consta |
+| POST /validations/run | OK | Evalúa valores almacenados o enviados (validar antes de guardar); respuesta con severidad, valor actual vs. esperado y ubicación |
+| GET /validations/catalog /cases/{id} /cases/{id}/latest | OK | Catálogo de reglas, historial de corridas y última corrida por expediente |
+| Persistencia validation_runs | OK | Migración phase6_rules: hallazgos completos en JSON para trazabilidad |
+| Auditoría VALIDATE | OK | Bitácora con conteos por severidad, sin datos sensibles |
+| Corrección de integración Fase 5 | OK | Campos lista auto-detectados ahora registran subcampos en options_json (compatibilidad con FieldDefinition de Fase 4) |
+| 65 pruebas nuevas | OK | 20 number_words + 24 motor (contextos fabricados) + 9 integración API + 2 ajustes regresión |
+
+#### Frontend — Panel de Inconsistencias
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| FindingsPanel | OK | Severidad con badges, mensaje, valor actual vs. esperado, ubicación, filtros por nivel, estado limpio |
+| CaseValidationModal | OK | Selector de formulario/versión, ejecución del motor, resumen de corrida actual vs. última, acceso desde Expedientes |
+| "Ir al campo" | OK | Navega al formulario dinámico del expediente (`/formularios?expediente=`) |
+| Corrección Reglas de Hooks | OK | useMutation tras return anticipado en CaseValidationModal y TemplateDetailModal (crash de runtime) |
+| Vitest FindingsPanel | OK | 6 pruebas: conteos, filtrado, comparación de valores, acción "Ir al campo" |
+
+**Verificación E2E ejecutada:** expediente EXP-2026-00001 con DPI discordante deliberado → el panel muestra RULE-004 (CRITICAL, 2345678901299 vs. 2345678901202), RULE-010 y RULE-011 (datos registrales ausentes) con filtros funcionando y persistencia de la corrida.
 
 ---
 
@@ -323,22 +342,22 @@ notariado-app/
 │   │   ├── db/                 # Sesion y base SQLAlchemy
 │   │   ├── models/             # User, Client, LegalEntity, Case, CaseParty, AuditLog, dynamic_field (Template*)
 │   │   ├── repositories/       # Capa de acceso a datos
-│   │   ├── rules/              # Motor de reglas RULE-001 a RULE-020
-│   │   ├── schemas/            # Esquemas Pydantic v2 (client, case, legal_entity, dynamic_field, template)
-│   │   ├── services/           # user, client, case, legal_entity, audit, dynamic_field, template_docx
+│   │   ├── rules/              # Motor RULE-001..020: engine, checks, catalog, gt_catalog, number_words
+│   │   ├── schemas/            # Esquemas Pydantic v2 (client, case, legal_entity, dynamic_field, template, validation)
+│   │   ├── services/           # user, client, case, legal_entity, audit, dynamic_field, template_docx, validation
 │   │   └── utils/              # seed_users.py
 │   ├── tests/
-│   │   ├── integration/        # auth, users, audit, clients, cases, dynamic_fields, templates
-│   │   └── unit/               # security, config, dynamic_fields, jinja_extraction
+│   │   ├── integration/        # auth, users, audit, clients, cases, dynamic_fields, templates, validations
+│   │   └── unit/               # security, config, dynamic_fields, jinja_extraction, number_words, rule_engine
 │   └── requirements.txt
 ├── frontend/                   # Interfaz React + TypeScript + Vite
 │   └── src/
 │       ├── components/         # Navbar, LoginModal, UserManagementModal, SystemHealthBadge
 │       │   └── common/         # ClientSearchSelect, ConfirmDialog
 │       ├── context/            # AuthContext
-│       ├── features/           # dashboard/, clients/, cases/, fields/, templates/
+│       ├── features/           # dashboard/, clients/, cases/, fields/, templates/, validation/
 │       ├── lib/                # validators.ts (Zod), labels.ts, format.ts
-│       ├── services/           # api.ts (auth, users, clients, legal-entities, cases, templates)
+│       ├── services/           # api.ts (auth, users, clients, legal-entities, cases, templates, validations)
 │       ├── test/               # setup Vitest + Testing Library
 │       └── types/              # index.ts
 ├── docs/                       # Documentacion formal de arquitectura, scrum y tesis
@@ -359,6 +378,7 @@ notariado-app/
 | 395259f | Fase 3 | Frontend clientes/expedientes, RHF+Zod+TanStack Query, vitest, lint backend |
 | a056427 | Fase 4 | Motor de 20 campos tipados, DynamicForm, persistencia por expediente, e2e Playwright |
 | 5346bec | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
+| PENDIENTE_HASH | Fase 6 | Motor RULE-001..020, numero->letras, catalogo GT, panel inconsistencias, validation_runs |
 
 ---
 

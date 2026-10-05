@@ -5,6 +5,7 @@ import { caseService } from "../../services/api";
 import { useAuth } from "../../context/AuthContext";
 import { CaseFormModal } from "./CaseFormModal";
 import { CaseDetailModal } from "./CaseDetailModal";
+import { CaseValidationModal } from "../validation/CaseValidationModal";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
 import {
   CASE_STATUS_COLORS,
@@ -22,6 +23,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Loader2,
+  ShieldCheck,
 } from "lucide-react";
 
 const PAGE_SIZE = 10;
@@ -41,10 +43,12 @@ export const CasesPage: React.FC = () => {
   const [editingCase, setEditingCase] = useState<Case | null>(null);
   const [detailCaseId, setDetailCaseId] = useState<string | null>(null);
   const [cancellingCase, setCancellingCase] = useState<Case | null>(null);
+  const [validatingCase, setValidatingCase] = useState<Case | null>(null);
 
   const canCreate = hasPermission("cases:create");
   const canUpdate = hasPermission("cases:update");
   const canDelete = hasPermission("cases:delete");
+  const canValidate = hasPermission("validations:read");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -233,6 +237,15 @@ export const CasesPage: React.FC = () => {
                         >
                           <Eye className="w-3.5 h-3.5" />
                         </button>
+                        {canValidate && (
+                          <button
+                            onClick={() => setValidatingCase(caseItem)}
+                            className="text-slate-400 hover:text-emerald-600 p-1.5 rounded-md hover:bg-emerald-50 transition-colors"
+                            title="Validar consistencia documental (RULE-001..020)"
+                          >
+                            <ShieldCheck className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                         {canUpdate && caseItem.status !== "CANCELADO" && (
                           <button
                             onClick={() => {
@@ -302,6 +315,7 @@ export const CasesPage: React.FC = () => {
         initialData={editingCase}
       />
       <CaseDetailModal caseId={detailCaseId} onClose={() => setDetailCaseId(null)} />
+      <CaseValidationModal caseItem={validatingCase} onClose={() => setValidatingCase(null)} />
       <ConfirmDialog
         isOpen={Boolean(cancellingCase)}
         title="Cancelar expediente"

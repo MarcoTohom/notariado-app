@@ -65,8 +65,6 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
     setVersionNotes("");
   }, [templateId]);
 
-  if (!templateId) return null;
-
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["template", templateId] });
     queryClient.invalidateQueries({ queryKey: ["templates"] });
@@ -74,7 +72,7 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
 
   const activateMutation = useMutation({
     mutationFn: (versionId: string) =>
-      templateService.activateVersion(templateId, versionId),
+      templateService.activateVersion(templateId ?? "", versionId),
     onSuccess: () => {
       invalidate();
       setActionError(null);
@@ -84,7 +82,7 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
 
   const previewMutation = useMutation({
     mutationFn: (versionId: string) =>
-      templateService.previewVersion(templateId, versionId),
+      templateService.previewVersion(templateId ?? "", versionId),
     onSuccess: (result) => {
       setPreviewResult(result);
       setActionError(null);
@@ -97,7 +95,7 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
 
   const uploadVersionMutation = useMutation({
     mutationFn: (formData: FormData) =>
-      templateService.uploadVersion(templateId, formData),
+      templateService.uploadVersion(templateId ?? "", formData),
     onSuccess: () => {
       invalidate();
       setVersionFile(null);
@@ -106,6 +104,9 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
     },
     onError: (err) => setActionError(getApiErrorMessage(err, "No se pudo cargar la versión.")),
   });
+
+  // Reglas de Hooks: los returns condicionales van DESPUÉS de todos los hooks.
+  if (!templateId) return null;
 
   const handleUploadVersion = () => {
     setActionError(null);

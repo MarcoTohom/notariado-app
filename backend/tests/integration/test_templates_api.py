@@ -121,6 +121,49 @@ def test_create_template_extracts_variables_and_suggested_types(
     assert detected["finca_registral"]["auto_detected"] is True
 
 
+def test_loop_collection_registers_list_field_with_subfields(
+    client: TestClient, db_session: Session
+):
+    """Los bucles {% for %} generan un campo lista con subcampos válidos
+    para el motor de formularios (options_json.fields no vacío)."""
+    _create_user(db_session, "tpl_loop", "ADMINISTRADOR")
+    token = _get_token(client, "user_tpl_loop")
+    content = _docx_bytes(
+        [
+            "{% for comp in compradores %}{{ comp.nombre }} DPI {{ comp.dpi }}{% endfor %}"
+        ]
+    )
+    detail = _upload(client, token, content)
+    version = detail["versions"][0]
+
+    list_field = next(
+        f for f in version["fields"] if f["docx_variable"] == "compradores"
+    )
+    assert list_field["field_type"] == "list"
+
+    # Compatibilidad con el motor de formularios (Fase 4): la lista debe
+    # validar como FieldDefinition, lo que exige subcampos definidos.
+    from app.schemas.dynamic_field import FieldDefinition
+
+    parsed = FieldDefinition.model_validate(
+        {
+            "key": list_field["key"],
+            "label": list_field["label"],
+            "field_type": list_field["field_type"],
+            "options_json": _read_options(db_session, list_field["id"]),
+        }
+    )
+    sub_keys = [sub.key for sub in parsed.options_json.fields]
+    assert "nombre" in sub_keys
+    assert "dpi" in sub_keys
+
+
+def _read_options(db_session: Session, field_id: str) -> dict:
+    from app.models.dynamic_field import TemplateField
+
+    return db_session.get(TemplateField, field_id).options_json
+
+
 def test_create_template_rejects_non_docx(client: TestClient, db_session: Session):
     _create_user(db_session, "tpl2", "ADMINISTRADOR")
     token = _get_token(client, "user_tpl2")
