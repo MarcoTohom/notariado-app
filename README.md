@@ -26,7 +26,7 @@ Este sistema es una solución tecnológica integral orientada a bufetes jurídic
 
 1. **Sistema Operativo:** Windows 10 o Windows 11 (64-bit).
 2. **Python:** 3.12 o superior instalado y disponible en el PATH del sistema.
-3. **Node.js:** Versión 18 o superior con `npm`.
+3. **Node.js:** Versión 22.13 o superior con `npm` (verificado con 22.16.0).
 4. **Git:** Para control de versiones local.
 
 ---
@@ -216,13 +216,28 @@ Objetivo: CRUD completo de clientes (personas individuales y juridicas) y expedi
 
 ---
 
-### FASE 4 — Plantillas DOCX y Motor de Reglas — PENDIENTE
+### FASE 4 — Campos Dinámicos Tipados
+
+Motor de 20 tipos con configuración versionada, DynamicForm (React Hook Form + Zod), persistencia por expediente, autocompletado de clientes, listas reordenables, cálculos Decimal y archivos con descarga autenticada.
+
+Acceso: **Formularios** en la navegación o desde el detalle del expediente. [Guía, contratos y pruebas](docs/dynamic-fields.md).
+
+```powershell
+cd frontend
+npx.cmd playwright install chromium
+cd ..
+.\scripts\test.ps1 -E2E
+```
+
+La numeración sigue [MASTER_PLAN.md](docs/MASTER_PLAN.md), que define 11 fases.
+
+### FASES 5 y 6 — Plantillas DOCX y Motor de Reglas — PENDIENTES
 
 Objetivo: Carga de plantillas .docx con Jinja2, extraccion lexica de variables y motor de consistencia documental (RULE-001 a RULE-020).
 
 | Tarea | Estado |
 |---|---|
-| Modelo Template y TemplateVersion | Pendiente |
+| Modelo Template y TemplateVersion | Base creada en fase 4; carga DOCX pendiente |
 | Endpoint POST /templates (carga de archivo) | Pendiente |
 | Extraccion de variables Jinja2 (docx-template skill) | Pendiente |
 | Motor de reglas RULE-001 a RULE-020 | Pendiente |
@@ -232,7 +247,7 @@ Objetivo: Carga de plantillas .docx con Jinja2, extraccion lexica de variables y
 
 ---
 
-### FASE 5 — Generacion de Borradores DOCX — PENDIENTE
+### FASE 7 — Generacion de Borradores DOCX — PENDIENTE
 
 Objetivo: Generacion verificada de borradores, historial de versiones, descarga y validacion de placeholders residuales.
 
@@ -248,7 +263,7 @@ Objetivo: Generacion verificada de borradores, historial de versiones, descarga 
 
 ---
 
-### FASE 6 — Experimento de Medicion de Tiempos — PENDIENTE
+### FASE 11 — Experimento de Medicion de Tiempos — PENDIENTE
 
 Objetivo: Generar 100 casos sinteticos y medir reduccion de tiempo de revision (linea base 240 min, meta 60 min).
 
@@ -315,4 +330,4 @@ notariado-app/
 
 ---
 
-> **Nota de tesis:** Los tiempos de revision se mediran empiricamente con 100 casos sinteticos en la Fase 6. La reduccion de 240 a 60 minutos es una meta experimental, no un resultado asumido a priori.
+> **Nota de tesis:** Los tiempos de revision se mediran empiricamente con 100 casos sinteticos en la Fase 11. La reduccion de 240 a 60 minutos es una meta experimental, no un resultado asumido a priori.

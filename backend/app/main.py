@@ -5,8 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.v1.api import api_router
 from app.core.config import settings
-from app.db.base import Base
-from app.db.session import engine
 
 
 @asynccontextmanager
@@ -18,8 +16,7 @@ async def lifespan(app: FastAPI):
     (settings.UPLOAD_DIR / "imports").mkdir(parents=True, exist_ok=True)
     (settings.UPLOAD_DIR / "attachments").mkdir(parents=True, exist_ok=True)
 
-    # Create tables if not present
-    Base.metadata.create_all(bind=engine)
+    # Schema changes are applied by Alembic (scripts/dev.ps1), never at startup.
     yield
     # Shutdown actions
 

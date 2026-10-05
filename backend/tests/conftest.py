@@ -31,7 +31,11 @@ def setup_test_db():
 def db_session() -> Generator[Session, None, None]:
     connection = test_engine.connect()
     transaction = connection.begin()
-    session = TestingSessionLocal(bind=connection)
+    # SQLite's legacy transaction mode otherwise releases SAVEPOINTs outside BEGIN.
+    connection.exec_driver_sql("BEGIN")
+    session = TestingSessionLocal(
+        bind=connection, join_transaction_mode="create_savepoint"
+    )
     try:
         yield session
     finally:
@@ -41,7 +45,13 @@ def db_session() -> Generator[Session, None, None]:
 
 
 @pytest.fixture
-def client(db_session: Session) -> Generator[TestClient, None, None]:
+def client(
+    db_session: Session, monkeypatch, tmp_path
+) -> Generator[TestClient, None, None]:
+    # TestClient runs lifespan too; isolate its storage directories as well.
+    monkeypatch.setattr("app.main.settings.UPLOAD_DIR", tmp_path / "uploads")
+    monkeypatch.setattr("app.main.settings.GENERATED_DIR", tmp_path / "generated")
+
     def override_get_db():
         try:
             yield db_session

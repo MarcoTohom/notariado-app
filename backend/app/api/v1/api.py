@@ -5,12 +5,16 @@ from app.api.v1.endpoints import (
     auth,
     cases,
     clients,
+    dynamic_fields,
     health,
     legal_entities,
     users,
 )
 
 api_router = APIRouter()
+api_router.include_router(
+    dynamic_fields.router, prefix="/fields", tags=["Campos dinámicos"]
+)
 
 api_router.include_router(health.router, tags=["Salud del Sistema"])
 api_router.include_router(

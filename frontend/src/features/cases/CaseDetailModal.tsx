@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { CaseStatus, Client, PartyRole } from "../../types";
 import { caseService, getApiErrorMessage } from "../../services/api";
@@ -214,6 +215,7 @@ export const CaseDetailModal: React.FC<CaseDetailModalProps> = ({ caseId, onClos
                   </div>
                 )}
               </section>
+              {hasPermission("templates:read") && <Link to={`/formularios?expediente=${caseId}`} onClick={onClose} className="inline-block text-brand-700 text-sm font-semibold">Completar formulario de escritura</Link>}
 
               {/* Comparecientes */}
               <section className="border-t border-slate-200 pt-4">

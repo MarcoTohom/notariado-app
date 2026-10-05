@@ -15,7 +15,12 @@ if (-not (Test-Path $PythonExe)) {
 }
 
 Write-Host "Arrancando Backend FastAPI en http://127.0.0.1:8000..." -ForegroundColor Green
-$backendJob = Start-Process -FilePath $PythonExe -ArgumentList "-m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000" -WorkingDirectory $BackendPath -PassThru
+Push-Location $BackendPath
+try {
+    & $PythonExe -m alembic upgrade head
+    if ($LASTEXITCODE -ne 0) { throw "No se pudieron aplicar las migraciones." }
+} finally { Pop-Location }
+$backendJob = Start-Process -FilePath $PythonExe -ArgumentList "-m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000" -WorkingDirectory $BackendPath -WindowStyle Hidden -PassThru
 
 # 2. Iniciar Frontend Vite en proceso actual
 $FrontendPath = Join-Path $RootPath "frontend"

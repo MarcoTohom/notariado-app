@@ -73,6 +73,7 @@ export const Navbar: React.FC = () => {
               <FlaskConical className="w-4 h-4" />
               Módulo Tesis
             </span>
+            {hasPermission("templates:read") && <NavLink to="/formularios" className={linkClass}>Formularios</NavLink>}
           </nav>
 
           <div className="flex items-center gap-3">
@@ -117,6 +118,7 @@ export const Navbar: React.FC = () => {
           </div>
         </div>
       </header>
+      {hasPermission("templates:read") && <nav className="md:hidden bg-white border-b px-4 py-2 text-sm"><NavLink to="/formularios">Formularios de escritura</NavLink></nav>}
 
       <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
       <UserManagementModal isOpen={managementOpen} onClose={() => setManagementOpen(false)} />

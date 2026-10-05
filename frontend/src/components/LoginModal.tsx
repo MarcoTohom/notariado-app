@@ -80,10 +80,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="login-username" className="block text-xs font-semibold text-slate-700 mb-1">
                 Usuario o Correo Electrónico
               </label>
               <input
+                id="login-username"
                 type="text"
                 required
                 value={username}
@@ -94,10 +95,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose }) => {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label htmlFor="login-password" className="block text-xs font-semibold text-slate-700 mb-1">
                 Contraseña
               </label>
               <input
+                id="login-password"
                 type="password"
                 required
                 value={password}
