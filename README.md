@@ -231,7 +231,7 @@ cd ..
 
 La numeración sigue [MASTER_PLAN.md](docs/MASTER_PLAN.md), que define 11 fases.
 
-### FASE 5 — Repositorio y Versionamiento de Plantillas DOCX — COMPLETADA (commit PENDIENTE_HASH)
+### FASE 5 — Repositorio y Versionamiento de Plantillas DOCX — COMPLETADA (commit 5346bec)
 
 Objetivo: Carga de plantillas .docx con marcadores Jinja2, extracción léxica automática de variables, versionamiento inmutable con una única versión vigente y render de prueba verificado.
 
@@ -358,7 +358,7 @@ notariado-app/
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |
 | 395259f | Fase 3 | Frontend clientes/expedientes, RHF+Zod+TanStack Query, vitest, lint backend |
 | a056427 | Fase 4 | Motor de 20 campos tipados, DynamicForm, persistencia por expediente, e2e Playwright |
-| PENDIENTE_HASH | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
+| 5346bec | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
 
 ---
 
