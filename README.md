@@ -296,7 +296,7 @@ Objetivo: Motor de consistencia documental que contrasta los valores del expedie
 
 ---
 
-### FASE 7 — Generación Verificada de Borradores DOCX — COMPLETADA (commit PENDIENTE_HASH)
+### FASE 7 — Generación Verificada de Borradores DOCX — COMPLETADA (commit 1ce014b)
 
 Objetivo: Generación de borradores con docxtpl en backend, verificación de cero placeholders residuales, historial inmutable con trazabilidad completa y descarga autenticada.
 
@@ -394,7 +394,7 @@ notariado-app/
 | a056427 | Fase 4 | Motor de 20 campos tipados, DynamicForm, persistencia por expediente, e2e Playwright |
 | 5346bec | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
 | 5f2cb1a | Fase 6 | Motor RULE-001..020, numero->letras, catalogo GT, panel inconsistencias, validation_runs |
-| PENDIENTE_HASH | Fase 7 | Generacion docxtpl verificada, bloqueo por CRITICAL, historial inmutable, descarga |
+| 1ce014b | Fase 7 | Generacion docxtpl verificada, bloqueo por CRITICAL, historial inmutable, descarga |
 
 ---
 
