@@ -264,7 +264,7 @@ Objetivo: Carga de plantillas .docx con marcadores Jinja2, extracción léxica a
 
 ---
 
-### FASE 6 — Motor de Reglas Notariales (RULE-001..RULE-020) — COMPLETADA (commit PENDIENTE_HASH)
+### FASE 6 — Motor de Reglas Notariales (RULE-001..RULE-020) — COMPLETADA (commit 5f2cb1a)
 
 Objetivo: Motor de consistencia documental que contrasta los valores del expediente contra las fichas maestras de clientes y la normativa notarial guatemalteca, con panel interactivo de inconsistencias.
 
@@ -378,7 +378,7 @@ notariado-app/
 | 395259f | Fase 3 | Frontend clientes/expedientes, RHF+Zod+TanStack Query, vitest, lint backend |
 | a056427 | Fase 4 | Motor de 20 campos tipados, DynamicForm, persistencia por expediente, e2e Playwright |
 | 5346bec | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
-| PENDIENTE_HASH | Fase 6 | Motor RULE-001..020, numero->letras, catalogo GT, panel inconsistencias, validation_runs |
+| 5f2cb1a | Fase 6 | Motor RULE-001..020, numero->letras, catalogo GT, panel inconsistencias, validation_runs |
 
 ---
 
