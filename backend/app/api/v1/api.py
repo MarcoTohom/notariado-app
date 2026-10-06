@@ -5,6 +5,7 @@ from app.api.v1.endpoints import (
     auth,
     cases,
     clients,
+    documents,
     dynamic_fields,
     health,
     legal_entities,
@@ -42,4 +43,7 @@ api_router.include_router(
 )
 api_router.include_router(
     validations.router, prefix="/validations", tags=["Motor de Reglas Notariales"]
+)
+api_router.include_router(
+    documents.router, prefix="/documents", tags=["Borradores DOCX"]
 )

@@ -7,6 +7,7 @@ import {
   Scale,
   FileText,
   FileStack,
+  FileOutput,
   Users,
   FolderOpen,
   FlaskConical,
@@ -71,6 +72,12 @@ export const Navbar: React.FC = () => {
               <NavLink to="/plantillas" className={linkClass}>
                 <FileStack className="w-4 h-4" />
                 Plantillas
+              </NavLink>
+            )}
+            {hasPermission("documents:read") && (
+              <NavLink to="/documentos" className={linkClass}>
+                <FileOutput className="w-4 h-4" />
+                Borradores
               </NavLink>
             )}
             {hasPermission("templates:read") && <NavLink to="/formularios" className={linkClass}>Formularios</NavLink>}

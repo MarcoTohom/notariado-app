@@ -296,19 +296,34 @@ Objetivo: Motor de consistencia documental que contrasta los valores del expedie
 
 ---
 
-### FASE 7 — Generacion de Borradores DOCX — PENDIENTE
+### FASE 7 — Generación Verificada de Borradores DOCX — COMPLETADA (commit PENDIENTE_HASH)
 
-Objetivo: Generacion verificada de borradores, historial de versiones, descarga y validacion de placeholders residuales.
+Objetivo: Generación de borradores con docxtpl en backend, verificación de cero placeholders residuales, historial inmutable con trazabilidad completa y descarga autenticada.
 
-| Tarea | Estado |
-|---|---|
-| Modelo Document y DocumentVersion | Pendiente |
-| Endpoint POST /documents/generate | Pendiente |
-| Verificacion post-generacion (sin variables residuales) | Pendiente |
-| Historial de versiones con trazabilidad | Pendiente |
-| Endpoint GET /documents/{id}/download | Pendiente |
-| Vista React: DocumentsPage | Pendiente |
-| Pruebas de generacion y verificacion DOCX | Pendiente |
+#### Backend — DocumentGenerationService + API /documents
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| Modelos Document y DocumentVersion | OK | Migración phase7_documents: snapshot de datos, hash SHA-256, tamaño, validation_status, residual_variables |
+| Constructor de contexto Jinja2 | OK | Mapeo clave plana → docx_variable: anidados (comprador.dpi), colecciones {% for %}, omisión de None |
+| POST /documents/generate | OK | Plantilla ACTIVA automática por tipo de escritura o versión explícita; render docxtpl en backend |
+| Bloqueo por CRITICAL (spec §39) | OK | El motor de reglas se ejecuta antes de generar: hallazgos CRITICAL → 422 con detalle de hallazgos |
+| ChainableUndefined | OK | Datos parciales (p. ej. vendedor ausente) renderizan vacío en lugar de abortar el render |
+| Verificación post-generación (US-07.2) | OK | python-docx inspecciona el archivo: placeholders residuales → estado ERROR_PLACEHOLDERS_PENDIENTES |
+| Historial inmutable (US-07.3) | OK | Versiones v1, v2… con autor, notas, hash y estado; jamás se sobrescriben |
+| GET /documents, /documents/{id}, /versions/{id}/download | OK | Listado por expediente, detalle con versiones, descarga autenticada |
+| 14 pruebas nuevas | OK | 7 contexto (unit) + 7 integración: flujo completo, bloqueo CRITICAL, datos parciales, historial, RBAC |
+
+#### Frontend — Generación y Repositorio de Borradores
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| GenerateDocumentModal | OK | Desde Expedientes: plantilla ACTIVA preseleccionada, notas de versión, resultado con verificación |
+| DocumentsPage (/documentos) | OK | Repositorio global de borradores con paginación y estado |
+| DocumentDetailModal + DocumentVersionsList | OK | Historial con badges de verificación, hash, tamaño, notas y descarga autenticada |
+| Vitest DocumentVersionsList | OK | 4 pruebas: estado vacío, verificada, placeholders pendientes, historial múltiple |
+
+**Verificación E2E principal de tesis ejecutada:** expediente con datos capturados → generación vía UI → versión v1 con estado OK y cero placeholders → descarga del DOCX con datos del expediente sustituidos (compareciente, DPI, precio, bucle de testigos) y secciones sin datos renderizadas vacías.
 
 ---
 
@@ -343,19 +358,19 @@ notariado-app/
 │   │   ├── models/             # User, Client, LegalEntity, Case, CaseParty, AuditLog, dynamic_field (Template*)
 │   │   ├── repositories/       # Capa de acceso a datos
 │   │   ├── rules/              # Motor RULE-001..020: engine, checks, catalog, gt_catalog, number_words
-│   │   ├── schemas/            # Esquemas Pydantic v2 (client, case, legal_entity, dynamic_field, template, validation)
-│   │   ├── services/           # user, client, case, legal_entity, audit, dynamic_field, template_docx, validation
+│   │   ├── schemas/            # Esquemas Pydantic v2 (client, case, legal_entity, dynamic_field, template, validation, document)
+│   │   ├── services/           # user, client, case, legal_entity, audit, dynamic_field, template_docx, validation, document_generation
 │   │   └── utils/              # seed_users.py
 │   ├── tests/
-│   │   ├── integration/        # auth, users, audit, clients, cases, dynamic_fields, templates, validations
-│   │   └── unit/               # security, config, dynamic_fields, jinja_extraction, number_words, rule_engine
+│   │   ├── integration/        # auth, users, audit, clients, cases, dynamic_fields, templates, validations, documents
+│   │   └── unit/               # security, config, dynamic_fields, jinja_extraction, number_words, rule_engine, document_context
 │   └── requirements.txt
 ├── frontend/                   # Interfaz React + TypeScript + Vite
 │   └── src/
 │       ├── components/         # Navbar, LoginModal, UserManagementModal, SystemHealthBadge
 │       │   └── common/         # ClientSearchSelect, ConfirmDialog
 │       ├── context/            # AuthContext
-│       ├── features/           # dashboard/, clients/, cases/, fields/, templates/, validation/
+│       ├── features/           # dashboard/, clients/, cases/, fields/, templates/, validation/, documents/
 │       ├── lib/                # validators.ts (Zod), labels.ts, format.ts
 │       ├── services/           # api.ts (auth, users, clients, legal-entities, cases, templates, validations)
 │       ├── test/               # setup Vitest + Testing Library
@@ -379,6 +394,7 @@ notariado-app/
 | a056427 | Fase 4 | Motor de 20 campos tipados, DynamicForm, persistencia por expediente, e2e Playwright |
 | 5346bec | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
 | 5f2cb1a | Fase 6 | Motor RULE-001..020, numero->letras, catalogo GT, panel inconsistencias, validation_runs |
+| PENDIENTE_HASH | Fase 7 | Generacion docxtpl verificada, bloqueo por CRITICAL, historial inmutable, descarga |
 
 ---
 

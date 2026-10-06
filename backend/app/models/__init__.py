@@ -3,6 +3,7 @@ from app.models.base import IdentifiableMixin
 from app.models.case import Case
 from app.models.case_party import CaseParty
 from app.models.client import Client
+from app.models.document import Document, DocumentVersion
 from app.models.dynamic_field import (
     CaseFieldValues,
     FieldAttachment,
@@ -20,6 +21,8 @@ __all__ = [
     "CaseFieldValues",
     "CaseParty",
     "Client",
+    "Document",
+    "DocumentVersion",
     "FieldAttachment",
     "IdentifiableMixin",
     "LegalEntity",

@@ -9,6 +9,7 @@ import { ClientsPage } from "./features/clients/ClientsPage";
 import { CasesPage } from "./features/cases/CasesPage";
 import { FieldsPage } from "./features/fields/FieldsPage";
 import { TemplatesPage } from "./features/templates/TemplatesPage";
+import { DocumentsPage } from "./features/documents/DocumentsPage";
 import { Loader2, LockKeyhole, ShieldX, LogIn } from "lucide-react";
 
 const queryClient = new QueryClient({
@@ -128,6 +129,14 @@ export const App: React.FC = () => {
                 element={
                   <RequireAuth permission="templates:read">
                     <TemplatesPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/documentos"
+                element={
+                  <RequireAuth permission="documents:read">
+                    <DocumentsPage />
                   </RequireAuth>
                 }
               />

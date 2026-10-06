@@ -14,6 +14,7 @@ from uuid import uuid4
 from docx import Document
 from docxtpl import DocxTemplate
 from fastapi import HTTPException, UploadFile
+from jinja2 import ChainableUndefined, Environment
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -597,9 +598,10 @@ def render_preview(
     context = build_sample_context(extraction)
     preview_name = f"{uuid4()}.docx"
     destination = _preview_storage_dir() / preview_name
+    jinja_env = Environment(undefined=ChainableUndefined, autoescape=False)
     try:
         document = DocxTemplate(str(version.file_path))
-        document.render(context)
+        document.render(context, jinja_env=jinja_env)
         document.save(str(destination))
     except HTTPException:
         raise

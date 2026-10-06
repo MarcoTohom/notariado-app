@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { CaseFormModal } from "./CaseFormModal";
 import { CaseDetailModal } from "./CaseDetailModal";
 import { CaseValidationModal } from "../validation/CaseValidationModal";
+import { GenerateDocumentModal } from "../documents/GenerateDocumentModal";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
 import {
   CASE_STATUS_COLORS,
@@ -24,6 +25,7 @@ import {
   ChevronRight,
   Loader2,
   ShieldCheck,
+  FileOutput,
 } from "lucide-react";
 
 const PAGE_SIZE = 10;
@@ -44,11 +46,13 @@ export const CasesPage: React.FC = () => {
   const [detailCaseId, setDetailCaseId] = useState<string | null>(null);
   const [cancellingCase, setCancellingCase] = useState<Case | null>(null);
   const [validatingCase, setValidatingCase] = useState<Case | null>(null);
+  const [generatingCase, setGeneratingCase] = useState<Case | null>(null);
 
   const canCreate = hasPermission("cases:create");
   const canUpdate = hasPermission("cases:update");
   const canDelete = hasPermission("cases:delete");
   const canValidate = hasPermission("validations:read");
+  const canGenerate = hasPermission("documents:generate");
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -246,6 +250,15 @@ export const CasesPage: React.FC = () => {
                             <ShieldCheck className="w-3.5 h-3.5" />
                           </button>
                         )}
+                        {canGenerate && caseItem.status !== "CANCELADO" && (
+                          <button
+                            onClick={() => setGeneratingCase(caseItem)}
+                            className="text-slate-400 hover:text-brand-700 p-1.5 rounded-md hover:bg-brand-50 transition-colors"
+                            title="Generar borrador DOCX verificado"
+                          >
+                            <FileOutput className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                         {canUpdate && caseItem.status !== "CANCELADO" && (
                           <button
                             onClick={() => {
@@ -316,6 +329,7 @@ export const CasesPage: React.FC = () => {
       />
       <CaseDetailModal caseId={detailCaseId} onClose={() => setDetailCaseId(null)} />
       <CaseValidationModal caseItem={validatingCase} onClose={() => setValidatingCase(null)} />
+      <GenerateDocumentModal caseItem={generatingCase} onClose={() => setGeneratingCase(null)} />
       <ConfirmDialog
         isOpen={Boolean(cancellingCase)}
         title="Cancelar expediente"
