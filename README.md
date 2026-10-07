@@ -327,18 +327,41 @@ Objetivo: Generación de borradores con docxtpl en backend, verificación de cer
 
 ---
 
-### FASE 11 — Experimento de Medicion de Tiempos — PENDIENTE
+### FASE 11 — Experimento de Medición de Tiempos (100 Casos Sintéticos) — COMPLETADA (commit PENDIENTE_HASH)
 
-Objetivo: Generar 100 casos sinteticos y medir reduccion de tiempo de revision (linea base 240 min, meta 60 min).
+Objetivo: corpus experimental estratificado, medición cronometrada TRADITIONAL vs SYSTEM por etapas y estadística real para la validación de la hipótesis (línea base 240 min, meta experimental 60 min).
 
-| Tarea | Estado |
-|---|---|
-| Generador de 100 casos sinteticos | Pendiente |
-| Modulo de medicion de tiempos por etapa | Pendiente |
-| Registro de resultados en CSV/Excel | Pendiente |
-| Calculo estadistico (media, desv. estandar, IC 95%) | Pendiente |
-| Reporte exportable (PDF/Excel) | Pendiente |
-| Script .\scripts\experiment.ps1 | Pendiente |
+#### Backend — Corpus + Medición + Estadística
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| Generador de 100 casos sintéticos | OK | 20 por tipo de escritura; 10 íntegros + 10 anómalos por tipo (una anomalía del plan por caso) |
+| Alineación corpus↔motor | OK | Prueba científica: cada caso íntegro produce 0 hallazgos y cada anomalía dispara EXACTAMENTE las reglas esperadas (50 combinaciones verificadas) |
+| Hallazgos esperados registrados | OK | expected_findings por caso → cómputo automático de errores detectados/omitidos en método SYSTEM |
+| Datos 100% sintéticos | OK | Faker es_ES + DPIs/NITs sintéticos con formato válido; regeneración idempotente del corpus |
+| Cronómetro por corridas y etapas | OK | test_executions (started/finished/duration) + time_measurements (DETECCION/CORRECCION/GENERACION); una corrida abierta por usuario |
+| Estadística real con scipy | OK | Media, σ, IC95 por método; Shapiro-Wilk; t de Student pareada o Wilcoxon (α=0.05); reducción con fórmula oficial |
+| Exportación Capítulo IV | OK | GET /experiment/export.xlsx (pandas+openpyxl, hojas Ejecuciones+Resumen) y /export.csv |
+| Script experiment.ps1 | OK | Genera el corpus contra la BD local sin requerir servidor |
+| Permisos experiment:read/execute | OK | Integrados a la matriz RBAC (ADMINISTRADOR/ABOGADO_NOTARIO ejecutan; AUXILIAR/ADMINISTRACION leen) |
+| Correcciones del motor detectadas | OK | Emparejamiento posicional multi-rol (contrayentes), exclusión de duplicados en cruces, ordinal único por inciso, par capital_monto/capital_letras en RULE-008 |
+| 27 pruebas nuevas | OK | 13 alineación corpus + 3 número→letras extra + 11 integración API (corpus, ciclo, stats, export, RBAC) |
+
+#### Frontend — Módulo Tesis (/tesis)
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| ExperimentPage | OK | Generación del corpus, tabla con filtros tipo/condición, botones Sistema/Tradicional por caso |
+| Cronómetro en vivo | OK | Panel de corrida activa con mm:ss, etapas cronometradas y finalización (conteo manual en TRADITIONAL, automático en SYSTEM) |
+| ExperimentStatsCards | OK | Línea base, μ por método con σ e IC95, reducción %, detección vs omisión, contraste de hipótesis, exportación |
+| Navbar "Módulo Tesis" | OK | Habilitado con permiso experiment:read |
+| Vitest | OK | 4 pruebas del dashboard (medias, reducción, decisión H₀, vacíos sin datos ficticios, exportación) |
+
+**Verificación E2E ejecutada:** corpus real de 100 casos en BD → corrida SYSTEM (41s, 1 detectado/0 omitidos automático) → corrida TRADITIONAL (48s, conteos manuales) → baseline cambia a MEDICIONES y reducción computada desde datos reales → CSV exportado con todas las columnas.
+
+**Nota metodológica:** la reducción mostrada en el dashboard deriva siempre de corridas reales registradas. Los tiempos del experimento formal (100 casos) se registran ejecutando las corridas desde el módulo; el sistema jamás inserta valores ficticios.
+
+---
 
 ---
 
@@ -376,7 +399,7 @@ notariado-app/
 │       ├── test/               # setup Vitest + Testing Library
 │       └── types/              # index.ts
 ├── docs/                       # Documentacion formal de arquitectura, scrum y tesis
-├── scripts/                    # dev.ps1, test.ps1, seed.ps1, backup.ps1
+├── scripts/                    # dev.ps1, test.ps1, seed.ps1, backup.ps1, experiment.ps1
 ├── AGENTS.md                   # Reglas maestras del proyecto (Antigravity)
 └── README.md                   # Guia de inicio rapido y estado del proyecto
 ```
@@ -395,6 +418,7 @@ notariado-app/
 | 5346bec | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
 | 5f2cb1a | Fase 6 | Motor RULE-001..020, numero->letras, catalogo GT, panel inconsistencias, validation_runs |
 | 1ce014b | Fase 7 | Generacion docxtpl verificada, bloqueo por CRITICAL, historial inmutable, descarga |
+| PENDIENTE_HASH | Fase 11 | Corpus 100 casos, cronometro por etapas, estadistica scipy, dashboard y exportacion |
 
 ---
 

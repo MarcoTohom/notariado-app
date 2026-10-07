@@ -175,70 +175,102 @@ def rule_003_nit_format(ctx: ValidationContext) -> list[Finding]:
 # ---------------------------------------------------------------------------
 
 
+def _pair_party_values(ctx: ValidationContext, role: str, attr: str):
+    """Empareja comparecientes y valores del mismo rol por orden.
+
+    Cuando hay varios comparecientes con el mismo rol (p. ej. dos CONTRAYENTE)
+    y el mismo número de campos (contrayente_uno_dpi, contrayente_dos_dpi),
+    el emparejamiento es posicional; de lo contrario se compara cada valor
+    contra cada compareciente (heurística conservadora).
+    Los comparecientes duplicados (mismo cliente + rol) se excluyen de las
+    comparaciones cruzadas: RULE-020 ya los reporta explícitamente.
+    """
+    seen: set[tuple[str, str]] = set()
+    parties = []
+    for party in ctx.party_by_role(role):
+        key = (party.client_id, party.role)
+        if key in seen:
+            continue
+        seen.add(key)
+        parties.append(party)
+    resolved = ctx.find_fields(role=role, attr=attr)
+    if parties and resolved and len(parties) == len(resolved):
+        return [(party, [value]) for party, value in zip(parties, resolved)]
+    return [(party, resolved) for party in parties]
+
+
 def rule_004_dpi_consistency(ctx: ValidationContext) -> list[Finding]:
     """DPI del documento vs. DPI de la ficha del cliente (CRITICAL)."""
     findings: list[Finding] = []
-    for party in ctx.parties:
-        for resolved in ctx.find_fields(role=party.role, attr="dpi"):
-            text = resolved.as_text()
-            if text and normalize_identifier(text) != party.dpi:
-                findings.append(
-                    make_finding(
-                        "RULE-004",
-                        resolved.field_key,
-                        f"El DPI del {party.role.lower()} no coincide con el registrado en el expediente.",
-                        current_value=text,
-                        expected_value=party.dpi,
-                        location=f"Comparecencia — {party.role} ({party.full_name})",
+    roles = {party.role for party in ctx.parties}
+    for role in roles:
+        for party, values in _pair_party_values(ctx, role, "dpi"):
+            for resolved in values:
+                text = resolved.as_text()
+                if text and normalize_identifier(text) != party.dpi:
+                    findings.append(
+                        make_finding(
+                            "RULE-004",
+                            resolved.field_key,
+                            f"El DPI del {party.role.lower()} no coincide con el registrado en el expediente.",
+                            current_value=text,
+                            expected_value=party.dpi,
+                            location=f"Comparecencia — {party.role} ({party.full_name})",
+                        )
                     )
-                )
     return findings
 
 
 def rule_005_nit_consistency(ctx: ValidationContext) -> list[Finding]:
     """NIT del documento vs. NIT de la ficha del cliente."""
     findings: list[Finding] = []
-    for party in ctx.parties:
-        if not party.nit:
-            continue
-        for resolved in ctx.find_fields(role=party.role, attr="nit"):
-            text = resolved.as_text()
-            if text and normalize_identifier(text) != normalize_identifier(party.nit):
-                findings.append(
-                    make_finding(
-                        "RULE-005",
-                        resolved.field_key,
-                        f"El NIT del {party.role.lower()} no coincide con la ficha del cliente.",
-                        current_value=text,
-                        expected_value=party.nit,
-                        location=f"Comparecencia — {party.role} ({party.full_name})",
+    roles = {party.role for party in ctx.parties if party.nit}
+    for role in roles:
+        for party, values in _pair_party_values(ctx, role, "nit"):
+            if not party.nit:
+                continue
+            for resolved in values:
+                text = resolved.as_text()
+                if text and normalize_identifier(text) != normalize_identifier(
+                    party.nit
+                ):
+                    findings.append(
+                        make_finding(
+                            "RULE-005",
+                            resolved.field_key,
+                            f"El NIT del {party.role.lower()} no coincide con la ficha del cliente.",
+                            current_value=text,
+                            expected_value=party.nit,
+                            location=f"Comparecencia — {party.role} ({party.full_name})",
+                        )
                     )
-                )
     return findings
 
 
 def rule_006_name_consistency(ctx: ValidationContext) -> list[Finding]:
     """Nombre del compareciente vs. ficha maestra (CRITICAL)."""
     findings: list[Finding] = []
-    for party in ctx.parties:
-        expected = normalize_text(party.full_name)
-        expected_tokens = set(expected.split())
-        for resolved in ctx.find_fields(role=party.role, attr="nombre"):
-            text = resolved.as_text()
-            if not text:
-                continue
-            current = normalize_text(text)
-            if current != expected and set(current.split()) != expected_tokens:
-                findings.append(
-                    make_finding(
-                        "RULE-006",
-                        resolved.field_key,
-                        f"El nombre del {party.role.lower()} no coincide con la ficha maestra del cliente.",
-                        current_value=text,
-                        expected_value=party.full_name,
-                        location=f"Comparecencia — {party.role}",
+    roles = {party.role for party in ctx.parties}
+    for role in roles:
+        for party, values in _pair_party_values(ctx, role, "nombre"):
+            expected = normalize_text(party.full_name)
+            expected_tokens = set(expected.split())
+            for resolved in values:
+                text = resolved.as_text()
+                if not text:
+                    continue
+                current = normalize_text(text)
+                if current != expected and set(current.split()) != expected_tokens:
+                    findings.append(
+                        make_finding(
+                            "RULE-006",
+                            resolved.field_key,
+                            f"El nombre del {party.role.lower()} no coincide con la ficha maestra del cliente.",
+                            current_value=text,
+                            expected_value=party.full_name,
+                            location=f"Comparecencia — {party.role}",
+                        )
                     )
-                )
     return findings
 
 
@@ -326,12 +358,15 @@ def rule_008_amount_letters(ctx: ValidationContext) -> list[Finding]:
         if amount is None or amount < 0:
             continue
         parent = _parent(resolved.field_key)
-        stem = next((hint for hint in _CURRENCY_HINTS if hint in base), "")
         sibling = next(
             (
                 lf
                 for lf in letter_fields
-                if _parent(lf.field_key) == parent and stem in lf.field_key.lower()
+                if _parent(lf.field_key) == parent
+                and any(
+                    hint in lf.field_key.lower() and hint in base
+                    for hint in _CURRENCY_HINTS
+                )
             ),
             None,
         )
@@ -520,23 +555,32 @@ def _extract_ordinal(sub_path: str, value: str) -> int | None:
 
 
 def rule_014_015_016_clauses(ctx: ValidationContext) -> list[Finding]:
-    """Integridad de la numeración de cláusulas/incisos."""
+    """Integridad de la numeración de cláusulas/incisos.
+
+    Se extrae UN ordinal por ítem: primero el campo numérico explícito
+    (numero/orden/indice/inciso); si no existe, se parsea el texto
+    (PRIMERA, 1., 2., etc.).
+    """
     findings: list[Finding] = []
-    seen_lists: set[str] = set()
-
-    for list_path, items in ctx.find_list_items(["clausula", "inciso"]):
-        list_name = list_path.rsplit("[", 1)[0]
-        if list_name in seen_lists:
-            continue
-        seen_lists.add(list_name)
-
     clauses_lists: dict[str, list[tuple[int, str]]] = {}
+
     for list_path, items in ctx.find_list_items(["clausula", "inciso"]):
         list_name = list_path.rsplit("[", 1)[0]
-        for resolved in items:
-            ordinal = _extract_ordinal(resolved.field_key, resolved.as_text())
-            if ordinal is not None:
-                clauses_lists.setdefault(list_name, []).append((ordinal, list_path))
+        ordinal: int | None = None
+        numeric = [
+            r
+            for r in items
+            if _base(r.field_key) in {"numero", "orden", "indice", "inciso"}
+        ]
+        if numeric:
+            ordinal = _extract_ordinal(numeric[0].field_key, numeric[0].as_text())
+        if ordinal is None:
+            for resolved in items:
+                ordinal = _extract_ordinal(resolved.field_key, resolved.as_text())
+                if ordinal is not None:
+                    break
+        if ordinal is not None:
+            clauses_lists.setdefault(list_name, []).append((ordinal, list_path))
 
     for list_name, entries in clauses_lists.items():
         ordinals = [number for number, _ in entries]

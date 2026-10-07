@@ -7,6 +7,7 @@ from app.api.v1.endpoints import (
     clients,
     documents,
     dynamic_fields,
+    experiment,
     health,
     legal_entities,
     templates,
@@ -46,4 +47,7 @@ api_router.include_router(
 )
 api_router.include_router(
     documents.router, prefix="/documents", tags=["Borradores DOCX"]
+)
+api_router.include_router(
+    experiment.router, prefix="/experiment", tags=["Experimento de Tesis UMG"]
 )

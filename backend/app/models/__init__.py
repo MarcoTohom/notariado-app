@@ -11,6 +11,7 @@ from app.models.dynamic_field import (
     TemplateField,
     TemplateVersion,
 )
+from app.models.experiment import TestCase, TestExecution, TimeMeasurement
 from app.models.legal_entity import LegalEntity
 from app.models.user import User
 from app.models.validation import ValidationRun
@@ -29,6 +30,9 @@ __all__ = [
     "Template",
     "TemplateField",
     "TemplateVersion",
+    "TestCase",
+    "TestExecution",
+    "TimeMeasurement",
     "User",
     "ValidationRun",
 ]

@@ -12,6 +12,7 @@ python-docx>=1.1.2
 docxtpl>=0.17.0
 pandas>=2.2.0
 openpyxl>=3.1.5
+scipy>=1.14.0
 pypdf>=4.3.0
 faker>=27.0.0
 pytest>=8.3.0

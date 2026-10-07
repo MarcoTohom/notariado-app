@@ -10,6 +10,7 @@ import { CasesPage } from "./features/cases/CasesPage";
 import { FieldsPage } from "./features/fields/FieldsPage";
 import { TemplatesPage } from "./features/templates/TemplatesPage";
 import { DocumentsPage } from "./features/documents/DocumentsPage";
+import { ExperimentPage } from "./features/experiment/ExperimentPage";
 import { Loader2, LockKeyhole, ShieldX, LogIn } from "lucide-react";
 
 const queryClient = new QueryClient({
@@ -137,6 +138,14 @@ export const App: React.FC = () => {
                 element={
                   <RequireAuth permission="documents:read">
                     <DocumentsPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/tesis"
+                element={
+                  <RequireAuth permission="experiment:read">
+                    <ExperimentPage />
                   </RequireAuth>
                 }
               />

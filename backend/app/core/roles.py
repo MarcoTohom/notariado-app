@@ -54,6 +54,8 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "payments:create",
         "reports:read",
         "audit:read",
+        "experiment:read",
+        "experiment:execute",
     },
     RoleEnum.ABOGADO_NOTARIO: {
         "clients:read",
@@ -78,6 +80,8 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "quotes:create",
         "quotes:update",
         "reports:read",
+        "experiment:read",
+        "experiment:execute",
     },
     RoleEnum.AUXILIAR: {
         "clients:read",
@@ -92,6 +96,7 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "documents:update",
         "validations:read",
         "validations:execute",
+        "experiment:read",
     },
     RoleEnum.ADMINISTRACION: {
         "clients:read",
@@ -109,6 +114,7 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "payments:read",
         "payments:create",
         "reports:read",
+        "experiment:read",
     },
 }
 

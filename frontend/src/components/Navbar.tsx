@@ -81,13 +81,12 @@ export const Navbar: React.FC = () => {
               </NavLink>
             )}
             {hasPermission("templates:read") && <NavLink to="/formularios" className={linkClass}>Formularios</NavLink>}
-            <span
-              className="px-3 py-1.5 rounded-lg text-slate-600 flex items-center gap-1.5 cursor-not-allowed"
-              title="Disponible en la Fase 11 del proyecto"
-            >
-              <FlaskConical className="w-4 h-4" />
-              Módulo Tesis
-            </span>
+            {hasPermission("experiment:read") && (
+              <NavLink to="/tesis" className={linkClass}>
+                <FlaskConical className="w-4 h-4 text-amber-400" />
+                Módulo Tesis
+              </NavLink>
+            )}
           </nav>
 
           <div className="flex items-center gap-3">
