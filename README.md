@@ -327,7 +327,7 @@ Objetivo: Generación de borradores con docxtpl en backend, verificación de cer
 
 ---
 
-### FASE 11 — Experimento de Medición de Tiempos (100 Casos Sintéticos) — COMPLETADA (commit PENDIENTE_HASH)
+### FASE 11 — Experimento de Medición de Tiempos (100 Casos Sintéticos) — COMPLETADA (commit b8ca802)
 
 Objetivo: corpus experimental estratificado, medición cronometrada TRADITIONAL vs SYSTEM por etapas y estadística real para la validación de la hipótesis (línea base 240 min, meta experimental 60 min).
 
@@ -418,7 +418,7 @@ notariado-app/
 | 5346bec | Fase 5 | Repositorio DOCX: carga, extractor Jinja2, versionamiento inmutable, activacion, preview |
 | 5f2cb1a | Fase 6 | Motor RULE-001..020, numero->letras, catalogo GT, panel inconsistencias, validation_runs |
 | 1ce014b | Fase 7 | Generacion docxtpl verificada, bloqueo por CRITICAL, historial inmutable, descarga |
-| PENDIENTE_HASH | Fase 11 | Corpus 100 casos, cronometro por etapas, estadistica scipy, dashboard y exportacion |
+| b8ca802 | Fase 11 | Corpus 100 casos, cronometro por etapas, estadistica scipy, dashboard y exportacion |
 
 ---
 
