@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { caseService, getApiErrorMessage } from "../../services/api";
+import { useAuth } from "../auth/AuthContext";
+import { caseService } from "../cases/api";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { fieldsApi } from "./api";
 import { DynamicForm } from "./DynamicForm";
 import { FieldDefinitionEditor, newField } from "./FieldDefinitionEditor";

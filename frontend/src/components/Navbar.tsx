@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
-import { LoginModal } from "./LoginModal";
-import { UserManagementModal } from "./UserManagementModal";
+import { useAuth } from "../features/auth/AuthContext";
+import { LoginModal } from "../features/auth/LoginModal";
+import { UserManagementModal } from "../features/users/UserManagementModal";
 import {
   Scale,
   FileText,

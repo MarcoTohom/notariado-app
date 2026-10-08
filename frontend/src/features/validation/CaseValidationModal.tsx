@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { Case, ValidationRun } from "../../types";
-import { getApiErrorMessage, validationService } from "../../services/api";
+import type { Case } from "../cases/types";
+import type { ValidationRun } from "./types";
+import { getApiErrorMessage } from "../../shared/api/errors";
+import { validationService } from "./api";
 import { fieldsApi } from "../fields/api";
-import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../auth/AuthContext";
 import { FindingsPanel } from "./FindingsPanel";
 import { CASE_TYPE_LABELS } from "../../lib/labels";
 import { formatDateTime } from "../../lib/format";

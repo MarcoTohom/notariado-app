@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Case, CaseCreate, CaseStatus, CaseType, CaseUpdate } from "../../types";
-import { caseService } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import type { Case, CaseCreate, CaseStatus, CaseUpdate } from "./types";
+import type { CaseType } from "../../shared/types";
+import { caseService } from "./api";
+import { useAuth } from "../auth/AuthContext";
 import { CaseFormModal } from "./CaseFormModal";
 import { CaseDetailModal } from "./CaseDetailModal";
 import { CaseValidationModal } from "../validation/CaseValidationModal";

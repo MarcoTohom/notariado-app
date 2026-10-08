@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Client, LegalEntity, LegalEntityCreate } from "../../types";
+import type { Client, LegalEntity, LegalEntityCreate } from "./types";
 import { legalEntitySchema, LegalEntityFormValues, cleanOptional } from "../../lib/validators";
 import { SOCIETY_TYPE_OPTIONS } from "../../lib/labels";
-import { getApiErrorMessage } from "../../services/api";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { ClientSearchSelect } from "../../components/common/ClientSearchSelect";
 import { X, Building2, Save } from "lucide-react";
 

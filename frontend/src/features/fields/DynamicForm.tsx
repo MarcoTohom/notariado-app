@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { getApiErrorMessage } from "../../services/api";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { fieldsApi } from "./api";
 import { DynamicFields, FileActivityContext } from "./FieldControls";
 import { defaults, formSchema } from "./validation";

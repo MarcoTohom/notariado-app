@@ -1,6 +1,6 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { documentService } from "../../services/api";
+import { documentService } from "./api";
 import { DocumentVersionsList } from "./DocumentVersionsList";
 import { formatDateTime } from "../../lib/format";
 import { X, FileText, Loader2 } from "lucide-react";

@@ -26,11 +26,14 @@ En desarrollo, Vite sirve la interfaz y redirige `/api/v1` al backend mediante s
 
 | Ubicación | Responsabilidad |
 |---|---|
-| [frontend/src/App.tsx](../frontend/src/App.tsx) | Proveedores, rutas, layout y acceso a pantallas |
+| [frontend/src/App.tsx](../frontend/src/App.tsx) | Composición de proveedores y rutas |
+| [frontend/src/app](../frontend/src/app) | AppProviders, AppRoutes y AppLayout; conserva el orden de proveedores y navegación |
 | [frontend/src/features](../frontend/src/features) | Pantallas, formularios y componentes por funcionalidad |
-| [frontend/src/services/api.ts](../frontend/src/services/api.ts) | Cliente HTTP, interceptores y mayoría de llamadas API |
-| [frontend/src/features/fields/api.ts](../frontend/src/features/fields/api.ts) | Llamadas propias de campos dinámicos |
-| [frontend/src/types/index.ts](../frontend/src/types/index.ts) | Mayoría de contratos frontend; campos tiene tipos locales |
+| [frontend/src/shared/api/client.ts](../frontend/src/shared/api/client.ts) | Cliente Axios común, configuración e interceptor de sesión |
+| [frontend/src/shared/api/errors.ts](../frontend/src/shared/api/errors.ts) | Mensajes comunes de errores API |
+| [API y tipos por funcionalidad](modules.md) | api.ts y types.ts dentro de cada módulo, incluido campos dinámicos |
+| [frontend/src/shared/types.ts](../frontend/src/shared/types.ts) | CaseType, contrato usado por expedientes, plantillas y experimento |
+| [frontend/src/features/auth](../frontend/src/features/auth) | Sesión, LoginModal y RequireAuth para acceso a pantallas |
 | [backend/app/api](../backend/app/api) | Entradas HTTP, autenticación y permisos |
 | [backend/app/schemas](../backend/app/schemas) | Contratos y validación Pydantic |
 | [backend/app/services](../backend/app/services) | Coordinación de persistencia, auditoría, reglas, documentos y medición |
@@ -51,8 +54,8 @@ Los roles y permisos se definen en [roles.py](../backend/app/core/roles.py) y se
 ## Decisiones para la reorganización
 
 1. **Mantener el backend por capas.** Se reorganizarán responsabilidades concretas dentro de las capas existentes. Una capa nueva de repositorios necesitaría una justificación y un alcance propios.
-2. **Completar el frontend por funcionalidad.** La fase estructural 3 distribuirá API y tipos concentrados en archivos globales. `features/fields` aporta una referencia ya implementada.
+2. **Organizar el frontend por funcionalidad.** La fase estructural 3 distribuyó las API y los tipos antes concentrados en archivos globales, siguiendo la referencia de `features/fields`. No quedan reexports de compatibilidad ni consumidores de las ubicaciones anteriores.
 3. **Extraer elementos compartidos cuando tengan consumidores concretos.** Las fases 4–6 ordenarán UI, interfaces públicas y recursos de pruebas. No se crean carpetas vacías como preparación.
 4. **Conservar contratos y persistencia.** La reorganización usa como referencia [OpenAPI](testing/baseline/2026-10-08/openapi.json), [el esquema SQLite](testing/baseline/2026-10-08/database-schema.json) y las pruebas existentes. Cualquier cambio funcional adicional requiere identificarse como tal.
 
-Estas decisiones orientan el trabajo pendiente; esta fase documental no mueve código. Las [convenciones](contributing.md) indican cómo aplicarlas. Los informes de pruebas registran resultados ejecutados; no se establece una latencia garantizada de respuesta.
+Las [convenciones](contributing.md) indican cómo aplicar estas decisiones. El [informe de fase 3](testing/FASE_3_ESTRUCTURAL.md) registra la equivalencia de contratos, navegación y componentes tras la extracción. Los informes de pruebas registran resultados ejecutados; no se establece una latencia garantizada de respuesta.

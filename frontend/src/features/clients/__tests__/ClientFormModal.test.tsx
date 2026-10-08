@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ClientFormModal } from "../ClientFormModal";
-import { Client, ClientCreate } from "../../../types";
+import type { Client, ClientCreate } from "../types";
 
 /**
  * Pruebas del formulario de registro de cliente (Fase 3):

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { documentService } from "../../services/api";
+import { documentService } from "./api";
 import { DocumentDetailModal } from "./DocumentDetailModal";
 import { formatDateTime } from "../../lib/format";
 import {

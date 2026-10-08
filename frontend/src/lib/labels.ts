@@ -1,4 +1,5 @@
-import { CaseStatus, CaseType, PartyRole } from "../types";
+import type { CaseStatus, PartyRole } from "../features/cases/types";
+import type { CaseType } from "../shared/types";
 
 /**
  * Catálogos de etiquetas en español para los enumerados del dominio notarial.

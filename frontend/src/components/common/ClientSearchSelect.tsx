@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Client } from "../../types";
-import { clientService } from "../../services/api";
+import type { Client } from "../../features/clients/types";
+import { clientService } from "../../features/clients/api";
 import { Search, X, UserCheck } from "lucide-react";
 
 interface ClientSearchSelectProps {

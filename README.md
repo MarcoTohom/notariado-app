@@ -67,6 +67,8 @@ La [referencia estructural del 8 de octubre de 2026](docs/testing/BASELINE_ESTRU
 
 La [fase estructural 1](docs/testing/FASE_1_ESTRUCTURAL.md) registra la instalación nueva/repetida y los scripts verificados en Windows PowerShell 5.1, con 260 pruebas backend, 85 frontend y un E2E aprobados.
 
+La [fase estructural 3](docs/testing/FASE_3_ESTRUCTURAL.md) registra la separación frontend de API, tipos y composición: 102 pruebas frontend, un E2E, lint, tipos y compilación aprobados; contratos, rutas y permisos conservados.
+
 ```powershell
 .\scripts\test.ps1
 ```
@@ -87,7 +89,7 @@ El estado del código revisado el **8 de octubre de 2026** se resume en el [mapa
 | Fase 10: QA integral | Pruebas disponibles; el E2E automatizado actual cubre campos dinámicos |
 | Fase 11: medición de tesis | Módulo implementado; la reducción temporal requiere el experimento registrado |
 
-Los apartados siguientes conservan el historial de entregas y sus verificaciones reportadas. Las comprobaciones recientes y sus límites se encuentran en los informes de las [fases estructurales 0](docs/testing/BASELINE_ESTRUCTURAL.md), [1](docs/testing/FASE_1_ESTRUCTURAL.md) y [2](docs/testing/FASE_2_ESTRUCTURAL.md).
+Los apartados siguientes conservan el historial de entregas y sus verificaciones reportadas. Las comprobaciones recientes y sus límites se encuentran en los informes de las [fases estructurales 0](docs/testing/BASELINE_ESTRUCTURAL.md), [1](docs/testing/FASE_1_ESTRUCTURAL.md), [2](docs/testing/FASE_2_ESTRUCTURAL.md) y [3](docs/testing/FASE_3_ESTRUCTURAL.md).
 
 ### FASE 1 — Monolito Modular Base — COMPLETADA (commit 209c9cb)
 
@@ -391,14 +393,14 @@ notariado-app/
 ├── frontend/
 │   ├── e2e/                   # Escenario Playwright de campos dinámicos
 │   └── src/
-│       ├── components/        # Navegación, sesión, usuarios y UI común
-│       ├── context/           # AuthContext
-│       ├── features/          # dashboard, clients, cases, fields, templates,
-│       │                      # validation, documents y experiment
+│       ├── app/               # Proveedores, rutas y layout
+│       ├── components/        # Navegación y UI común
+│       ├── features/          # dashboard, auth, users, audit, clients, cases, fields,
+│       │                      # templates, validation, documents y experiment;
+│       │                      # API y tipos propios por funcionalidad
 │       ├── lib/               # Validadores, etiquetas y formato
-│       ├── services/          # Cliente HTTP y API mayormente centralizados
-│       ├── test/              # Preparación Vitest
-│       └── types/             # Contratos mayormente centralizados
+│       ├── shared/            # Cliente HTTP, errores comunes y CaseType
+│       └── test/              # Preparación Vitest
 ├── docs/                      # Índice, guías, planificación, evidencia y antecedentes
 ├── scripts/                   # setup, dev, test, seed, backup, experiment y baseline
 ├── AGENTS.md                  # Reglas permanentes
@@ -414,6 +416,7 @@ Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y ca
 | Commit | Fase | Descripcion |
 |---|---|---|
 | a48ef71 | Estructural 0–1 | Referencia verificada, instalación repetible, dependencias fijadas y scripts Windows |
+| 338d6b0 | Estructural 2 | Índice, arquitectura, mapa de módulos, convenciones y referencias documentales verificadas |
 | 209c9cb | Fase 1 | Base modular: FastAPI, SQLite, Alembic, React, Tailwind, test suite |
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |

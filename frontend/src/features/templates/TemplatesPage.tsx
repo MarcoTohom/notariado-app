@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CaseType, TemplateSummary } from "../../types";
-import { templateService } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import type { CaseType } from "../../shared/types";
+import type { TemplateSummary } from "./types";
+import { templateService } from "./api";
+import { useAuth } from "../auth/AuthContext";
 import { TemplateUploadModal } from "./TemplateUploadModal";
 import { TemplateDetailModal } from "./TemplateDetailModal";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";

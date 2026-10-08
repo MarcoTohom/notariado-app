@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FindingsPanel, countBySeverity, filterBySeverity } from "../FindingsPanel";
-import { ValidationFinding } from "../../../types";
+import type { ValidationFinding } from "../types";
 
 /**
  * Pruebas del Panel de Inconsistencias Notariales (Fase 6):

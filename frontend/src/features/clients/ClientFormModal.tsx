@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Client, ClientCreate, ClientUpdate } from "../../types";
+import type { Client, ClientCreate, ClientUpdate } from "./types";
 import { clientSchema, ClientFormValues, cleanOptional, maskDpiInput } from "../../lib/validators";
 import { MARITAL_STATUS_OPTIONS } from "../../lib/labels";
-import { getApiErrorMessage } from "../../services/api";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { X, UserPlus, Save } from "lucide-react";
 
 interface ClientFormModalProps {

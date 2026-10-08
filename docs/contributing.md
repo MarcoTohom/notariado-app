@@ -12,7 +12,7 @@ Estas convenciones acompañan las [reglas permanentes](../AGENTS.md), el [mapa a
 | Persistencia | `backend/app/models/`; migraciones en `backend/alembic/versions/` si cambia el esquema |
 | Regla documental | `backend/app/rules/`; conservar identificadores, catálogo y orden de ejecución |
 | Pantalla o componente React | `frontend/src/features/<funcionalidad>/`; componentes y archivos `.tsx` en `PascalCase` |
-| Tipos y llamadas de una funcionalidad | `types.ts` y `api.ts` dentro de su módulo; esta distribución se completa en fase 3 |
+| Tipos y llamadas de una funcionalidad | `types.ts` y `api.ts` dentro de su módulo |
 | UI común | `frontend/src/components/common/` cuando varios consumidores concretos comparten la misma responsabilidad |
 | Utilidad frontend | `frontend/src/lib/`; nombre descriptivo en `camelCase` o convención existente |
 | Operación Windows | `scripts/<operacion>.ps1`; rutas resueltas desde el script y errores con salida fallida |
@@ -21,9 +21,11 @@ No todos los módulos requieren subcarpetas `hooks`, `pages` o `components`: cre
 
 ## Tipos, HTTP e imports
 
-La fase 3 separará el cliente Axios y el tratamiento común de errores de las llamadas de cada funcionalidad. Conservará rutas, payloads, token y descargas actuales. Hasta esa entrega, la mayoría de llamadas y tipos permanece en `services/api.ts` y `types/index.ts`; `features/fields` tiene sus propios contratos y API.
+El cliente Axios está en `shared/api/client.ts`; los mensajes comunes de error, en `shared/api/errors.ts`. Las llamadas de cada funcionalidad están en `features/<modulo>/api.ts` y sus contratos en `types.ts`. Mantener los parámetros, payloads y tipos junto a su operación; usar el cliente común para conservar la configuración y sesión.
 
-Un tipo pertenece al módulo que define su significado. Llevarlo a una ubicación compartida solo si varios módulos lo necesitan y su responsabilidad es común. Las páginas consumen la API de su funcionalidad; la infraestructura HTTP no importa pantallas. Evitar dependencias circulares y reexports globales sin consumidores. Los reexports de compatibilidad se retiran al terminar la migración de sus consumidores.
+Un tipo pertenece al módulo que define su significado. Llevarlo a una ubicación compartida solo si varios módulos lo necesitan y su responsabilidad es común: `shared/types.ts` contiene CaseType, usado por expedientes, plantillas y experimento. Usar `import type` para contratos que no necesitan código en ejecución. Las páginas consumen la API de su funcionalidad; la infraestructura HTTP no importa pantallas. Evitar dependencias circulares y reexports globales sin consumidores. No quedan reexports de compatibilidad tras la fase 3.
+
+La composición de proveedores, rutas y layout está en `src/app/`; la sesión y los controles de acceso, en `features/auth/`. Añadir rutas en `AppRoutes.tsx` y conservar su autorización en backend. Los componentes comunes de interfaz siguen en `components/common/` y se ordenarán en fase 4 según sus consumidores.
 
 En backend, mantener la entrada HTTP en routers y la coordinación en servicios. Exponer funciones compartidas con nombre público y responsabilidad explícita; evitar nuevos imports de funciones privadas de otro servicio. Los imports existentes de `_build_context` se resolverán en fase 5. Cualquier extracción debe preservar commit, flush, rollback y errores: un cambio de ubicación no autoriza modificar límites de transacción.
 

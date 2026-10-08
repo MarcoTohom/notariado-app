@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DynamicForm } from "../DynamicForm";
 import { CONTROLS } from "../FieldControls";
 import { fieldsApi } from "../api";
-import { clientService } from "../../../services/api";
+import { clientService } from "../../clients/api";
 import { FIELD_TYPES, FieldDefinition, FormVersion } from "../types";
 
 const field = (

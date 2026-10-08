@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CaseStatus, Client, PartyRole } from "../../types";
-import { caseService, getApiErrorMessage } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import type { CaseStatus, PartyRole } from "./types";
+import type { Client } from "../clients/types";
+import { caseService } from "./api";
+import { getApiErrorMessage } from "../../shared/api/errors";
+import { useAuth } from "../auth/AuthContext";
 import {
   CASE_STATUS_COLORS,
   CASE_STATUS_LABELS,

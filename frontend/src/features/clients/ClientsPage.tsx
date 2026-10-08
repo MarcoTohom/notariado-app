@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Client, ClientCreate, ClientUpdate, LegalEntity, LegalEntityCreate } from "../../types";
-import { clientService, legalEntityService } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import type { Client, ClientCreate, ClientUpdate, LegalEntity, LegalEntityCreate } from "./types";
+import { clientService, legalEntityService } from "./api";
+import { useAuth } from "../auth/AuthContext";
 import { ClientFormModal } from "./ClientFormModal";
 import { LegalEntityFormModal } from "./LegalEntityFormModal";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";

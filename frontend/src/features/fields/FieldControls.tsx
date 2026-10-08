@@ -1,11 +1,9 @@
 import { createContext, useContext, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Controller, useFieldArray, useFormContext } from "react-hook-form";
-import {
-  caseService,
-  clientService,
-  getApiErrorMessage,
-} from "../../services/api";
+import { caseService } from "../cases/api";
+import { clientService } from "../clients/api";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { fieldsApi } from "./api";
 import { FieldDefinition } from "./types";
 import {

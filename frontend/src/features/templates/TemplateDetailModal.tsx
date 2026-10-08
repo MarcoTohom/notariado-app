@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { PreviewResult, TemplateVersionInfo } from "../../types";
-import { getApiErrorMessage, templateService } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import type { PreviewResult, TemplateVersionInfo } from "./types";
+import { getApiErrorMessage } from "../../shared/api/errors";
+import { templateService } from "./api";
+import { useAuth } from "../auth/AuthContext";
 import {
   CASE_TYPE_LABELS,
   DOCX_VERSION_STATUS_COLORS,

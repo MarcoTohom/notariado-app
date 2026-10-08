@@ -1,6 +1,6 @@
 # Mapa de módulos implementados
 
-Revisado el **8 de octubre de 2026** contra [las rutas FastAPI](../backend/app/api/v1/api.py), [las rutas React](../frontend/src/App.tsx) y los archivos de cada módulo. [Índice](README.md) · [Arquitectura](architecture.md) · [Convenciones](contributing.md).
+Revisado el **8 de octubre de 2026** contra [las rutas FastAPI](../backend/app/api/v1/api.py), [las rutas React](../frontend/src/app/AppRoutes.tsx) y los archivos de cada módulo. [Índice](README.md) · [Arquitectura](architecture.md) · [Convenciones](contributing.md).
 
 ## Pantallas y responsabilidades
 
@@ -9,7 +9,7 @@ Los prefijos de la tabla son relativos a `/api/v1`; OpenAPI detalla métodos, pa
 | Funcionalidad | Interfaz y acceso | API y servicio |
 |---|---|---|
 | Inicio y salud | `/`, [DashboardPage](../frontend/src/features/dashboard/DashboardPage.tsx), acceso público | `/health`, [health.py](../backend/app/api/v1/endpoints/health.py) |
-| Sesión, usuarios y auditoría | [AuthContext](../frontend/src/context/AuthContext.tsx), [LoginModal](../frontend/src/components/LoginModal.tsx) y [UserManagementModal](../frontend/src/components/UserManagementModal.tsx); accesos desde la navegación | `/auth`, `/users`, `/audit`; [user_service](../backend/app/services/user_service.py), [audit_service](../backend/app/services/audit_service.py) |
+| Sesión, usuarios y auditoría | [AuthContext](../frontend/src/features/auth/AuthContext.tsx), [LoginModal](../frontend/src/features/auth/LoginModal.tsx) y [UserManagementModal](../frontend/src/features/users/UserManagementModal.tsx); accesos desde la navegación | `/auth`, `/users`, `/audit`; [user_service](../backend/app/services/user_service.py), [audit_service](../backend/app/services/audit_service.py) |
 | Clientes y personas jurídicas | `/clientes`, `clients:read`, [features/clients](../frontend/src/features/clients) | `/clients`, `/legal-entities`; [client_service](../backend/app/services/client_service.py), [legal_entity_service](../backend/app/services/legal_entity_service.py) |
 | Expedientes y comparecientes | `/expedientes`, `cases:read`, [features/cases](../frontend/src/features/cases) | `/cases`; [case_service](../backend/app/services/case_service.py) |
 | Formularios y captura | `/formularios`, `templates:read`, [features/fields](../frontend/src/features/fields); también desde un expediente | `/fields`; [dynamic_field_service](../backend/app/services/dynamic_field_service.py), [field_validation](../backend/app/services/field_validation.py) |
@@ -18,7 +18,25 @@ Los prefijos de la tabla son relativos a `/api/v1`; OpenAPI detalla métodos, pa
 | Borradores e historial | `/documentos`, `documents:read`, [features/documents](../frontend/src/features/documents) | `/documents`; [document_generation_service](../backend/app/services/document_generation_service.py) |
 | Experimento | `/tesis`, `experiment:read`, [features/experiment](../frontend/src/features/experiment) | `/experiment`; [experiment_service](../backend/app/services/experiment_service.py), [synthetic_data](../backend/app/utils/synthetic_data.py) |
 
-Los esquemas se localizan en [schemas](../backend/app/schemas), la persistencia en [models](../backend/app/models) y el detalle de tablas en [database.md](database.md). La interfaz usa actualmente [services/api.ts](../frontend/src/services/api.ts) y [types/index.ts](../frontend/src/types/index.ts); campos dinámicos tiene [api.ts](../frontend/src/features/fields/api.ts) y [types.ts](../frontend/src/features/fields/types.ts) propios. Su distribución se completará en la fase estructural 3.
+Los esquemas se localizan en [schemas](../backend/app/schemas), la persistencia en [models](../backend/app/models) y el detalle de tablas en [database.md](database.md). Cada funcionalidad frontend tiene sus llamadas HTTP y contratos propios. El [cliente común](../frontend/src/shared/api/client.ts) mantiene configuración y sesión; [errors.ts](../frontend/src/shared/api/errors.ts) mantiene los mensajes de error. [shared/types.ts](../frontend/src/shared/types.ts) contiene CaseType, utilizado por varios módulos.
+
+## API y contratos frontend
+
+| Funcionalidad | Llamadas HTTP | Contratos |
+|---|---|---|
+| Inicio y salud | [dashboard/api.ts](../frontend/src/features/dashboard/api.ts) | [dashboard/types.ts](../frontend/src/features/dashboard/types.ts) |
+| Sesión | [auth/api.ts](../frontend/src/features/auth/api.ts) | [auth/types.ts](../frontend/src/features/auth/types.ts) |
+| Usuarios | [users/api.ts](../frontend/src/features/users/api.ts) | [users/types.ts](../frontend/src/features/users/types.ts) |
+| Auditoría | [audit/api.ts](../frontend/src/features/audit/api.ts) | [audit/types.ts](../frontend/src/features/audit/types.ts) |
+| Clientes y personas jurídicas | [clients/api.ts](../frontend/src/features/clients/api.ts) | [clients/types.ts](../frontend/src/features/clients/types.ts) |
+| Expedientes | [cases/api.ts](../frontend/src/features/cases/api.ts) | [cases/types.ts](../frontend/src/features/cases/types.ts) |
+| Campos | [fields/api.ts](../frontend/src/features/fields/api.ts) | [fields/types.ts](../frontend/src/features/fields/types.ts) |
+| Plantillas | [templates/api.ts](../frontend/src/features/templates/api.ts) | [templates/types.ts](../frontend/src/features/templates/types.ts) |
+| Validación | [validation/api.ts](../frontend/src/features/validation/api.ts) | [validation/types.ts](../frontend/src/features/validation/types.ts) |
+| Borradores | [documents/api.ts](../frontend/src/features/documents/api.ts) | [documents/types.ts](../frontend/src/features/documents/types.ts) |
+| Experimento | [experiment/api.ts](../frontend/src/features/experiment/api.ts) | [experiment/types.ts](../frontend/src/features/experiment/types.ts) |
+
+[AppProviders](../frontend/src/app/AppProviders.tsx) compone TanStack Query, sesión y BrowserRouter. [AppRoutes](../frontend/src/app/AppRoutes.tsx) conserva rutas y permisos; [AppLayout](../frontend/src/app/AppLayout.tsx) contiene navegación y pie. [RequireAuth](../frontend/src/features/auth/RequireAuth.tsx) conserva los estados de carga, inicio de sesión y acceso restringido.
 
 ## Operaciones de generación y medición
 
@@ -52,8 +70,9 @@ El [OpenAPI conservado](testing/baseline/2026-10-08/openapi.json) contiene 47 ru
 | Documentos | [test_document_context](../backend/tests/unit/test_document_context.py), [test_documents_api](../backend/tests/integration/test_documents_api.py), [DocumentVersionsList](../frontend/src/features/documents/__tests__/DocumentVersionsList.test.tsx) |
 | Experimento | [test_experiment_corpus](../backend/tests/unit/test_experiment_corpus.py), [test_experiment_api](../backend/tests/integration/test_experiment_api.py), [ExperimentStatsCards](../frontend/src/features/experiment/__tests__/ExperimentStatsCards.test.tsx) |
 | Operación y navegador | [test_backup_operations](../backend/tests/unit/test_backup_operations.py), [dynamic-fields.spec.ts](../frontend/e2e/dynamic-fields.spec.ts) |
+| Transporte y permisos frontend | [client.test](../frontend/src/shared/api/__tests__/client.test.ts), [errors.test](../frontend/src/shared/api/__tests__/errors.test.ts), [RequireAuth.test](../frontend/src/features/auth/__tests__/RequireAuth.test.tsx) |
 
-[test.ps1](../scripts/test.ps1) ejecuta calidad, backend, frontend y compilación; `-E2E` añade el escenario de campos dinámicos. Los [informes de verificación](testing/FASE_1_ESTRUCTURAL.md) detallan resultados y límites de cobertura.
+[test.ps1](../scripts/test.ps1) ejecuta calidad, backend, frontend y compilación; `-E2E` añade el escenario de campos dinámicos. Los informes de [fase 1](testing/FASE_1_ESTRUCTURAL.md) y [fase 3](testing/FASE_3_ESTRUCTURAL.md) detallan resultados y límites de cobertura.
 
 ## Funcionalidades previstas
 

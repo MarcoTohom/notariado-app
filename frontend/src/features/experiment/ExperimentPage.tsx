@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  CaseType,
+import type { CaseType } from "../../shared/types";
+import type {
   ExperimentExecution,
   ExperimentMethod,
   ExperimentStage,
   ExperimentTestCase,
-} from "../../types";
-import { experimentService, getApiErrorMessage } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+} from "./types";
+import { experimentService } from "./api";
+import { getApiErrorMessage } from "../../shared/api/errors";
+import { useAuth } from "../auth/AuthContext";
 import { ExperimentStatsCards } from "./ExperimentStatsCards";
 import { CASE_TYPE_LABELS } from "../../lib/labels";
 import {

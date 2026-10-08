@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { DocumentVersionsList } from "../DocumentVersionsList";
-import { DocumentVersionInfo } from "../../../types";
+import type { DocumentVersionInfo } from "../types";
 
 /**
  * Pruebas del historial inmutable de versiones de borradores (US-07.3):

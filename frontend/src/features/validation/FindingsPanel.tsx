@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import { FindingSeverity, ValidationFinding } from "../../types";
+import type { FindingSeverity, ValidationFinding } from "./types";
 import {
   AlertOctagon,
   AlertTriangle,

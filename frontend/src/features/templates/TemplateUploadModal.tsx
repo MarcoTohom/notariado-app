@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { CaseType } from "../../types";
+import type { CaseType } from "../../shared/types";
 import { CASE_TYPE_LABELS } from "../../lib/labels";
 import { CASE_TYPES } from "../../lib/validators";
-import { getApiErrorMessage } from "../../services/api";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { formatBytes } from "../../lib/format";
 import { X, FileUp, Save, FileText } from "lucide-react";
 

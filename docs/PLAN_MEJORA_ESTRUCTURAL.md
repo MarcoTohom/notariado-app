@@ -26,7 +26,7 @@ La revisión inicial fue de código y documentación: esta copia no tenía `back
 | 0 | Preparar el entorno y registrar la referencia inicial | — | Completada |
 | 1 | Unificar instalación, configuración y limpieza del repositorio | 0 | Completada |
 | 2 | Establecer documentación y convenciones de organización | 1 | Completada |
-| 3 | Organizar API, tipos y composición del frontend | 2 | Pendiente |
+| 3 | Organizar API, tipos y composición del frontend | 2 | Completada |
 | 4 | Extraer componentes y controles compartidos | 3 | Pendiente |
 | 5 | Separar responsabilidades y dependencias del backend | 4 | Pendiente |
 | 6 | Organizar recursos compartidos de pruebas | 5 | Pendiente |
@@ -201,3 +201,6 @@ Se aplican las [reglas permanentes del proyecto](../AGENTS.md) y los criterios p
 | 2026-10-08 | 0–1 | Entregas conservadas en el commit `a48ef71` antes de iniciar la documentación de la siguiente fase. | Commit creado |
 | 2026-10-08 | 2 | Índice, arquitectura, mapa de módulos, enlaces y convenciones en revisión contra el código actual. | En curso |
 | 2026-10-08 | 2 | Índice, arquitectura, persistencia, mapa de módulos y convenciones actualizados; enlaces internos, 11 operaciones API, 7 rutas frontend y 18 tablas comprobados. Documentación académica conservada y funcionalidades previstas identificadas; código y configuración sin cambios. [Informe](testing/FASE_2_ESTRUCTURAL.md). | Completada |
+| 2026-10-08 | 2 | Entrega documental conservada en el commit `338d6b0` antes de reorganizar el frontend. | Commit creado |
+| 2026-10-08 | 3 | Distribución de contratos y servicios HTTP por funcionalidad, extracción de composición y revisión de consumidores iniciadas. | En curso |
+| 2026-10-08 | 3 | API y tipos distribuidos, cliente/errores comunes separados y composición extraída. 50 tipos y 13 declaraciones conservados; 102 pruebas frontend, un E2E, lint, tipos y build aprobados. Imports sin ciclos ni destinos rotos; navegación, permisos y cuerpos existentes equivalentes. [Informe](testing/FASE_3_ESTRUCTURAL.md). | Completada |

@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Case, DocumentDetail } from "../../types";
-import { documentService, getApiErrorMessage, templateService } from "../../services/api";
+import type { Case } from "../cases/types";
+import type { DocumentDetail } from "./types";
+import { documentService } from "./api";
+import { getApiErrorMessage } from "../../shared/api/errors";
+import { templateService } from "../templates/api";
 import { DocumentVersionsList } from "./DocumentVersionsList";
 import { CASE_TYPE_LABELS } from "../../lib/labels";
 import { X, FileOutput, Loader2, AlertTriangle } from "lucide-react";

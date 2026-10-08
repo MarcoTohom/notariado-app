@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { SystemHealthBadge } from "../../components/SystemHealthBadge";
-import { LoginModal } from "../../components/LoginModal";
+import { useAuth } from "../auth/AuthContext";
+import { SystemHealthBadge } from "./SystemHealthBadge";
+import { LoginModal } from "../auth/LoginModal";
 import {
   FileCheck2,
   Clock,

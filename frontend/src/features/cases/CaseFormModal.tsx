@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Case, CaseCreate, CaseUpdate, CaseType, Client, PartyRole } from "../../types";
+import type { Case, CaseCreate, CaseUpdate, PartyRole } from "./types";
+import type { CaseType } from "../../shared/types";
+import type { Client } from "../clients/types";
 import { caseSchema, CaseFormValues, cleanOptional } from "../../lib/validators";
-import { CASE_TYPE_LABELS, PARTY_ROLE_LABELS, SUGGESTED_ROLES_BY_CASE_TYPE } from "../../lib/labels";
-import { getApiErrorMessage } from "../../services/api";
+import {
+  CASE_TYPE_LABELS,
+  PARTY_ROLE_LABELS,
+  SUGGESTED_ROLES_BY_CASE_TYPE,
+} from "../../lib/labels";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { ClientSearchSelect } from "../../components/common/ClientSearchSelect";
 import { X, FolderOpen, Save, Plus, Trash2 } from "lucide-react";
 

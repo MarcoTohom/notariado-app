@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { userService, auditService } from "../services/api";
-import { UserItem, AuditLogItem } from "../types";
-import { useAuth } from "../context/AuthContext";
+import { userService } from "./api";
+import { auditService } from "../audit/api";
+import type { UserItem } from "./types";
+import type { AuditLogItem } from "../audit/types";
+import { useAuth } from "../auth/AuthContext";
 import { X, Users, Shield, History, RefreshCw } from "lucide-react";
 
 interface UserManagementModalProps {

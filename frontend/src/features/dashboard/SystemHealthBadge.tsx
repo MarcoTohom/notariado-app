@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { systemService } from "../services/api";
-import { HealthResponse } from "../types";
+import { systemService } from "./api";
+import type { HealthResponse } from "./types";
 import { CheckCircle2, AlertCircle, RefreshCw, Database, Server } from "lucide-react";
 
 export const SystemHealthBadge: React.FC = () => {
