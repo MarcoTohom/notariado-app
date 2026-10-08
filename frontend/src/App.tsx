@@ -4,13 +4,17 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { Navbar } from "./components/Navbar";
 import { LoginModal } from "./components/LoginModal";
-import { DashboardPage } from "./features/dashboard/DashboardPage";
+import { LandingPage } from "./features/landing/LandingPage";
+import { ProjectPanelPage } from "./features/admin/ProjectPanelPage";
 import { ClientsPage } from "./features/clients/ClientsPage";
 import { CasesPage } from "./features/cases/CasesPage";
 import { FieldsPage } from "./features/fields/FieldsPage";
 import { TemplatesPage } from "./features/templates/TemplatesPage";
 import { DocumentsPage } from "./features/documents/DocumentsPage";
 import { ExperimentPage } from "./features/experiment/ExperimentPage";
+import { FilesPage } from "./features/files/FilesPage";
+import { DraftEditorPage } from "./features/editor/DraftEditorPage";
+import { GuidePage } from "./features/guide/GuidePage";
 import { Loader2, LockKeyhole, ShieldX, LogIn } from "lucide-react";
 
 const queryClient = new QueryClient({
@@ -41,15 +45,17 @@ const AppLayout: React.FC = () => {
 interface RequireAuthProps {
   /** Permiso granular requerido (matriz RBAC, ej. "clients:read"). */
   permission?: string;
+  /** Restringe exclusivamente a usuarios con rol ADMINISTRADOR. */
+  adminOnly?: boolean;
   children: React.ReactNode;
 }
 
 /**
  * Guardián de rutas privadas: exige sesión activa y, opcionalmente,
- * un permiso granular de la matriz RBAC.
+ * rol de administrador o permiso granular de la matriz RBAC.
  */
-const RequireAuth: React.FC<RequireAuthProps> = ({ permission, children }) => {
-  const { user, loading, hasPermission } = useAuth();
+export const RequireAuth: React.FC<RequireAuthProps> = ({ permission, adminOnly, children }) => {
+  const { user, loading, hasPermission, hasRole } = useAuth();
   const [loginOpen, setLoginOpen] = useState(false);
 
   if (loading) {
@@ -83,6 +89,20 @@ const RequireAuth: React.FC<RequireAuthProps> = ({ permission, children }) => {
     );
   }
 
+  if (adminOnly && !hasRole("ADMINISTRADOR")) {
+    return (
+      <div className="max-w-md mx-auto mt-16 bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
+        <div className="bg-red-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <ShieldX className="w-6 h-6 text-red-600" />
+        </div>
+        <h2 className="text-base font-bold text-slate-900">Acceso restringido</h2>
+        <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+          Esta sección está reservada exclusivamente para el rol <span className="font-mono font-semibold">ADMINISTRADOR</span>.
+        </p>
+      </div>
+    );
+  }
+
   if (permission && !hasPermission(permission)) {
     return (
       <div className="max-w-md mx-auto mt-16 bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
@@ -108,7 +128,15 @@ export const App: React.FC = () => {
         <BrowserRouter>
           <Routes>
             <Route element={<AppLayout />}>
-              <Route path="/" element={<DashboardPage />} />
+              <Route path="/" element={<LandingPage />} />
+              <Route
+                path="/admin/proyecto"
+                element={
+                  <RequireAuth adminOnly>
+                    <ProjectPanelPage />
+                  </RequireAuth>
+                }
+              />
               <Route
                 path="/clientes"
                 element={
@@ -146,6 +174,30 @@ export const App: React.FC = () => {
                 element={
                   <RequireAuth permission="experiment:read">
                     <ExperimentPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/archivos"
+                element={
+                  <RequireAuth permission="files:read">
+                    <FilesPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/editor"
+                element={
+                  <RequireAuth permission="cases:update">
+                    <DraftEditorPage />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/guia"
+                element={
+                  <RequireAuth>
+                    <GuidePage />
                   </RequireAuth>
                 }
               />

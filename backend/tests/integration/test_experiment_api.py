@@ -98,6 +98,31 @@ def test_corpus_generation_forbidden_for_auxiliar(
     assert resp.status_code == 403
 
 
+def test_experiment_endpoints_forbidden_for_non_administrators(
+    client: TestClient, db_session: Session
+):
+    """Solo ADMINISTRADOR puede acceder a los endpoints del experimento de tesis (WP-04)."""
+    # ABOGADO_NOTARIO
+    _create_user(db_session, "exp_notario", "ABOGADO_NOTARIO")
+    token_notario = _token(client, "user_exp_notario")
+    resp = client.post(
+        f"{BASE}/experiment/cases/generate", headers=_auth(token_notario)
+    )
+    assert resp.status_code == 403
+    resp = client.get(f"{BASE}/experiment/stats", headers=_auth(token_notario))
+    assert resp.status_code == 403
+
+    # ADMINISTRACION
+    _create_user(db_session, "exp_adminfin", "ADMINISTRACION")
+    token_adminfin = _token(client, "user_exp_adminfin")
+    resp = client.post(
+        f"{BASE}/experiment/cases/generate", headers=_auth(token_adminfin)
+    )
+    assert resp.status_code == 403
+    resp = client.get(f"{BASE}/experiment/stats", headers=_auth(token_adminfin))
+    assert resp.status_code == 403
+
+
 # ---------------------------------------------------------------------------
 # Ciclo de medición cronometrada
 # ---------------------------------------------------------------------------

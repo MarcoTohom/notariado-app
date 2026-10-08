@@ -57,6 +57,20 @@ def create_new_user(
 
 
 @router.get(
+    "/meta/permissions",
+    response_model=list[str],
+    summary="Catálogo de permisos conocidos",
+    description="Retorna la lista de todos los permisos definidos en el sistema para gestión granular. Requiere 'users:read'.",
+)
+def get_permissions_catalog(
+    _: Annotated[User, Depends(require_permission("users:read"))],
+) -> list[str]:
+    from app.core.roles import get_all_known_permissions
+
+    return get_all_known_permissions()
+
+
+@router.get(
     "/{user_id}",
     response_model=UserResponse,
     summary="Consultar usuario por ID",

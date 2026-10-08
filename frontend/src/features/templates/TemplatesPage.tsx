@@ -6,6 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { TemplateUploadModal } from "./TemplateUploadModal";
 import { TemplateDetailModal } from "./TemplateDetailModal";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
+import { ModuleTip } from "../../components/common/ModuleTip";
 import { CASE_TYPE_LABELS } from "../../lib/labels";
 import {
   FileText,
@@ -84,6 +85,10 @@ export const TemplatesPage: React.FC = () => {
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
             <FileText className="w-5 h-5 text-brand-600" />
             Plantillas de Escrituras DOCX
+            <ModuleTip
+              anchor="plantilla"
+              tipText="La plantilla es el molde DOCX reutilizable con variables {{ jinja2 }}. Sus versiones son inmutables y solo una está ACTIVA: los borradores se generan siempre desde esa versión vigente."
+            />
           </h2>
           <p className="text-xs text-slate-500 mt-1">
             Repositorio con versionamiento inmutable • Variables Jinja2 detectadas automáticamente

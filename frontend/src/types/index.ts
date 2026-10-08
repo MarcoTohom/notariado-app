@@ -40,6 +40,11 @@ export interface TokenResponse {
   expires_in_minutes: number;
 }
 
+export interface PermissionOverrides {
+  grant?: string[];
+  revoke?: string[];
+}
+
 export interface UserItem {
   id: string;
   username: string;
@@ -50,6 +55,16 @@ export interface UserItem {
   created_at: string;
   updated_at: string;
   last_login?: string | null;
+  permission_overrides?: PermissionOverrides | null;
+}
+
+export interface UserUpdatePayload {
+  full_name?: string;
+  email?: string;
+  role?: RoleType;
+  status?: string;
+  password?: string;
+  permission_overrides?: PermissionOverrides | null;
 }
 
 export interface UserListResponse {
@@ -493,4 +508,42 @@ export interface ExperimentStats {
   cases_total: number;
   cases_with_anomalies: number;
   executions_total: number;
+}
+
+// ---------------------------------------------------------------------------
+// WP-05: Inventario y previsualización de archivos del sistema
+// ---------------------------------------------------------------------------
+
+export type FileKind = "TEMPLATE_VERSION" | "ATTACHMENT" | "DOCUMENT_VERSION" | "PREVIEW";
+export type FilePersistenceStatus = "OK" | "NO_ENCONTRADO" | "DIFIERE";
+
+export interface FileInventoryItem {
+  kind: FileKind;
+  record_id: string;
+  file_name: string;
+  reference: string;
+  logical_path: string;
+  db_size?: number | null;
+  db_hash?: string | null;
+  previewable: boolean;
+  created_at: string;
+  exists_on_disk: boolean;
+  size_on_disk?: number | null;
+  size_matches_db: boolean;
+  hash_matches_db?: boolean | null;
+  status: FilePersistenceStatus;
+}
+
+export interface FileInventoryResponse {
+  total: number;
+  items: FileInventoryItem[];
+}
+
+export interface FilePreviewResponse {
+  file_name: string;
+  kind: FileKind;
+  media_type: string;
+  preview_type: "text" | "table" | "unavailable";
+  content: string | { columns: string[]; rows: string[][] };
+  truncated: boolean;
 }

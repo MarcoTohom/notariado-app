@@ -54,3 +54,17 @@ class GenerateDocumentRequest(BaseModel):
     # Si se omite, se usa la versión ACTIVA de la plantilla del tipo de escritura.
     template_version_id: str | None = None
     notes: str | None = Field(default=None, max_length=500)
+
+
+class PreviewRenderRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    case_id: str
+    template_version_id: str
+    values: dict = Field(default_factory=dict)
+
+
+class PreviewRenderResponse(BaseModel):
+    html: str
+    placeholders_free: bool
+    residual_variables: list[str] = Field(default_factory=list)

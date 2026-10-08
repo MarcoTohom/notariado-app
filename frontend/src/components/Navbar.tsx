@@ -8,20 +8,24 @@ import {
   FileText,
   FileStack,
   FileOutput,
+  FileSignature,
+  FolderSearch,
+  BookOpen,
   Users,
   FolderOpen,
   FlaskConical,
   LogIn,
   LogOut,
   User as UserIcon,
-  ShieldCheck
+  ShieldCheck,
+  LayoutDashboard,
 } from "lucide-react";
 
 const navLinkBase =
   "px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5";
 
 export const Navbar: React.FC = () => {
-  const { user, logout, hasPermission } = useAuth();
+  const { user, logout, hasPermission, hasRole } = useAuth();
   const [loginOpen, setLoginOpen] = useState(false);
   const [managementOpen, setManagementOpen] = useState(false);
 
@@ -36,8 +40,8 @@ export const Navbar: React.FC = () => {
     <>
       <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-40 shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-brand-600 p-2 rounded-lg text-white shadow-inner">
+          <NavLink to="/" className="flex items-center gap-3 group">
+            <div className="bg-brand-600 p-2 rounded-lg text-white shadow-inner group-hover:bg-brand-500 transition-colors">
               <Scale className="w-6 h-6" />
             </div>
             <div>
@@ -49,13 +53,19 @@ export const Navbar: React.FC = () => {
               </h1>
               <p className="text-[11px] text-slate-400">Sistema de Borradores de Escrituras Públicas</p>
             </div>
-          </div>
+          </NavLink>
 
           <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
             <NavLink to="/" end className={linkClass}>
               <FileText className="w-4 h-4 text-brand-500" />
-              Panel
+              Inicio
             </NavLink>
+            {hasRole("ADMINISTRADOR") && (
+              <NavLink to="/admin/proyecto" className={linkClass}>
+                <LayoutDashboard className="w-4 h-4 text-emerald-400" />
+                Proyecto
+              </NavLink>
+            )}
             {hasPermission("clients:read") && (
               <NavLink to="/clientes" className={linkClass}>
                 <Users className="w-4 h-4" />
@@ -80,7 +90,25 @@ export const Navbar: React.FC = () => {
                 Borradores
               </NavLink>
             )}
+            {hasPermission("files:read") && (
+              <NavLink to="/archivos" className={linkClass}>
+                <FolderSearch className="w-4 h-4" />
+                Archivos
+              </NavLink>
+            )}
+            {hasPermission("cases:update") && (
+              <NavLink to="/editor" className={linkClass}>
+                <FileSignature className="w-4 h-4" />
+                Editor
+              </NavLink>
+            )}
             {hasPermission("templates:read") && <NavLink to="/formularios" className={linkClass}>Formularios</NavLink>}
+            {user && (
+              <NavLink to="/guia" className={linkClass}>
+                <BookOpen className="w-4 h-4" />
+                Guía
+              </NavLink>
+            )}
             {hasPermission("experiment:read") && (
               <NavLink to="/tesis" className={linkClass}>
                 <FlaskConical className="w-4 h-4 text-amber-400" />

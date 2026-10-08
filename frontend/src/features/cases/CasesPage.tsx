@@ -8,6 +8,7 @@ import { CaseDetailModal } from "./CaseDetailModal";
 import { CaseValidationModal } from "../validation/CaseValidationModal";
 import { GenerateDocumentModal } from "../documents/GenerateDocumentModal";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
+import { ModuleTip } from "../../components/common/ModuleTip";
 import {
   CASE_STATUS_COLORS,
   CASE_STATUS_LABELS,
@@ -110,6 +111,10 @@ export const CasesPage: React.FC = () => {
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
             <FolderOpen className="w-5 h-5 text-brand-600" />
             Expedientes Notariales
+            <ModuleTip
+              anchor="expediente"
+              tipText="El expediente es la carpeta del caso legal: agrupa comparecientes, datos, validaciones y borradores. Primero se apertura el expediente, luego se capturan sus datos y finalmente se genera el borrador desde la plantilla activa."
+            />
           </h2>
           <p className="text-xs text-slate-500 mt-1">
             Centralización de documentación, comparecientes, borradores y finanzas por caso

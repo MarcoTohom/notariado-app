@@ -3,6 +3,8 @@ import {
   HealthResponse,
   TokenResponse,
   UserSession,
+  UserItem,
+  UserUpdatePayload,
   UserListResponse,
   AuditLogListResponse,
   Client,
@@ -33,6 +35,8 @@ import {
   ExperimentStage,
   ExperimentMethod,
   ExperimentStats,
+  FileInventoryResponse,
+  FilePreviewResponse,
 } from "../types";
 
 export const apiClient = axios.create({
@@ -81,6 +85,14 @@ export const userService = {
     const response = await apiClient.get<UserListResponse>("/users", {
       params: { skip, limit, search },
     });
+    return response.data;
+  },
+  updateUser: async (id: string, data: Partial<UserUpdatePayload>): Promise<UserItem> => {
+    const response = await apiClient.put<UserItem>(`/users/${id}`, data);
+    return response.data;
+  },
+  getPermissionCatalog: async (): Promise<string[]> => {
+    const response = await apiClient.get<string[]>("/users/meta/permissions");
     return response.data;
   },
 };
@@ -394,4 +406,26 @@ export const experimentService = {
   },
   exportXlsxUrl: "/api/v1/experiment/export.xlsx",
   exportCsvUrl: "/api/v1/experiment/export.csv",
+};
+
+// ---------------------------------------------------------------------------
+// WP-05: Inventario y previsualización de archivos del sistema
+// ---------------------------------------------------------------------------
+
+export const fileService = {
+  getInventory: async (
+    kind?: string,
+    statusFilter?: string,
+    skip = 0,
+    limit = 100
+  ): Promise<FileInventoryResponse> => {
+    const response = await apiClient.get<FileInventoryResponse>("/files/inventory", {
+      params: { kind: kind || undefined, status: statusFilter || undefined, skip, limit },
+    });
+    return response.data;
+  },
+  getPreview: async (kind: string, recordId: string): Promise<FilePreviewResponse> => {
+    const response = await apiClient.get<FilePreviewResponse>(`/files/preview/${kind}/${recordId}`);
+    return response.data;
+  },
 };

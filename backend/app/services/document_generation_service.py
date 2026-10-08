@@ -45,6 +45,22 @@ from app.services.validation_service import _build_context
 # ---------------------------------------------------------------------------
 
 
+def _xml_safe(value):
+    """Escapa XML en cadenas: docxtpl inyecta valores CRUDOS en document.xml
+    y un `<` rompería la estructura del DOCX (y abriría una vía de inyección).
+    El escape aquí se revierte al parsear: el texto final es idéntico al original.
+    """
+    from xml.sax.saxutils import escape as xml_escape
+
+    if isinstance(value, str):
+        return xml_escape(value)
+    if isinstance(value, list):
+        return [_xml_safe(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _xml_safe(item) for key, item in value.items()}
+    return value
+
+
 def build_render_context(fields: list[TemplateField], values: dict) -> dict:
     """Mapea los valores planos del formulario a las variables Jinja2.
 
@@ -53,7 +69,9 @@ def build_render_context(fields: list[TemplateField], values: dict) -> dict:
     - `docx_variable` con punto (comprador.dpi) anida en diccionarios.
     - Campos lista (testigos) pasan como colecciones de filas para {% for %}.
     """
-    context: dict = {key: value for key, value in values.items() if value is not None}
+    context: dict = {
+        key: _xml_safe(value) for key, value in values.items() if value is not None
+    }
     for field in fields:
         if not field.docx_variable:
             continue
@@ -62,11 +80,11 @@ def build_render_context(fields: list[TemplateField], values: dict) -> dict:
             continue
         variable = field.docx_variable
         if field.field_type == "list":
-            context[variable] = value if isinstance(value, list) else []
+            context[variable] = _xml_safe(value) if isinstance(value, list) else []
         elif "." in variable:
-            _assign_nested(context, variable, value)
+            _assign_nested(context, variable, _xml_safe(value))
         else:
-            context[variable] = value
+            context[variable] = _xml_safe(value)
     return context
 
 
@@ -366,3 +384,96 @@ def version_file_path(db: Session, version_id: str) -> tuple[Path, DocumentVersi
     if not path.is_file():
         raise HTTPException(404, "El archivo del borrador no existe en disco.")
     return path, version
+
+
+# ---------------------------------------------------------------------------
+# Preview en vivo para el editor de borradores (WP-07)
+# ---------------------------------------------------------------------------
+
+
+def _docx_to_html(document) -> str:
+    """HTML simple y escapado (anti-XSS) del documento renderizado."""
+    from html import escape
+
+    parts: list[str] = []
+    for paragraph in document.paragraphs:
+        text = paragraph.text.strip()
+        if text:
+            parts.append(f"<p>{escape(text)}</p>")
+    for table in document.tables:
+        parts.append("<table><tbody>")
+        for row in table.rows:
+            cells = "".join(
+                f"<td>{escape(cell.text.strip())}</td>" for cell in row.cells
+            )
+            parts.append(f"<tr>{cells}</tr>")
+        parts.append("</tbody></table>")
+    return "".join(parts) or "<p>(documento vacío)</p>"
+
+
+def render_preview_html(
+    db: Session, case_id: str, template_version_id: str, values: dict
+) -> dict:
+    """Render en memoria (sin persistir) para la previsualización del editor.
+
+    Devuelve HTML escapado del documento y la verificación de placeholders
+    residuales, con el mismo motor de contexto de la generación real.
+    """
+    import io
+
+    from docx import Document
+
+    case = db.get(Case, case_id)
+    if case is None:
+        raise HTTPException(404, "Expediente no encontrado.")
+    version = db.get(TemplateVersion, template_version_id)
+    if version is None:
+        raise HTTPException(404, "Versión de plantilla no encontrada.")
+    template = db.get(Template, version.template_id)
+    if template and template.case_type != case.case_type:
+        raise HTTPException(
+            422, "La plantilla no corresponde al tipo de escritura del expediente."
+        )
+    if not version.file_path or not Path(version.file_path).is_file():
+        raise HTTPException(422, "La versión de plantilla no tiene un archivo DOCX.")
+
+    fields = db.query(TemplateField).filter_by(template_version_id=version.id).all()
+    context = build_render_context(fields, values)
+    jinja_env = Environment(undefined=ChainableUndefined, autoescape=False)
+    buffer = io.BytesIO()
+    try:
+        document = DocxTemplate(str(version.file_path))
+        document.render(context, jinja_env=jinja_env)
+        document.save(buffer)
+    except Exception as exc:
+        raise HTTPException(
+            422, "La plantilla no pudo renderizarse con los datos enviados."
+        ) from exc
+
+    buffer.seek(0)
+    rendered = Document(buffer)
+    residuals = _residuals_in_document(rendered)
+    return {
+        "html": _docx_to_html(rendered),
+        "placeholders_free": not residuals,
+        "residual_variables": residuals,
+    }
+
+
+def _residuals_in_document(document) -> list[str]:
+    """Variables {{ ... }} residuales en un documento ya abierto (RULE-017)."""
+    from app.services.template_docx_service import RE_VARIABLE
+
+    texts = [p.text for p in document.paragraphs]
+    for table in document.tables:
+        for row in table.rows:
+            for cell in row.cells:
+                texts.extend(p.text for p in cell.paragraphs)
+    residuals: list[str] = []
+    seen: set[str] = set()
+    for text in texts:
+        for match in RE_VARIABLE.finditer(text):
+            if match.group(1) not in seen:
+                seen.add(match.group(1))
+                residuals.append(match.group(1))
+    return residuals

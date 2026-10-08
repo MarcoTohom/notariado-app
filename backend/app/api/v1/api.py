@@ -8,6 +8,7 @@ from app.api.v1.endpoints import (
     documents,
     dynamic_fields,
     experiment,
+    files,
     health,
     legal_entities,
     templates,
@@ -50,4 +51,7 @@ api_router.include_router(
 )
 api_router.include_router(
     experiment.router, prefix="/experiment", tags=["Experimento de Tesis UMG"]
+)
+api_router.include_router(
+    files.router, prefix="/files", tags=["Archivos del Sistema"]
 )

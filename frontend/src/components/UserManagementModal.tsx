@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { userService, auditService } from "../services/api";
 import { UserItem, AuditLogItem } from "../types";
 import { useAuth } from "../context/AuthContext";
-import { X, Users, Shield, History, RefreshCw } from "lucide-react";
+import { X, Users, Shield, History, RefreshCw, Edit3, Sliders } from "lucide-react";
+import { EditUserModal } from "../features/users/EditUserModal";
 
 interface UserManagementModalProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen
   const [users, setUsers] = useState<UserItem[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserItem | null>(null);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const loadData = async () => {
     setLoading(true);
@@ -115,31 +118,66 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen
                     <th className="py-2.5 px-4">Correo</th>
                     <th className="py-2.5 px-4">Rol Notarial</th>
                     <th className="py-2.5 px-4">Estado</th>
+                    <th className="py-2.5 px-4 text-right">Acción</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200">
-                  {users.map((u) => (
-                    <tr key={u.id} className="hover:bg-slate-50 transition-colors">
-                      <td className="py-2.5 px-4 font-mono font-bold text-slate-800">{u.username}</td>
-                      <td className="py-2.5 px-4 font-medium text-slate-700">{u.full_name}</td>
-                      <td className="py-2.5 px-4 text-slate-500">{u.email}</td>
-                      <td className="py-2.5 px-4">
-                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-50 text-brand-700 border border-brand-200">
-                          <Shield className="w-3 h-3" />
-                          {u.role}
-                        </span>
-                      </td>
-                      <td className="py-2.5 px-4">
-                        <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          u.status === "ACTIVE"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-slate-100 text-slate-600"
-                        }`}>
-                          {u.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
+                  {users.map((u) => {
+                    const hasOverrides =
+                      (u.permission_overrides?.grant?.length || 0) > 0 ||
+                      (u.permission_overrides?.revoke?.length || 0) > 0;
+
+                    return (
+                      <tr key={u.id} className="hover:bg-slate-50 transition-colors">
+                        <td className="py-2.5 px-4 font-mono font-bold text-slate-800">
+                          {u.username}
+                        </td>
+                        <td className="py-2.5 px-4 font-medium text-slate-700">{u.full_name}</td>
+                        <td className="py-2.5 px-4 text-slate-500">{u.email}</td>
+                        <td className="py-2.5 px-4">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-brand-50 text-brand-700 border border-brand-200">
+                              <Shield className="w-3 h-3" />
+                              {u.role}
+                            </span>
+                            {hasOverrides && (
+                              <span
+                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-100 text-amber-800 border border-amber-300"
+                                title={`Overrides: +${u.permission_overrides?.grant?.length || 0} / -${u.permission_overrides?.revoke?.length || 0}`}
+                              >
+                                <Sliders className="w-2.5 h-2.5" />
+                                Overrides
+                              </span>
+                            )}
+                          </div>
+                        </td>
+                        <td className="py-2.5 px-4">
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              u.status === "ACTIVE"
+                                ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                                : "bg-slate-100 text-slate-600"
+                            }`}
+                          >
+                            {u.status}
+                          </span>
+                        </td>
+                        <td className="py-2.5 px-4 text-right">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingUser(u);
+                              setEditModalOpen(true);
+                            }}
+                            className="inline-flex items-center gap-1 text-[11px] font-semibold text-brand-600 hover:text-brand-800 bg-brand-50 hover:bg-brand-100 border border-brand-200 px-2.5 py-1 rounded-md transition-colors"
+                          >
+                            <Edit3 className="w-3 h-3" />
+                            Editar
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -185,6 +223,15 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen
           )}
         </div>
       </div>
+      <EditUserModal
+        user={editingUser}
+        isOpen={editModalOpen}
+        onClose={() => {
+          setEditModalOpen(false);
+          setEditingUser(null);
+        }}
+        onSaved={loadData}
+      />
     </div>
   );
 };

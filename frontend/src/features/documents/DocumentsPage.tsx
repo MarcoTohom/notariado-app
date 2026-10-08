@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { documentService } from "../../services/api";
 import { DocumentDetailModal } from "./DocumentDetailModal";
+import { ModuleTip } from "../../components/common/ModuleTip";
 import { formatDateTime } from "../../lib/format";
 import {
   FileText,
@@ -38,6 +39,10 @@ export const DocumentsPage: React.FC = () => {
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
             <FileText className="w-5 h-5 text-brand-600" />
             Borradores Generados
+            <ModuleTip
+              anchor="borrador"
+              tipText="El borrador es el documento DOCX resultante de combinar la plantilla activa con los datos del expediente. Cada generación crea una versión nueva verificada sin placeholders; el historial nunca se sobrescribe."
+            />
           </h2>
           <p className="text-xs text-slate-500 mt-1">
             Historial inmutable de versiones DOCX verificadas sin placeholders residuales

@@ -56,6 +56,7 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "audit:read",
         "experiment:read",
         "experiment:execute",
+        "files:read",
     },
     RoleEnum.ABOGADO_NOTARIO: {
         "clients:read",
@@ -80,8 +81,7 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "quotes:create",
         "quotes:update",
         "reports:read",
-        "experiment:read",
-        "experiment:execute",
+        "files:read",
     },
     RoleEnum.AUXILIAR: {
         "clients:read",
@@ -96,7 +96,6 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "documents:update",
         "validations:read",
         "validations:execute",
-        "experiment:read",
     },
     RoleEnum.ADMINISTRACION: {
         "clients:read",
@@ -114,7 +113,6 @@ ROLE_PERMISSIONS: dict[RoleEnum, set[str]] = {
         "payments:read",
         "payments:create",
         "reports:read",
-        "experiment:read",
     },
 }
 
@@ -126,3 +124,21 @@ def get_permissions_for_role(role: str) -> list[str]:
         return sorted(ROLE_PERMISSIONS.get(role_enum, set()))
     except ValueError:
         return []
+
+
+def get_effective_permissions(role: str, overrides: dict | None = None) -> list[str]:
+    """Returns permissions for role with granular grant/revoke overrides applied."""
+    role_perms = set(get_permissions_for_role(role))
+    if overrides:
+        grant = set(overrides.get("grant", []))
+        revoke = set(overrides.get("revoke", []))
+        role_perms = (role_perms - revoke) | grant
+    return sorted(role_perms)
+
+
+def get_all_known_permissions() -> list[str]:
+    """Returns union of all permissions defined in the RBAC matrix."""
+    all_perms: set[str] = set()
+    for perms in ROLE_PERMISSIONS.values():
+        all_perms.update(perms)
+    return sorted(all_perms)
