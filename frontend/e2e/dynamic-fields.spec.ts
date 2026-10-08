@@ -122,7 +122,9 @@ test("configurar, completar, recalcular y recuperar datos de una escritura", asy
     .fill("sintetico@example.com");
   await page.getByLabel("cantidad", { exact: true }).fill("2");
   await page.getByLabel("decimal", { exact: true }).fill("0.1234");
-  await page.getByLabel("precio", { exact: true }).fill("0.10");
+  const priceInput = page.getByRole("textbox", { name: "precio *", exact: true });
+  await expect(priceInput).toHaveAttribute("aria-required", "true");
+  await priceInput.fill("0.10");
   await page.getByLabel("porcentaje", { exact: true }).fill("12");
   await page.getByLabel("fecha", { exact: true }).fill("2026-10-04");
   await page.getByLabel("hora", { exact: true }).fill("2026-10-04T13:45");
@@ -145,10 +147,11 @@ test("configurar, completar, recalcular y recuperar datos de una escritura", asy
     page.getByText("Descargar archivo", { exact: true }),
   ).toBeVisible();
   await page.getByText("Agregar bienes", { exact: true }).click();
-  await page.getByLabel("descripcion", { exact: true }).fill("Bien Uno");
+  const descriptions = page.getByRole("textbox", { name: "descripcion *", exact: true });
+  await descriptions.fill("Bien Uno");
   await page.getByLabel("valor", { exact: true }).fill("0.10");
   await page.getByText("Agregar bienes", { exact: true }).click();
-  await page.getByLabel("descripcion", { exact: true }).nth(1).fill("Bien Dos");
+  await descriptions.nth(1).fill("Bien Dos");
   await page.getByLabel("valor", { exact: true }).nth(1).fill("0.20");
   await page.getByLabel("Subir bienes 2").click();
   await page
@@ -164,9 +167,9 @@ test("configurar, completar, recalcular y recuperar datos de una escritura", asy
   await page.reload();
   await page.getByLabel("Formulario y versión").selectOption(version.id);
   await page.getByRole("combobox", { name: "Expediente", exact: true }).selectOption(caseId);
-  await expect(page.getByLabel("precio", { exact: true })).toHaveValue("0.10");
+  await expect(priceInput).toHaveValue("0.10");
   await expect(
-    page.getByLabel("descripcion", { exact: true }).first(),
+    descriptions.first(),
   ).toHaveValue("Bien Dos");
   await expect(page.getByLabel("notas", { exact: true })).toHaveValue(
     "<p>Nota</p>",

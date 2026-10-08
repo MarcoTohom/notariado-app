@@ -67,3 +67,7 @@ Cada fase se ejecutará de forma secuencial y acumulativa:
 * Se ejecutan las pruebas automatizadas asociadas (`pytest` y `npm test`).
 * Se valida el criterio de aceptación del módulo.
 * Se emite el reporte de progreso al usuario.
+
+## 6. Plan complementario de mejora estructural
+
+El [plan de mejora estructural](PLAN_MEJORA_ESTRUCTURAL.md) organiza la instalación, documentación, frontend, componentes compartidos, backend y recursos de pruebas en fases estructurales 0–7. Mantiene el comportamiento existente y el alcance funcional de la tesis, con entregables y comprobaciones por fase. Su seguimiento es independiente de las once fases de desarrollo de este plan maestro.

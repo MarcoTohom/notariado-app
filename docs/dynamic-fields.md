@@ -76,7 +76,7 @@ Tablas nuevas: `templates`, `template_versions`, `template_fields`, `case_field_
 
 ## Instalación y verificación Windows
 
-Después de instalar `backend/requirements.txt` y ejecutar `npm ci` en frontend:
+Después de preparar las dependencias con `scripts/setup.ps1 -E2E` (véase la [guía de instalación](installation.md)):
 
 ```powershell
 cd backend

@@ -44,6 +44,9 @@ backend/app.db
 # Storage & Uploads
 backend/uploads/*
 !backend/uploads/.gitkeep
+!backend/uploads/templates/
+!backend/uploads/imports/
+!backend/uploads/attachments/
 backend/uploads/templates/*
 !backend/uploads/templates/.gitkeep
 backend/uploads/imports/*
@@ -55,6 +58,8 @@ backend/generated/*
 
 # Environment files
 .env
+.env.*
+!.env.example
 .env.local
 .env.*.local
 
@@ -68,6 +73,12 @@ yarn-debug.log*
 yarn-error.log*
 frontend/playwright-report/
 frontend/test-results/
+frontend/.cache/
+
+# Respaldos y resultados operativos locales
+/backups/
+/artifacts/
+*.log
 
 # IDE & OS
 .vscode/

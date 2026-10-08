@@ -1,0 +1,62 @@
+{
+  "date": "2026-10-08",
+  "phase": 0,
+  "node": "24.19.0",
+  "npm": "11.17.0",
+  "backend_ruff": {
+    "lint": "passed",
+    "format": "passed",
+    "files": 98
+  },
+  "backend_pytest": {
+    "passed": 254,
+    "unit": 177,
+    "duration_seconds": 58.49,
+    "warnings": 1,
+    "integration": 77
+  },
+  "frontend_vitest": {
+    "files": 8,
+    "passed": 85,
+    "duration_seconds": 36.35
+  },
+  "final_frontend": {
+    "gzip_kb": 171.83,
+    "command_exit_code": 0,
+    "vite": "passed",
+    "modules": 1805,
+    "eslint": "passed",
+    "typescript": "passed",
+    "javascript_kb": 602.34
+  },
+  "final_e2e": {
+    "viewport_width": 390,
+    "passed": 1,
+    "duration_seconds": 16.8,
+    "horizontal_overflow": false,
+    "exit_code": 0
+  },
+  "migrations": {
+    "temporary_database": true,
+    "revision": "phase11_experiment",
+    "status": "passed"
+  },
+  "pip_check": "passed",
+  "full_script": {
+    "command": "scripts/test.ps1 -E2E",
+    "initial_failure": "E2E selector for required field precio",
+    "initial_exit_code": 1,
+    "backend_unchanged": true,
+    "rerun_scope": [
+      "ESLint",
+      "TypeScript/Vite",
+      "Playwright"
+    ]
+  },
+  "limitations": [
+    "Browser scenario downloads a synthetic CSV attachment, not DOCX",
+    "Client and case created through API in browser scenario",
+    "No coverage percentage computed",
+    "No experimental time reduction measured"
+  ]
+}

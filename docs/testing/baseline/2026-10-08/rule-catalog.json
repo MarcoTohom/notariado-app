@@ -1,0 +1,102 @@
+{
+  "RULE-001": {
+    "description": "Campos marcados como obligatorios en la plantilla sin valor.",
+    "name": "Campo obligatorio faltante",
+    "severity": "ERROR"
+  },
+  "RULE-002": {
+    "description": "El DPI (CUI) debe tener exactamente 13 dígitos numéricos.",
+    "name": "Formato de DPI inválido",
+    "severity": "ERROR"
+  },
+  "RULE-003": {
+    "description": "El NIT debe seguir el formato guatemalteco (ej. 1234567-8 o CF).",
+    "name": "Formato de NIT inválido",
+    "severity": "ERROR"
+  },
+  "RULE-004": {
+    "description": "El DPI del documento difiere del registrado en la ficha del cliente.",
+    "name": "DPI no coincide con el expediente",
+    "severity": "CRITICAL"
+  },
+  "RULE-005": {
+    "description": "El NIT del documento difiere del registrado en la ficha del cliente.",
+    "name": "NIT no coincide con el expediente",
+    "severity": "ERROR"
+  },
+  "RULE-006": {
+    "description": "El nombre del compareciente difiere de la ficha maestra del cliente.",
+    "name": "Nombre no coincide con el expediente",
+    "severity": "CRITICAL"
+  },
+  "RULE-007": {
+    "description": "Fechas futuras no permitidas o rangos de fechas invertidos.",
+    "name": "Fecha inconsistente",
+    "severity": "ERROR"
+  },
+  "RULE-008": {
+    "description": "Art. 30 Código de Notariado: la cifra debe corresponder a su redacción en letras.",
+    "name": "Monto en números no coincide con letras",
+    "severity": "ERROR"
+  },
+  "RULE-009": {
+    "description": "La finca registral es obligatoria y debe ser numérica.",
+    "name": "Número de finca inválido",
+    "severity": "ERROR"
+  },
+  "RULE-010": {
+    "description": "El folio registral es obligatorio y debe ser numérico.",
+    "name": "Número de folio inválido",
+    "severity": "ERROR"
+  },
+  "RULE-011": {
+    "description": "El libro registral es obligatorio para inmuebles.",
+    "name": "Número de libro inválido",
+    "severity": "ERROR"
+  },
+  "RULE-012": {
+    "description": "El departamento no existe en el catálogo oficial de Guatemala (22).",
+    "name": "Departamento inválido",
+    "severity": "ERROR"
+  },
+  "RULE-013": {
+    "description": "El municipio no corresponde al departamento indicado o no consta en catálogo.",
+    "name": "Municipio no verificable",
+    "severity": "WARNING"
+  },
+  "RULE-014": {
+    "description": "La secuencia de cláusulas/incisos presenta saltos de numeración.",
+    "name": "Inciso faltante",
+    "severity": "ERROR"
+  },
+  "RULE-015": {
+    "description": "Existen cláusulas o incisos con la misma numeración.",
+    "name": "Inciso duplicado",
+    "severity": "ERROR"
+  },
+  "RULE-016": {
+    "description": "Los incisos no aparecen en orden ascendente.",
+    "name": "Numeración desordenada",
+    "severity": "WARNING"
+  },
+  "RULE-017": {
+    "description": "Se detectó sintaxis {{ ... }} sin sustituir (residuo de plantilla).",
+    "name": "Variable de plantilla sin sustituir",
+    "severity": "CRITICAL"
+  },
+  "RULE-018": {
+    "description": "Sumas de porcentajes de aportaciones deben totalizar 100%.",
+    "name": "Cálculo aritmético inconsistente",
+    "severity": "ERROR"
+  },
+  "RULE-019": {
+    "description": "Adjunto inexistente en disco, fuera de tamaño o con extensión no permitida.",
+    "name": "Archivo adjunto no válido",
+    "severity": "ERROR"
+  },
+  "RULE-020": {
+    "description": "El mismo compareciente figura más de una vez con el mismo rol.",
+    "name": "Registro duplicado",
+    "severity": "ERROR"
+  }
+}

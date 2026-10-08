@@ -35,13 +35,13 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <header className="bg-slate-900 border-b border-slate-800 text-white sticky top-0 z-40 shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="bg-brand-600 p-2 rounded-lg text-white shadow-inner">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 min-h-16 py-3 flex flex-wrap items-center justify-between gap-x-4 gap-y-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="bg-brand-600 p-2 rounded-lg text-white shadow-inner shrink-0">
               <Scale className="w-6 h-6" />
             </div>
-            <div>
-              <h1 className="font-bold text-base leading-tight text-white flex items-center gap-2">
+            <div className="min-w-0">
+              <h1 className="font-bold text-base leading-tight text-white flex flex-wrap items-center gap-x-2 gap-y-1">
                 Borradores Notariales
                 <span className="bg-amber-500/20 text-amber-300 text-[10px] font-semibold px-2 py-0.5 rounded border border-amber-500/30">
                   UMG
@@ -51,7 +51,7 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
+          <nav className="hidden md:flex flex-wrap items-center gap-1 text-sm font-medium">
             <NavLink to="/" end className={linkClass}>
               <FileText className="w-4 h-4 text-brand-500" />
               Panel
@@ -89,7 +89,7 @@ export const Navbar: React.FC = () => {
             )}
           </nav>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-auto">
             {user ? (
               <div className="flex items-center gap-2.5">
                 {hasPermission("users:read") && (

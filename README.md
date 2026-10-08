@@ -16,7 +16,7 @@ Este sistema es una solución tecnológica integral orientada a bufetes jurídic
 
 ## 2. Pila Tecnológica (Stack)
 
-* **Backend:** Python 3.12+ (probado en Python 3.14), FastAPI, SQLAlchemy 2.x, Alembic, SQLite, Pydantic v2, PyJWT, Argon2-cffi, python-docx, docxtpl, pandas, openpyxl, pypdf, pytest, Ruff.
+* **Backend:** Python 3.12+ (referencia estructural verificada con 3.12.14), FastAPI, SQLAlchemy 2.x, Alembic, SQLite, Pydantic v2, PyJWT, Argon2-cffi, python-docx, docxtpl, pandas, openpyxl, pypdf, pytest, Ruff.
 * **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React, Axios, React Router 6, React Hook Form + Zod, TanStack Query, Vitest + React Testing Library.
 * **Automatización:** Scripts PowerShell nativos para Windows 10/11 (`dev.ps1`, `test.ps1`, `seed.ps1`, `backup.ps1`).
 
@@ -26,38 +26,25 @@ Este sistema es una solución tecnológica integral orientada a bufetes jurídic
 
 1. **Sistema Operativo:** Windows 10 o Windows 11 (64-bit).
 2. **Python:** 3.12 o superior instalado y disponible en el PATH del sistema.
-3. **Node.js:** Versión 22.13 o superior con `npm` (verificado con 22.16.0).
+3. **Node.js:** Versión 22.13 o superior con `npm` (referencia verificada con 24.19.0 y npm 11.17.0).
 4. **Git:** Para control de versiones local.
 
 ---
 
 ## 4. Instalación Rápida
 
-1. **Clonar o abrir el repositorio:**
-   ```powershell
-   cd C:\git\apps\notariado-app
-   ```
+Desde la carpeta del repositorio:
 
-2. **Configurar el Backend:**
-   ```powershell
-   cd backend
-   python -m venv .venv
-   .\.venv\Scripts\pip install -r requirements.txt
-   .\.venv\Scripts\alembic upgrade head
-   cd ..
-   ```
+```powershell
+.\scripts\setup.ps1 -E2E
+.\scripts\test.ps1 -E2E
+.\scripts\seed.ps1
+.\scripts\dev.ps1
+```
 
-3. **Poblar usuarios iniciales (seed):**
-   ```powershell
-   .\scripts\seed.ps1
-   ```
+`setup.ps1` instala las versiones verificadas, prepara Chromium cuando se solicita `-E2E` y crea `.env` solo si falta. No aplica migraciones ni modifica datos; puede repetirse. `seed.ps1` aplica migraciones y restablece las cuentas demo. Para una instalación existente, ejecutar el sembrador únicamente si se desean esos usuarios sintéticos.
 
-4. **Configurar el Frontend:**
-   ```powershell
-   cd frontend
-   npm install
-   cd ..
-   ```
+La [guía de instalación](docs/installation.md) explica cómo indicar otra ruta de Python, configurar las rutas locales y verificar el arranque.
 
 ---
 
@@ -76,6 +63,10 @@ Para arrancar el backend y frontend en un solo comando:
 
 ## 6. Pruebas Automatizadas y Calidad
 
+La [referencia estructural del 8 de octubre de 2026](docs/testing/BASELINE_ESTRUCTURAL.md) registra el entorno verificado, los resultados, los contratos iniciales y las limitaciones de cobertura para la reorganización.
+
+La [fase estructural 1](docs/testing/FASE_1_ESTRUCTURAL.md) registra la instalación nueva/repetida y los scripts verificados en Windows PowerShell 5.1, con 260 pruebas backend, 85 frontend y un E2E aprobados.
+
 ```powershell
 .\scripts\test.ps1
 ```
@@ -83,6 +74,8 @@ Para arrancar el backend y frontend en un solo comando:
 ---
 
 ## 7. Roadmap de Fases del Proyecto
+
+La reorganización de archivos, configuración y documentación tiene un [plan de mejora estructural](docs/PLAN_MEJORA_ESTRUCTURAL.md) con fases 0–7, entregables y criterios de cierre. Complementa las fases funcionales de la tesis que se describen a continuación.
 
 ### FASE 1 — Monolito Modular Base — COMPLETADA (commit 209c9cb)
 
@@ -223,9 +216,7 @@ Motor de 20 tipos con configuración versionada, DynamicForm (React Hook Form + 
 Acceso: **Formularios** en la navegación o desde el detalle del expediente. [Guía, contratos y pruebas](docs/dynamic-fields.md).
 
 ```powershell
-cd frontend
-npx.cmd playwright install chromium
-cd ..
+.\scripts\setup.ps1 -E2E
 .\scripts\test.ps1 -E2E
 ```
 
