@@ -6,6 +6,8 @@
 > **Investigador:** Marco Antonio Lares Tohom
 > **Línea Base:** 240 minutos → **Meta Experimental:** 60 minutos por escritura
 
+> 📋 **Plan de trabajo vigente:** [`docs/PLAN_DESARROLLO.md`](docs/PLAN_DESARROLLO.md) — paquetes de trabajo WP-01 a WP-08 (landing, admin, usuarios, archivos, guía, editor de borradores con preview en vivo y atajos).
+
 ---
 
 ## 1. Descripción y Objetivo
