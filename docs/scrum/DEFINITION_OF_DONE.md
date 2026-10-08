@@ -2,6 +2,8 @@
 **Sistema de Borradores de Escrituras Públicas en Python**  
 **Facultad de Ingeniería en Sistemas - UMG**
 
+> **Uso del documento:** criterios de aceptación para las entregas funcionales. La [reorganización estructural](../PLAN_MEJORA_ESTRUCTURAL.md) aplica los criterios pertinentes a su alcance y registra sus comprobaciones por fase. El [índice documental](../README.md) reúne las guías y los informes ejecutados.
+
 ---
 
 ## 1. Definición Global de Terminado (Global DoD)

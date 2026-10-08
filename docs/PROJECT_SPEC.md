@@ -1,6 +1,8 @@
 # ESPECIFICACIÓN MAESTRA PARA ANTIGRAVITY
 ## Sistema de borradores de escrituras públicas en Python
 
+> **Carácter del documento:** especificación original del alcance y de la estructura objetivo. Incluye requisitos pendientes, como importación y administración financiera. No es un inventario de funciones completadas. El [mapa de módulos](modules.md), la [arquitectura actual](architecture.md) y el [índice documental](README.md) describen el código vigente y las comprobaciones realizadas. Se conserva la propuesta académica y su historial.
+
 > **Propósito:** utilizar este archivo como especificación técnica y funcional principal para que Antigravity construya el proyecto completo, no solamente el scaffolding.
 >
 > **Contexto académico:** proyecto de tesis de Ingeniería de Sistemas de la Universidad Mariano Gálvez de Guatemala (UMG).
@@ -110,6 +112,8 @@ No fijar versiones arbitrarias antiguas. Utilizar versiones estables y compatibl
 ---
 
 # 3. ARQUITECTURA
+
+La estructura siguiente es el objetivo de la especificación. Consultar [architecture.md](architecture.md) y [modules.md](modules.md) para las capas y ubicaciones actualmente implementadas.
 
 Usar **monolito modular**, no microservicios.
 
@@ -1469,11 +1473,13 @@ No insertar artificialmente 60 minutos como resultado.
 
 # 30. DATOS SINTÉTICOS
 
-Crear script:
+El punto de entrada vigente para generar el corpus es:
 
-```text
-backend/app/utils/seed_synthetic.py
+```powershell
+.\scripts\experiment.ps1
 ```
+
+Ejecutarlo desde la raíz, con una base migrada y un administrador. La generación se implementa en [synthetic_data.py](../backend/app/utils/synthetic_data.py), coordinada por [experiment_service.py](../backend/app/services/experiment_service.py). Generar el corpus no registra tiempos de revisión.
 
 Generar 100 casos:
 
@@ -1687,6 +1693,8 @@ Registrar medición
 
 # 35. CALIDAD DE CÓDIGO
 
+El comando operativo vigente desde la raíz es `scripts/test.ps1` o `scripts/test.ps1 -E2E`, según la [guía de instalación](installation.md). Ruff y pytest se configuran en `backend/pyproject.toml`. La referencia a `mypy` conserva un objetivo de calidad de esta especificación; no está instalado ni incluido en la verificación actual.
+
 Backend:
 
 ```text
@@ -1708,7 +1716,7 @@ npm run build
 E2E:
 
 ```text
-pytest tests/e2e
+.\scripts\test.ps1 -E2E  # Desde la raíz; ejecuta Playwright
 ```
 
 Crear scripts PowerShell para facilitar:
@@ -1730,7 +1738,7 @@ Prefijo:
 /api/v1
 ```
 
-Endpoints mínimos:
+Catálogo objetivo de endpoints mínimos. Incluye módulos previstos y rutas que difieren de la implementación; el contrato vigente está en [OpenAPI](testing/baseline/2026-10-08/openapi.json) y las operaciones principales en el [mapa de módulos](modules.md):
 
 ```text
 POST   /auth/login
@@ -1804,6 +1812,8 @@ Cada endpoint debe tener:
 ---
 
 # 37. BASE DE DATOS
+
+La lista siguiente corresponde al alcance objetivo. [database.md](database.md) documenta las 17 tablas de dominio y la tabla Alembic actualmente existentes.
 
 Crear como mínimo estas entidades:
 
@@ -2290,7 +2300,7 @@ npm run test
 npm run build
 
 E2E:
-pytest tests/e2e
+.\scripts\test.ps1 -E2E  # Desde la raíz; ejecuta Playwright
 ```
 
 Después:

@@ -2,6 +2,8 @@
 **Facultad de Ingeniería en Sistemas de Información y Ciencias de la Computación**  
 **Universidad Mariano Gálvez de Guatemala (UMG)**
 
+> **Carácter del documento:** propuesta y guion académico de defensa; conserva el planteamiento original. No acredita que todos los módulos estén implementados ni que la meta de 240 a 60 minutos se haya alcanzado. Consultar el [mapa actual](../modules.md), la [arquitectura](../architecture.md) y los [informes de verificación](../README.md). La ingesta de archivos del diagrama conceptual sigue prevista.
+
 ---
 
 ## Ficha Técnica del Proyecto de Graduación
@@ -75,7 +77,7 @@ Desarrollar un sistema de borradores de escrituras públicas en Python para redu
 │                         BACKEND (FastAPI API)                          │
 │  ├── Core / Auth (Argon2 + JWT + RBAC)                                 │
 │  ├── Motor de Reglas Notariales (RULE-001..RULE-020)                   │
-│  ├── Ingestor de Documentos (XLSX, CSV, PDF digital pypdf)             │
+│  ├── Ingestor previsto (XLSX, CSV, PDF digital pypdf)             │
 │  └── Generador DOCX Verificado (docxtpl + python-docx audit)          │
 └───────────────────────────────────┬────────────────────────────────────┘
                                     │ SQLAlchemy 2.0 / Alembic

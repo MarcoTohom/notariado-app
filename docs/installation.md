@@ -1,5 +1,9 @@
 # Instalación y operación local en Windows 10/11
 
+[Índice documental](README.md) · [Mapa de módulos](modules.md) · [Convenciones de contribución](contributing.md).
+
+La preparación nueva y repetida y los comandos operativos de esta guía se verificaron en la [fase estructural 1](testing/FASE_1_ESTRUCTURAL.md), con Windows PowerShell 5.1. Esta fase documental conserva ese procedimiento.
+
 ## Requisitos
 
 - Windows PowerShell 5.1 o PowerShell 7+.

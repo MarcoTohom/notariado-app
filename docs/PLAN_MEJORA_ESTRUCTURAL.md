@@ -25,7 +25,7 @@ La revisión inicial fue de código y documentación: esta copia no tenía `back
 |---|---|---|---|
 | 0 | Preparar el entorno y registrar la referencia inicial | — | Completada |
 | 1 | Unificar instalación, configuración y limpieza del repositorio | 0 | Completada |
-| 2 | Establecer documentación y convenciones de organización | 1 | Pendiente |
+| 2 | Establecer documentación y convenciones de organización | 1 | Completada |
 | 3 | Organizar API, tipos y composición del frontend | 2 | Pendiente |
 | 4 | Extraer componentes y controles compartidos | 3 | Pendiente |
 | 5 | Separar responsabilidades y dependencias del backend | 4 | Pendiente |
@@ -198,3 +198,6 @@ Se aplican las [reglas permanentes del proyecto](../AGENTS.md) y los criterios p
 | 2026-10-08 | 0 | Entorno preparado; 254 pruebas backend, 85 frontend y un E2E aprobados, lint/formato y compilación aprobados. Referencias de API, esquema, permisos, reglas e inventario conservadas. Selectores obligatorios y desbordamiento de cabecera corregidos. [Informe y límites](testing/BASELINE_ESTRUCTURAL.md). | Completada |
 | 2026-10-08 | 1 | Instalación repetible, configuración, archivo histórico y scripts operativos en revisión. Se conserva la referencia de la fase 0. | En curso |
 | 2026-10-08 | 1 | Instalación nueva y repetida verificadas, versiones separadas y fijadas, configuración y scripts alineados, generadores archivados y respaldos preservados. Arranque/proxy, corpus y respaldos sintéticos aprobados en Windows PowerShell 5.1. Suite completa: 260 backend, 85 frontend y un E2E; contratos y esquema idénticos. [Informe](testing/FASE_1_ESTRUCTURAL.md). | Completada |
+| 2026-10-08 | 0–1 | Entregas conservadas en el commit `a48ef71` antes de iniciar la documentación de la siguiente fase. | Commit creado |
+| 2026-10-08 | 2 | Índice, arquitectura, mapa de módulos, enlaces y convenciones en revisión contra el código actual. | En curso |
+| 2026-10-08 | 2 | Índice, arquitectura, persistencia, mapa de módulos y convenciones actualizados; enlaces internos, 11 operaciones API, 7 rutas frontend y 18 tablas comprobados. Documentación académica conservada y funcionalidades previstas identificadas; código y configuración sin cambios. [Informe](testing/FASE_2_ESTRUCTURAL.md). | Completada |

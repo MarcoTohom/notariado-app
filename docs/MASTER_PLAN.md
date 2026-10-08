@@ -4,6 +4,8 @@
 
 ---
 
+Este documento conserva la planificación funcional y académica. El estado implementado se consulta en el [mapa de módulos](modules.md), y las guías vigentes en el [índice documental](README.md). Los entregables y el cronograma que siguen no constituyen evidencia de cierre de todas las fases.
+
 ## 1. Visión y Alcance del Plan Maestro
 
 El presente documento articula la planificación integral del proyecto de investigación aplicada y desarrollo de software, estructurado en **11 fases de desarrollo**, organizadas bajo la metodología ágil **Scrum** en **6 Sprints de trabajo**, asegurando la entrega de documentación formal académica, aseguramiento de calidad y validación experimental de hipótesis.
@@ -14,12 +16,12 @@ El presente documento articula la planificación integral del proyecto de invest
 
 | Dimensión | Documento Oficial en el Repositorio | Propósito |
 |:---|:---|:---|
-| **Metodología Scrum** | [`docs/scrum/PRODUCT_BACKLOG.md`](file:///C:/Users/marco/.gemini/antigravity-ide/scratch/sistema-borradores-escrituras/docs/scrum/PRODUCT_BACKLOG.md) | Catálogo de 11 Épicas, 35+ Historias de Usuario priorizadas por MoSCoW (254 Story Points). |
-| **Metodología Scrum** | [`docs/scrum/SPRINT_PLANNING.md`](file:///C:/Users/marco/.gemini/antigravity-ide/scratch/sistema-borradores-escrituras/docs/scrum/SPRINT_PLANNING.md) | Cronograma detallado de los 6 Sprints de 2 semanas, asignación de puntos y ceremonias. |
-| **Metodología Scrum** | [`docs/scrum/DEFINITION_OF_DONE.md`](file:///C:/Users/marco/.gemini/antigravity-ide/scratch/sistema-borradores-escrituras/docs/scrum/DEFINITION_OF_DONE.md) | Estándares de calidad de 10 puntos por entrega y criterios específicos por módulo. |
-| **Defensa y Tesis** | [`docs/presentation/PRESENTACION_EJECUTIVA_PROYECTO.md`](file:///C:/Users/marco/.gemini/antigravity-ide/scratch/sistema-borradores-escrituras/docs/presentation/PRESENTACION_EJECUTIVA_PROYECTO.md) | Documento formal para la Terna Evaluadora UMG, justificación legal (Dto 314, Art 31 CPRG) y estructura de diapositivas. |
-| **QA y Experimento** | [`docs/testing/TEST_PLAN_AND_EXPERIMENT.md`](file:///C:/Users/marco/.gemini/antigravity-ide/scratch/sistema-borradores-escrituras/docs/testing/TEST_PLAN_AND_EXPERIMENT.md) | Estrategia de pruebas en 4 niveles y protocolo formal del experimento con 100 casos sintéticos. |
-| **Especificación Base** | [`docs/PROJECT_SPEC.md`](file:///C:/Users/marco/.gemini/antigravity-ide/scratch/sistema-borradores-escrituras/docs/PROJECT_SPEC.md) | Especificación técnica maestra de 52 secciones. |
+| **Metodología Scrum** | [`docs/scrum/PRODUCT_BACKLOG.md`](scrum/PRODUCT_BACKLOG.md) | Catálogo de 11 Épicas, 35+ Historias de Usuario priorizadas por MoSCoW (254 Story Points). |
+| **Metodología Scrum** | [`docs/scrum/SPRINT_PLANNING.md`](scrum/SPRINT_PLANNING.md) | Cronograma detallado de los 6 Sprints de 2 semanas, asignación de puntos y ceremonias. |
+| **Metodología Scrum** | [`docs/scrum/DEFINITION_OF_DONE.md`](scrum/DEFINITION_OF_DONE.md) | Estándares de calidad de 10 puntos por entrega y criterios específicos por módulo. |
+| **Defensa y Tesis** | [`docs/presentation/PRESENTACION_EJECUTIVA_PROYECTO.md`](presentation/PRESENTACION_EJECUTIVA_PROYECTO.md) | Documento formal para la Terna Evaluadora UMG, justificación legal (Dto 314, Art 31 CPRG) y estructura de diapositivas. |
+| **QA y Experimento** | [`docs/testing/TEST_PLAN_AND_EXPERIMENT.md`](testing/TEST_PLAN_AND_EXPERIMENT.md) | Estrategia de pruebas en 4 niveles y protocolo formal del experimento con 100 casos sintéticos. |
+| **Especificación Base** | [`docs/PROJECT_SPEC.md`](PROJECT_SPEC.md) | Especificación técnica maestra de 52 secciones. |
 
 ---
 

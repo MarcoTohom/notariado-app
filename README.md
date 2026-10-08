@@ -44,7 +44,7 @@ Desde la carpeta del repositorio:
 
 `setup.ps1` instala las versiones verificadas, prepara Chromium cuando se solicita `-E2E` y crea `.env` solo si falta. No aplica migraciones ni modifica datos; puede repetirse. `seed.ps1` aplica migraciones y restablece las cuentas demo. Para una instalación existente, ejecutar el sembrador únicamente si se desean esos usuarios sintéticos.
 
-La [guía de instalación](docs/installation.md) explica cómo indicar otra ruta de Python, configurar las rutas locales y verificar el arranque.
+La [guía de instalación](docs/installation.md) explica cómo indicar otra ruta de Python, configurar las rutas locales y verificar el arranque. El [índice documental](docs/README.md) reúne las guías técnicas y académicas; el [mapa de módulos](docs/modules.md) permite localizar pantallas, API, servicios y pruebas.
 
 ---
 
@@ -76,6 +76,18 @@ La [fase estructural 1](docs/testing/FASE_1_ESTRUCTURAL.md) registra la instalac
 ## 7. Roadmap de Fases del Proyecto
 
 La reorganización de archivos, configuración y documentación tiene un [plan de mejora estructural](docs/PLAN_MEJORA_ESTRUCTURAL.md) con fases 0–7, entregables y criterios de cierre. Complementa las fases funcionales de la tesis que se describen a continuación.
+
+El estado del código revisado el **8 de octubre de 2026** se resume en el [mapa de módulos](docs/modules.md):
+
+| Alcance funcional | Estado actual |
+|---|---|
+| Fases 1–7 | Módulos de base, seguridad, expedientes, campos, plantillas, reglas y borradores implementados |
+| Fase 8: ingesta XLSX/CSV/PDF | Prevista; los adjuntos actuales se guardan y descargan |
+| Fase 9: administración financiera | Prevista |
+| Fase 10: QA integral | Pruebas disponibles; el E2E automatizado actual cubre campos dinámicos |
+| Fase 11: medición de tesis | Módulo implementado; la reducción temporal requiere el experimento registrado |
+
+Los apartados siguientes conservan el historial de entregas y sus verificaciones reportadas. Las comprobaciones recientes y sus límites se encuentran en los informes de las [fases estructurales 0](docs/testing/BASELINE_ESTRUCTURAL.md), [1](docs/testing/FASE_1_ESTRUCTURAL.md) y [2](docs/testing/FASE_2_ESTRUCTURAL.md).
 
 ### FASE 1 — Monolito Modular Base — COMPLETADA (commit 209c9cb)
 
@@ -318,7 +330,7 @@ Objetivo: Generación de borradores con docxtpl en backend, verificación de cer
 
 ---
 
-### FASE 11 — Experimento de Medición de Tiempos (100 Casos Sintéticos) — COMPLETADA (commit b8ca802)
+### FASE 11 — Experimento de Medición de Tiempos (100 Casos Sintéticos) — MÓDULO IMPLEMENTADO (commit b8ca802)
 
 Objetivo: corpus experimental estratificado, medición cronometrada TRADITIONAL vs SYSTEM por etapas y estadística real para la validación de la hipótesis (línea base 240 min, meta experimental 60 min).
 
@@ -360,40 +372,40 @@ Objetivo: corpus experimental estratificado, medición cronometrada TRADITIONAL 
 
 ```text
 notariado-app/
-├── .agents/                    # Reglas e invariantes locales Antigravity
-│   ├── rules/                  # Reglas notariales, de tesis y arquitectura
-│   └── skills/                 # Skills para DOCX, validacion y experimentacion
-├── backend/                    # API FastAPI, SQLAlchemy, SQLite
-│   ├── alembic/                # Migraciones de base de datos
+├── .agents/                    # Reglas y procedimientos locales
+├── backend/
+│   ├── alembic/                # Migraciones versionadas
 │   ├── app/
-│   │   ├── api/v1/endpoints/   # auth, users, audit, health, clients, cases, legal_entities, dynamic_fields, templates
-│   │   ├── core/               # config.py, security.py, roles.py
-│   │   ├── db/                 # Sesion y base SQLAlchemy
-│   │   ├── models/             # User, Client, LegalEntity, Case, CaseParty, AuditLog, dynamic_field (Template*)
-│   │   ├── repositories/       # Capa de acceso a datos
-│   │   ├── rules/              # Motor RULE-001..020: engine, checks, catalog, gt_catalog, number_words
-│   │   ├── schemas/            # Esquemas Pydantic v2 (client, case, legal_entity, dynamic_field, template, validation, document)
-│   │   ├── services/           # user, client, case, legal_entity, audit, dynamic_field, template_docx, validation, document_generation
-│   │   └── utils/              # seed_users.py
-│   ├── tests/
-│   │   ├── integration/        # auth, users, audit, clients, cases, dynamic_fields, templates, validations, documents
-│   │   └── unit/               # security, config, dynamic_fields, jinja_extraction, number_words, rule_engine, document_context
-│   └── requirements.txt
-├── frontend/                   # Interfaz React + TypeScript + Vite
+│   │   ├── api/v1/endpoints/   # Entradas HTTP por módulo
+│   │   ├── core/              # Configuración, seguridad y permisos
+│   │   ├── db/                # Base y sesiones SQLAlchemy
+│   │   ├── models/            # Dominio, versiones, validación y experimento
+│   │   ├── repositories/      # Solo inicializador; pendiente de resolver en fase 5
+│   │   ├── rules/             # Motor RULE-001..020 y catálogos
+│   │   ├── schemas/           # Contratos Pydantic
+│   │   ├── services/          # Coordinación y persistencia
+│   │   └── utils/             # seed_users.py y synthetic_data.py
+│   ├── tests/                 # unit/ e integration/
+│   ├── pyproject.toml         # Configuración Ruff y pytest
+│   └── requirements*.txt      # Dependencias de ejecución/desarrollo y versiones fijadas
+├── frontend/
+│   ├── e2e/                   # Escenario Playwright de campos dinámicos
 │   └── src/
-│       ├── components/         # Navbar, LoginModal, UserManagementModal, SystemHealthBadge
-│       │   └── common/         # ClientSearchSelect, ConfirmDialog
-│       ├── context/            # AuthContext
-│       ├── features/           # dashboard/, clients/, cases/, fields/, templates/, validation/, documents/
-│       ├── lib/                # validators.ts (Zod), labels.ts, format.ts
-│       ├── services/           # api.ts (auth, users, clients, legal-entities, cases, templates, validations)
-│       ├── test/               # setup Vitest + Testing Library
-│       └── types/              # index.ts
-├── docs/                       # Documentacion formal de arquitectura, scrum y tesis
-├── scripts/                    # dev.ps1, test.ps1, seed.ps1, backup.ps1, experiment.ps1
-├── AGENTS.md                   # Reglas maestras del proyecto (Antigravity)
-└── README.md                   # Guia de inicio rapido y estado del proyecto
+│       ├── components/        # Navegación, sesión, usuarios y UI común
+│       ├── context/           # AuthContext
+│       ├── features/          # dashboard, clients, cases, fields, templates,
+│       │                      # validation, documents y experiment
+│       ├── lib/               # Validadores, etiquetas y formato
+│       ├── services/          # Cliente HTTP y API mayormente centralizados
+│       ├── test/              # Preparación Vitest
+│       └── types/             # Contratos mayormente centralizados
+├── docs/                      # Índice, guías, planificación, evidencia y antecedentes
+├── scripts/                   # setup, dev, test, seed, backup, experiment y baseline
+├── AGENTS.md                  # Reglas permanentes
+└── README.md
 ```
+
+Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y cachés se excluyen de Git. La [arquitectura](docs/architecture.md), el [mapa de módulos](docs/modules.md) y las [convenciones](docs/contributing.md) detallan responsabilidades actuales y la reorganización pendiente.
 
 ---
 
@@ -401,6 +413,7 @@ notariado-app/
 
 | Commit | Fase | Descripcion |
 |---|---|---|
+| a48ef71 | Estructural 0–1 | Referencia verificada, instalación repetible, dependencias fijadas y scripts Windows |
 | 209c9cb | Fase 1 | Base modular: FastAPI, SQLite, Alembic, React, Tailwind, test suite |
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |

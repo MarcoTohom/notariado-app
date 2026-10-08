@@ -76,16 +76,14 @@ Tablas nuevas: `templates`, `template_versions`, `template_fields`, `case_field_
 
 ## Instalación y verificación Windows
 
-Después de preparar las dependencias con `scripts/setup.ps1 -E2E` (véase la [guía de instalación](installation.md)):
+Desde la raíz del repositorio (véase la [guía de instalación](installation.md)):
 
 ```powershell
-cd backend
-.\.venv\Scripts\python.exe -m alembic upgrade head
-cd ..\frontend
-npx playwright install chromium
-cd ..
+.\scripts\setup.ps1 -E2E
 .\scripts\test.ps1 -E2E
 ```
+
+El instalador prepara Chromium en la ubicación usada por el script de pruebas. El [índice documental](README.md) y el [mapa de módulos](modules.md) enlazan el resto de flujos.
 
 `dev.ps1` aplica migraciones antes de iniciar. `phase3_subjects` incorpora la migración faltante de la fase anterior, conservando tablas preexistentes creadas por create_all. `phase4_fields` admite instalaciones que ya hayan creado esas tablas, sin borrar datos. Las pruebas de migración cubren una base nueva y otra preexistente. Las pruebas de API usan SQLite aislado y las de navegador arrancan servicios en 8011/5174 con una base temporal y datos sintéticos. No usan cuentas ni archivos del bufete.
 
