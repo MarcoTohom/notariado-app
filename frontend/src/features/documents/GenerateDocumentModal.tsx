@@ -1,3 +1,5 @@
+import { Modal, ModalBody } from "../../components/common/Modal";
+import { ErrorNotice } from "../../components/common/Feedback";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Case } from "../cases/types";
@@ -7,7 +9,7 @@ import { getApiErrorMessage } from "../../shared/api/errors";
 import { templateService } from "../templates/api";
 import { DocumentVersionsList } from "./DocumentVersionsList";
 import { CASE_TYPE_LABELS } from "../../lib/labels";
-import { X, FileOutput, Loader2, AlertTriangle } from "lucide-react";
+import { FileOutput, Loader2, AlertTriangle } from "lucide-react";
 
 interface GenerateDocumentModalProps {
   caseItem: Case | null;
@@ -73,107 +75,92 @@ export const GenerateDocumentModal: React.FC<GenerateDocumentModalProps> = ({
   const latestVersion = result?.versions[0] ?? null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
-      <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] flex flex-col shadow-2xl border border-slate-200 overflow-hidden">
-        {/* Header */}
-        <div className="bg-slate-900 text-white p-5 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-2.5">
-            <div className="bg-brand-600 p-2 rounded-lg text-white">
-              <FileOutput className="w-5 h-5" />
-            </div>
-            <div>
-              <h3 className="font-bold text-base leading-tight">Generar Borrador DOCX</h3>
-              <p className="text-xs text-slate-400 font-mono">
-                {caseItem.case_number} • {CASE_TYPE_LABELS[caseItem.case_type]}
+    <Modal
+      title={<>Generar Borrador DOCX</>}
+      subtitle={<>{caseItem.case_number} • {CASE_TYPE_LABELS[caseItem.case_type]}</>}
+      icon={<FileOutput className="w-5 h-5" />}
+      onClose={onClose}
+      size="2xl"
+      subtitleClassName="font-mono"
+    >
+
+      {/* Cuerpo */}
+      <ModalBody className="space-y-4">
+        <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
+          <div>
+            <label htmlFor="gen_template" className="block text-xs font-semibold text-slate-700 mb-1">
+              Plantilla (versión ACTIVA)
+            </label>
+            <select
+              id="gen_template"
+              value={templateVersionId}
+              onChange={(e) => setTemplateVersionId(e.target.value)}
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+            >
+              {activeTemplates.length === 0 && (
+                <option value="">Sin plantilla activa para este tipo</option>
+              )}
+              {activeTemplates.map((template) => (
+                <option key={template.active_version_id} value={template.active_version_id ?? ""}>
+                  {template.name}
+                </option>
+              ))}
+            </select>
+            {activeTemplates.length === 0 && (
+              <p className="text-[11px] text-amber-700 mt-1 flex items-center gap-1">
+                <AlertTriangle className="w-3 h-3" />
+                Carga y activa una plantilla DOCX en el módulo Plantillas antes de generar.
               </p>
-            </div>
+            )}
+          </div>
+          <div>
+            <label htmlFor="gen_notes" className="block text-xs font-semibold text-slate-700 mb-1">
+              Notas de la versión (opcional)
+            </label>
+            <input
+              id="gen_notes"
+              type="text"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Ej. Primera revisión con el otorgante"
+              className="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
+            />
           </div>
           <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white p-1 rounded-lg transition-colors"
+            onClick={() => generateMutation.mutate()}
+            disabled={!templateVersionId || generateMutation.isPending}
+            className="w-full text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
           >
-            <X className="w-5 h-5" />
+            {generateMutation.isPending ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Renderizando y verificando…
+              </>
+            ) : (
+              <>
+                <FileOutput className="w-4 h-4" />
+                Generar y verificar borrador
+              </>
+            )}
           </button>
         </div>
 
-        {/* Cuerpo */}
-        <div className="flex-1 overflow-y-auto p-5 space-y-4">
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3">
-            <div>
-              <label htmlFor="gen_template" className="block text-xs font-semibold text-slate-700 mb-1">
-                Plantilla (versión ACTIVA)
-              </label>
-              <select
-                id="gen_template"
-                value={templateVersionId}
-                onChange={(e) => setTemplateVersionId(e.target.value)}
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-              >
-                {activeTemplates.length === 0 && (
-                  <option value="">Sin plantilla activa para este tipo</option>
-                )}
-                {activeTemplates.map((template) => (
-                  <option key={template.active_version_id} value={template.active_version_id ?? ""}>
-                    {template.name}
-                  </option>
-                ))}
-              </select>
-              {activeTemplates.length === 0 && (
-                <p className="text-[11px] text-amber-700 mt-1 flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" />
-                  Carga y activa una plantilla DOCX en el módulo Plantillas antes de generar.
-                </p>
-              )}
-            </div>
-            <div>
-              <label htmlFor="gen_notes" className="block text-xs font-semibold text-slate-700 mb-1">
-                Notas de la versión (opcional)
-              </label>
-              <input
-                id="gen_notes"
-                type="text"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-                placeholder="Ej. Primera revisión con el otorgante"
-                className="w-full border border-slate-300 rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-brand-500 bg-white"
-              />
-            </div>
-            <button
-              onClick={() => generateMutation.mutate()}
-              disabled={!templateVersionId || generateMutation.isPending}
-              className="w-full text-xs font-semibold bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-lg flex items-center justify-center gap-1.5 transition-colors disabled:opacity-50"
-            >
-              {generateMutation.isPending ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Renderizando y verificando…
-                </>
-              ) : (
-                <>
-                  <FileOutput className="w-4 h-4" />
-                  Generar y verificar borrador
-                </>
-              )}
-            </button>
-          </div>
+        {actionError && (
+          <ErrorNotice className="whitespace-pre-line">
+            {actionError}
+          </ErrorNotice>
+        )}
 
-          {actionError && (
-            <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium px-3.5 py-2.5 rounded-lg whitespace-pre-line">
-              {actionError}
-            </div>
-          )}
-
-          {/* Resultado de la generación */}
-          {result && latestVersion && (
-            <section className="space-y-2">
-              <h4 className="text-xs font-bold text-slate-800">
-                Borrador generado — {result.title}
-              </h4>
-              <DocumentVersionsList versions={[latestVersion]} />
-            </section>
-          )}
-        </div>
-      </div>
-    </div>
+        {/* Resultado de la generación */}
+        {result && latestVersion && (
+          <section className="space-y-2">
+            <h4 className="text-xs font-bold text-slate-800">
+              Borrador generado — {result.title}
+            </h4>
+            <DocumentVersionsList versions={[latestVersion]} />
+          </section>
+        )}
+      </ModalBody>
+    </Modal>
   );
 };

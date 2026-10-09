@@ -38,6 +38,20 @@ Los esquemas se localizan en [schemas](../backend/app/schemas), la persistencia 
 
 [AppProviders](../frontend/src/app/AppProviders.tsx) compone TanStack Query, sesión y BrowserRouter. [AppRoutes](../frontend/src/app/AppRoutes.tsx) conserva rutas y permisos; [AppLayout](../frontend/src/app/AppLayout.tsx) contiene navegación y pie. [RequireAuth](../frontend/src/features/auth/RequireAuth.tsx) conserva los estados de carga, inicio de sesión y acceso restringido.
 
+## UI compartida y campos
+
+| Responsabilidad | Ubicación y consumidores |
+|---|---|
+| Modal, cabecera, cuerpo y acciones | [Modal.tsx](../frontend/src/components/common/Modal.tsx); once modales de funcionalidades y [ConfirmDialog](../frontend/src/components/common/ConfirmDialog.tsx) |
+| Mensajes y carga | [Feedback.tsx](../frontend/src/components/common/Feedback.tsx); formularios, listas, detalles y acceso |
+| Badges y estilos de formulario | [Badge.tsx](../frontend/src/components/common/Badge.tsx), [formStyles.ts](../frontend/src/components/common/formStyles.ts); consumidores conservan sus colores y variantes |
+| Registro y renderizado de veinte tipos | [FieldControls.tsx](../frontend/src/features/fields/FieldControls.tsx); consumido por DynamicForm y listas anidadas |
+| Controles de captura | [controls](../frontend/src/features/fields/controls); BasicInputs, TextInputs, SelectInput, RelationInput, FileInput y ListInput |
+| Coordinación del editor | [FieldDefinitionEditor.tsx](../frontend/src/features/fields/FieldDefinitionEditor.tsx); orden, expansión y edición anidada |
+| Secciones del editor | [editor](../frontend/src/features/fields/editor); DefinitionSettings, DefinitionOptions y DefinitionRestrictions, con defaults y controles auxiliares |
+
+Los componentes comunes reciben presentación y acciones. Las consultas, permisos, payloads y estados de negocio permanecen en cada funcionalidad. [Informe de la extracción](testing/FASE_4_ESTRUCTURAL.md).
+
 ## Operaciones de generación y medición
 
 Estas rutas completas corresponden al contrato de referencia:
@@ -69,10 +83,11 @@ El [OpenAPI conservado](testing/baseline/2026-10-08/openapi.json) contiene 47 ru
 | Reglas | [test_rule_engine](../backend/tests/unit/test_rule_engine.py), [test_number_words](../backend/tests/unit/test_number_words.py), [test_validations_api](../backend/tests/integration/test_validations_api.py), [FindingsPanel](../frontend/src/features/validation/__tests__/FindingsPanel.test.tsx) |
 | Documentos | [test_document_context](../backend/tests/unit/test_document_context.py), [test_documents_api](../backend/tests/integration/test_documents_api.py), [DocumentVersionsList](../frontend/src/features/documents/__tests__/DocumentVersionsList.test.tsx) |
 | Experimento | [test_experiment_corpus](../backend/tests/unit/test_experiment_corpus.py), [test_experiment_api](../backend/tests/integration/test_experiment_api.py), [ExperimentStatsCards](../frontend/src/features/experiment/__tests__/ExperimentStatsCards.test.tsx) |
-| Operación y navegador | [test_backup_operations](../backend/tests/unit/test_backup_operations.py), [dynamic-fields.spec.ts](../frontend/e2e/dynamic-fields.spec.ts) |
+| Operación y navegador | [test_backup_operations](../backend/tests/unit/test_backup_operations.py), [dynamic-fields.spec.ts](../frontend/e2e/dynamic-fields.spec.ts), [shared-modals.spec.ts](../frontend/e2e/shared-modals.spec.ts) |
 | Transporte y permisos frontend | [client.test](../frontend/src/shared/api/__tests__/client.test.ts), [errors.test](../frontend/src/shared/api/__tests__/errors.test.ts), [RequireAuth.test](../frontend/src/features/auth/__tests__/RequireAuth.test.tsx) |
+| UI común y editor | [Modal.test](../frontend/src/components/common/__tests__/Modal.test.tsx), [FieldDefinitionEditor.test](../frontend/src/features/fields/__tests__/FieldDefinitionEditor.test.tsx) |
 
-[test.ps1](../scripts/test.ps1) ejecuta calidad, backend, frontend y compilación; `-E2E` añade el escenario de campos dinámicos. Los informes de [fase 1](testing/FASE_1_ESTRUCTURAL.md) y [fase 3](testing/FASE_3_ESTRUCTURAL.md) detallan resultados y límites de cobertura.
+[test.ps1](../scripts/test.ps1) ejecuta calidad, backend, frontend y compilación; `-E2E` añade los escenarios de campos dinámicos y modales. Los informes de [fase 1](testing/FASE_1_ESTRUCTURAL.md), [fase 3](testing/FASE_3_ESTRUCTURAL.md) y [fase 4](testing/FASE_4_ESTRUCTURAL.md) detallan resultados y límites de cobertura.
 
 ## Funcionalidades previstas
 

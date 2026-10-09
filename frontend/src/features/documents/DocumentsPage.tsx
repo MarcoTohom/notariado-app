@@ -1,3 +1,5 @@
+import { LoadingState } from "../../components/common/Feedback";
+import { Badge } from "../../components/common/Badge";
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { documentService } from "./api";
@@ -8,7 +10,6 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   Eye,
   CheckCircle2,
   AlertTriangle,
@@ -55,10 +56,10 @@ export const DocumentsPage: React.FC = () => {
       {/* Tabla */}
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm mb-4">
         {documentsQuery.isLoading ? (
-          <div className="flex items-center justify-center py-16 text-slate-400">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          <LoadingState className="py-16">
+
             <span className="text-xs">Cargando borradores…</span>
-          </div>
+          </LoadingState>
         ) : documentsQuery.isError ? (
           <div className="py-16 text-center">
             <p className="text-xs text-red-600 font-medium">
@@ -94,9 +95,9 @@ export const DocumentsPage: React.FC = () => {
                       </span>
                     </td>
                     <td className="py-2.5 px-4">
-                      <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-brand-50 text-brand-700 border border-brand-200">
+                      <Badge className="bg-brand-50 text-brand-700 border border-brand-200">
                         {doc.status}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="py-2.5 px-4 text-slate-500">{formatDateTime(doc.created_at)}</td>
                     <td className="py-2.5 px-4">

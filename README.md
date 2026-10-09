@@ -69,6 +69,8 @@ La [fase estructural 1](docs/testing/FASE_1_ESTRUCTURAL.md) registra la instalac
 
 La [fase estructural 3](docs/testing/FASE_3_ESTRUCTURAL.md) registra la separación frontend de API, tipos y composición: 102 pruebas frontend, un E2E, lint, tipos y compilación aprobados; contratos, rutas y permisos conservados.
 
+La [fase estructural 4](docs/testing/FASE_4_ESTRUCTURAL.md) registra componentes comunes de modal, mensajes, carga y badges, y la división de controles y editor: 111 pruebas frontend, dos E2E, lint, tipos y compilación aprobados.
+
 ```powershell
 .\scripts\test.ps1
 ```
@@ -86,10 +88,10 @@ El estado del código revisado el **8 de octubre de 2026** se resume en el [mapa
 | Fases 1–7 | Módulos de base, seguridad, expedientes, campos, plantillas, reglas y borradores implementados |
 | Fase 8: ingesta XLSX/CSV/PDF | Prevista; los adjuntos actuales se guardan y descargan |
 | Fase 9: administración financiera | Prevista |
-| Fase 10: QA integral | Pruebas disponibles; el E2E automatizado actual cubre campos dinámicos |
+| Fase 10: QA integral | Pruebas disponibles; los E2E actuales cubren campos dinámicos y formularios/modales compartidos |
 | Fase 11: medición de tesis | Módulo implementado; la reducción temporal requiere el experimento registrado |
 
-Los apartados siguientes conservan el historial de entregas y sus verificaciones reportadas. Las comprobaciones recientes y sus límites se encuentran en los informes de las [fases estructurales 0](docs/testing/BASELINE_ESTRUCTURAL.md), [1](docs/testing/FASE_1_ESTRUCTURAL.md), [2](docs/testing/FASE_2_ESTRUCTURAL.md) y [3](docs/testing/FASE_3_ESTRUCTURAL.md).
+Los apartados siguientes conservan el historial de entregas y sus verificaciones reportadas. Las comprobaciones recientes y sus límites se encuentran en los informes de las [fases estructurales 0](docs/testing/BASELINE_ESTRUCTURAL.md), [1](docs/testing/FASE_1_ESTRUCTURAL.md), [2](docs/testing/FASE_2_ESTRUCTURAL.md), [3](docs/testing/FASE_3_ESTRUCTURAL.md) y [4](docs/testing/FASE_4_ESTRUCTURAL.md).
 
 ### FASE 1 — Monolito Modular Base — COMPLETADA (commit 209c9cb)
 
@@ -394,7 +396,7 @@ notariado-app/
 │   ├── e2e/                   # Escenario Playwright de campos dinámicos
 │   └── src/
 │       ├── app/               # Proveedores, rutas y layout
-│       ├── components/        # Navegación y UI común
+│       ├── components/        # Navegación y UI común: modales, mensajes, carga y badges
 │       ├── features/          # dashboard, auth, users, audit, clients, cases, fields,
 │       │                      # templates, validation, documents y experiment;
 │       │                      # API y tipos propios por funcionalidad
@@ -417,6 +419,7 @@ Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y ca
 |---|---|---|
 | a48ef71 | Estructural 0–1 | Referencia verificada, instalación repetible, dependencias fijadas y scripts Windows |
 | 338d6b0 | Estructural 2 | Índice, arquitectura, mapa de módulos, convenciones y referencias documentales verificadas |
+| da9d93b | Estructural 3 | API y tipos por funcionalidad, cliente HTTP compartido y composición de la aplicación |
 | 209c9cb | Fase 1 | Base modular: FastAPI, SQLite, Alembic, React, Tailwind, test suite |
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |

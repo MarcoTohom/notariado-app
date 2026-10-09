@@ -1,7 +1,8 @@
+import { LoadingState } from "../../components/common/Feedback";
 import React, { useState } from "react";
 import { useAuth } from "./AuthContext";
 import { LoginModal } from "./LoginModal";
-import { Loader2, LockKeyhole, ShieldX, LogIn } from "lucide-react";
+import { LockKeyhole, ShieldX, LogIn } from "lucide-react";
 
 interface RequireAuthProps {
   /** Permiso granular requerido (matriz RBAC, ej. "clients:read"). */
@@ -15,10 +16,10 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({ permission, children }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-24 text-slate-400">
-        <Loader2 className="w-5 h-5 animate-spin mr-2" />
+      <LoadingState className="py-24">
+
         <span className="text-xs">Verificando sesión…</span>
-      </div>
+      </LoadingState>
     );
   }
 

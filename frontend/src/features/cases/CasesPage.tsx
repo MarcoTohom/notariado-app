@@ -1,3 +1,5 @@
+import { LoadingState } from "../../components/common/Feedback";
+import { Badge } from "../../components/common/Badge";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Case, CaseCreate, CaseStatus, CaseUpdate } from "./types";
@@ -24,7 +26,6 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   ShieldCheck,
   FileOutput,
 } from "lucide-react";
@@ -184,10 +185,10 @@ export const CasesPage: React.FC = () => {
 
         {/* Tabla */}
         {casesQuery.isLoading ? (
-          <div className="flex items-center justify-center py-16 text-slate-400">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          <LoadingState className="py-16">
+
             <span className="text-xs">Cargando expedientes…</span>
-          </div>
+          </LoadingState>
         ) : casesQuery.isError ? (
           <div className="py-16 text-center">
             <p className="text-xs text-red-600 font-medium">
@@ -221,11 +222,9 @@ export const CasesPage: React.FC = () => {
                       {CASE_TYPE_LABELS[caseItem.case_type]}
                     </td>
                     <td className="py-2.5 px-4">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold border ${CASE_STATUS_COLORS[caseItem.status]}`}
-                      >
+                      <Badge className={`border ${CASE_STATUS_COLORS[caseItem.status]}`}>
                         {CASE_STATUS_LABELS[caseItem.status]}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="py-2.5 px-4 text-center text-slate-600">
                       {caseItem.parties.length}

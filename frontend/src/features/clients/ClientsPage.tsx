@@ -1,3 +1,5 @@
+import { Badge } from "../../components/common/Badge";
+import { LoadingState } from "../../components/common/Feedback";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { Client, ClientCreate, ClientUpdate, LegalEntity, LegalEntityCreate } from "./types";
@@ -17,7 +19,6 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Loader2,
 } from "lucide-react";
 
 const PAGE_SIZE = 10;
@@ -117,15 +118,12 @@ export const ClientsPage: React.FC = () => {
   });
 
   const statusBadge = (status: string) => (
-    <span
-      className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
-        status === "ACTIVE"
-          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-          : "bg-slate-100 text-slate-500 border border-slate-200"
-      }`}
-    >
+    <Badge className={`${status === "ACTIVE"
+        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+        : "bg-slate-100 text-slate-500 border border-slate-200"
+      }`}>
       {status === "ACTIVE" ? "ACTIVO" : "INACTIVO"}
-    </span>
+    </Badge>
   );
 
   return (
@@ -169,11 +167,10 @@ export const ClientsPage: React.FC = () => {
                 setTab("individual");
                 setPage(0);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                tab === "individual"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${tab === "individual"
                   ? "bg-slate-900 text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
-              }`}
+                }`}
             >
               <Users className="w-3.5 h-3.5" />
               Personas Individuales
@@ -183,11 +180,10 @@ export const ClientsPage: React.FC = () => {
                 setTab("juridica");
                 setPage(0);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${
-                tab === "juridica"
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-colors ${tab === "juridica"
                   ? "bg-slate-900 text-white shadow-sm"
                   : "text-slate-500 hover:text-slate-900 hover:bg-slate-100"
-              }`}
+                }`}
             >
               <Building2 className="w-3.5 h-3.5" />
               Personas Jurídicas
@@ -217,10 +213,10 @@ export const ClientsPage: React.FC = () => {
 
         {/* Contenido */}
         {activeQuery.isLoading ? (
-          <div className="flex items-center justify-center py-16 text-slate-400">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          <LoadingState className="py-16">
+
             <span className="text-xs">Cargando registros…</span>
-          </div>
+          </LoadingState>
         ) : activeQuery.isError ? (
           <div className="py-16 text-center">
             <p className="text-xs text-red-600 font-medium">No se pudieron cargar los datos. Verifica tu sesión.</p>

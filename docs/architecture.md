@@ -34,6 +34,9 @@ En desarrollo, Vite sirve la interfaz y redirige `/api/v1` al backend mediante s
 | [API y tipos por funcionalidad](modules.md) | api.ts y types.ts dentro de cada módulo, incluido campos dinámicos |
 | [frontend/src/shared/types.ts](../frontend/src/shared/types.ts) | CaseType, contrato usado por expedientes, plantillas y experimento |
 | [frontend/src/features/auth](../frontend/src/features/auth) | Sesión, LoginModal y RequireAuth para acceso a pantallas |
+| [frontend/src/components/common](../frontend/src/components/common) | Modal/ModalFrame, cuerpo y acciones, errores, carga, badges y estilos de formulario |
+| [frontend/src/features/fields/controls](../frontend/src/features/fields/controls) | Entradas básicas, texto, catálogos, relaciones, adjuntos y listas |
+| [frontend/src/features/fields/editor](../frontend/src/features/fields/editor) | Configuración, opciones por tipo y restricciones de definiciones de campos |
 | [backend/app/api](../backend/app/api) | Entradas HTTP, autenticación y permisos |
 | [backend/app/schemas](../backend/app/schemas) | Contratos y validación Pydantic |
 | [backend/app/services](../backend/app/services) | Coordinación de persistencia, auditoría, reglas, documentos y medición |
@@ -45,6 +48,8 @@ En desarrollo, Vite sirve la interfaz y redirige `/api/v1` al backend mediante s
 
 Los servicios acceden actualmente a SQLAlchemy. `backend/app/repositories/` contiene solo su inicializador; no constituye una capa de acceso a datos implementada. Hay dependencias compartidas pendientes de ordenar: generación y experimento importan `_build_context` de validación, y varios servicios reutilizan operaciones de persistencia de campos dinámicos. Estos cambios corresponden a la fase estructural 5.
 
+En frontend, cada funcionalidad conserva estado, consultas, validaciones y acciones de sus modales. La UI común concentra su estructura visual y nombres accesibles. `FieldControls.tsx` conserva el registro de veinte tipos y la composición con React Hook Form; pasa el renderizador a ListInput para mantener la recursión sin imports circulares. `FieldDefinitionEditor.tsx` conserva orden, expansión y edición anidada; sus secciones reciben cambios parciales de una definición. La normalización y los cálculos siguen en `validation.ts`.
+
 ## Captura, validación y generación
 
 Los valores capturados quedan asociados al expediente y a una versión concreta de campos. La validación normaliza datos, calcula valores con `Decimal` y produce hallazgos. El backend genera DOCX con `docxtpl`, inspecciona variables residuales con `python-docx` y registra cada versión con su estado. Las versiones previas se conservan; una plantilla de campos con estado `FIELD_DEFINITION` se distingue de una plantilla DOCX activa.
@@ -55,7 +60,7 @@ Los roles y permisos se definen en [roles.py](../backend/app/core/roles.py) y se
 
 1. **Mantener el backend por capas.** Se reorganizarán responsabilidades concretas dentro de las capas existentes. Una capa nueva de repositorios necesitaría una justificación y un alcance propios.
 2. **Organizar el frontend por funcionalidad.** La fase estructural 3 distribuyó las API y los tipos antes concentrados en archivos globales, siguiendo la referencia de `features/fields`. No quedan reexports de compatibilidad ni consumidores de las ubicaciones anteriores.
-3. **Extraer elementos compartidos cuando tengan consumidores concretos.** Las fases 4–6 ordenarán UI, interfaces públicas y recursos de pruebas. No se crean carpetas vacías como preparación.
+3. **Extraer elementos compartidos cuando tengan consumidores concretos.** La fase 4 reunió UI común y dividió controles y editor. Las fases 5–6 ordenarán interfaces públicas backend y recursos de pruebas. No se crean carpetas vacías como preparación.
 4. **Conservar contratos y persistencia.** La reorganización usa como referencia [OpenAPI](testing/baseline/2026-10-08/openapi.json), [el esquema SQLite](testing/baseline/2026-10-08/database-schema.json) y las pruebas existentes. Cualquier cambio funcional adicional requiere identificarse como tal.
 
-Las [convenciones](contributing.md) indican cómo aplicar estas decisiones. El [informe de fase 3](testing/FASE_3_ESTRUCTURAL.md) registra la equivalencia de contratos, navegación y componentes tras la extracción. Los informes de pruebas registran resultados ejecutados; no se establece una latencia garantizada de respuesta.
+Las [convenciones](contributing.md) indican cómo aplicar estas decisiones. Los informes de [fase 3](testing/FASE_3_ESTRUCTURAL.md) y [fase 4](testing/FASE_4_ESTRUCTURAL.md) registran equivalencia e interacción tras las extracciones. Los informes de pruebas registran resultados ejecutados; no se establece una latencia garantizada de respuesta.

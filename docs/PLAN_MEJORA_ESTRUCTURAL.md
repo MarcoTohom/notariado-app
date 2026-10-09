@@ -27,7 +27,7 @@ La revisión inicial fue de código y documentación: esta copia no tenía `back
 | 1 | Unificar instalación, configuración y limpieza del repositorio | 0 | Completada |
 | 2 | Establecer documentación y convenciones de organización | 1 | Completada |
 | 3 | Organizar API, tipos y composición del frontend | 2 | Completada |
-| 4 | Extraer componentes y controles compartidos | 3 | Pendiente |
+| 4 | Extraer componentes y controles compartidos | 3 | Completada |
 | 5 | Separar responsabilidades y dependencias del backend | 4 | Pendiente |
 | 6 | Organizar recursos compartidos de pruebas | 5 | Pendiente |
 | 7 | Verificar el conjunto y cerrar la documentación | 6 | Pendiente |
@@ -204,3 +204,6 @@ Se aplican las [reglas permanentes del proyecto](../AGENTS.md) y los criterios p
 | 2026-10-08 | 2 | Entrega documental conservada en el commit `338d6b0` antes de reorganizar el frontend. | Commit creado |
 | 2026-10-08 | 3 | Distribución de contratos y servicios HTTP por funcionalidad, extracción de composición y revisión de consumidores iniciadas. | En curso |
 | 2026-10-08 | 3 | API y tipos distribuidos, cliente/errores comunes separados y composición extraída. 50 tipos y 13 declaraciones conservados; 102 pruebas frontend, un E2E, lint, tipos y build aprobados. Imports sin ciclos ni destinos rotos; navegación, permisos y cuerpos existentes equivalentes. [Informe](testing/FASE_3_ESTRUCTURAL.md). | Completada |
+| 2026-10-08 | 3 | Entrega conservada en el commit `da9d93b` antes de extraer la UI compartida. | Commit creado |
+| 2026-10-08 | 4 | Modales, mensajes, indicadores y estilos comunes extraídos; controles y editor divididos por responsabilidad. Verificación de interacción y equivalencia en curso. | En curso |
+| 2026-10-08 | 4 | Once modales y confirmación usan UI común; controles y editor divididos, handlers y contratos conservados. 111 pruebas frontend y dos E2E aprobados, lint/tipos/build aprobados e imports sin ciclos. Documentación y verificadores actualizados. [Informe](testing/FASE_4_ESTRUCTURAL.md). | Completada |

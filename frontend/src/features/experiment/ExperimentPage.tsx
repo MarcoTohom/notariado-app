@@ -1,3 +1,5 @@
+import { ErrorNotice, LoadingState } from "../../components/common/Feedback";
+import { Badge } from "../../components/common/Badge";
 import React, { useEffect, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { CaseType } from "../../shared/types";
@@ -113,10 +115,10 @@ export const ExperimentPage: React.FC = () => {
       const payload =
         active?.method === "TRADITIONAL"
           ? {
-              errors_found: parseInt(manualFound) || 0,
-              errors_missed: parseInt(manualMissed) || 0,
-              corrections: parseInt(corrections) || 0,
-            }
+            errors_found: parseInt(manualFound) || 0,
+            errors_missed: parseInt(manualMissed) || 0,
+            corrections: parseInt(corrections) || 0,
+          }
           : { corrections: parseInt(corrections) || 0 };
       return experimentService.finishExecution(active?.id ?? "", payload);
     },
@@ -182,9 +184,9 @@ export const ExperimentPage: React.FC = () => {
       </div>
 
       {actionError && (
-        <div className="bg-red-50 border border-red-200 text-red-700 text-xs font-medium px-3.5 py-2.5 rounded-lg">
+        <ErrorNotice>
           {actionError}
-        </div>
+        </ErrorNotice>
       )}
 
       {/* Distribución del corpus */}
@@ -237,11 +239,10 @@ export const ExperimentPage: React.FC = () => {
                 key={stage}
                 onClick={() => handleStage(stage)}
                 disabled={stageBusy !== null || finishedStages.includes(stage)}
-                className={`text-[11px] font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${
-                  finishedStages.includes(stage)
+                className={`text-[11px] font-semibold px-3 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors ${finishedStages.includes(stage)
                     ? "bg-emerald-600/30 text-emerald-300 border border-emerald-500/40"
                     : "bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700"
-                } disabled:opacity-60`}
+                  } disabled:opacity-60`}
               >
                 {finishedStages.includes(stage) ? (
                   <CheckCircle2 className="w-3 h-3" />
@@ -341,10 +342,10 @@ export const ExperimentPage: React.FC = () => {
         </div>
 
         {casesQuery.isLoading ? (
-          <div className="flex items-center justify-center py-12 text-slate-400">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          <LoadingState className="py-12">
+
             <span className="text-xs">Cargando corpus…</span>
-          </div>
+          </LoadingState>
         ) : (
           <div className="overflow-x-auto max-h-[420px] overflow-y-auto">
             <table className="w-full text-left text-xs">
@@ -366,13 +367,13 @@ export const ExperimentPage: React.FC = () => {
                     <td className="py-2.5 px-4 text-slate-600">{CASE_TYPE_LABELS[testCase.case_type]}</td>
                     <td className="py-2.5 px-4">
                       {testCase.has_anomalies ? (
-                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <Badge className="bg-amber-50 text-amber-700 border border-amber-200">
                           Anómalo
-                        </span>
+                        </Badge>
                       ) : (
-                        <span className="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <Badge className="bg-emerald-50 text-emerald-700 border border-emerald-200">
                           Íntegro
-                        </span>
+                        </Badge>
                       )}
                     </td>
                     <td className="py-2.5 px-4 font-mono text-[10px] text-slate-500">
@@ -426,10 +427,10 @@ export const ExperimentPage: React.FC = () => {
         {stats ? (
           <ExperimentStatsCards stats={stats} />
         ) : (
-          <div className="flex items-center justify-center py-10 text-slate-400">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          <LoadingState className="py-10">
+
             <span className="text-xs">Calculando estadística…</span>
-          </div>
+          </LoadingState>
         )}
       </section>
     </div>

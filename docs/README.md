@@ -23,9 +23,10 @@ Referencia del código revisada el **8 de octubre de 2026**. El sistema organiza
 | [Entorno y scripts: fase 1](testing/FASE_1_ESTRUCTURAL.md) | Instalación y operación verificadas; 260 pruebas backend, 85 frontend y un E2E aprobados |
 | [Documentación: fase 2](testing/FASE_2_ESTRUCTURAL.md) | Cambios documentales y comprobación de referencias |
 | [Organización frontend: fase 3](testing/FASE_3_ESTRUCTURAL.md) | API y tipos por funcionalidad, composición y pruebas de equivalencia |
+| [Componentes y controles: fase 4](testing/FASE_4_ESTRUCTURAL.md) | UI común, controles y editor por responsabilidad; 111 pruebas frontend y dos E2E |
 | [Generadores archivados](archive/bootstrap/README.md) | Antecedentes de preparación, conservados como texto |
 
-Los informes fechados son evidencia de sus respectivas ejecuciones. El E2E automatizado actual cubre campos dinámicos; la cobertura integral del flujo hasta el borrador se comprueba al cerrar el plan estructural.
+Los informes fechados son evidencia de sus respectivas ejecuciones. Los E2E actuales cubren campos dinámicos y formularios/modales compartidos; la cobertura integral del flujo hasta el borrador se comprueba al cerrar el plan estructural.
 
 ## Planificación y documentación académica
 

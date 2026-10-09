@@ -1,5 +1,7 @@
 # Fase 4: campos dinámicos
 
+La fase funcional 4 mantiene su numeración original. La reorganización estructural 4 dividió [los controles](../frontend/src/features/fields/controls) y [las secciones del editor](../frontend/src/features/fields/editor). FieldControls conserva registro/renderizado; FieldDefinitionEditor conserva orden y recursión. Tipos, validaciones y API permanecen en este módulo. [Informe y comprobaciones](testing/FASE_4_ESTRUCTURAL.md).
+
 Implementación de US-04.1, US-04.2 y US-04.3 (EPIC-04). Incluye el cálculo y las relaciones aunque US-04.3 figure en el Sprint 3: son parte de los veinte tipos de la fase cuatro.
 
 ## Uso
