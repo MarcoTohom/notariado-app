@@ -17,21 +17,18 @@ from scipy import stats as scipy_stats
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.db.operations import flush
 from app.models.audit import AuditLog
 from app.models.case import Case
+from app.models.case_field_values import CaseFieldValues
 from app.models.case_party import CaseParty
 from app.models.client import Client
-from app.models.dynamic_field import (
-    CaseFieldValues,
-    Template,
-    TemplateField,
-    TemplateVersion,
-)
+from app.models.dynamic_field import TemplateField
 from app.models.experiment import TestCase, TestExecution, TimeMeasurement
+from app.models.template import Template, TemplateVersion
 from app.models.user import User
 from app.rules.engine import run_rules
-from app.services.dynamic_field_service import flush
-from app.services.validation_service import _build_context
+from app.services.validation_context import build_validation_context
 from app.utils import synthetic_data as syn
 
 UTC = timezone.utc
@@ -315,7 +312,9 @@ def start_execution(
 
 def _compute_system_errors(db: Session, test_case: TestCase) -> tuple[int, int]:
     """Errores detectados/omitidos por el sistema vs. hallazgos esperados."""
-    ctx = _build_context(db, test_case.case_id, test_case.template_version_id, None)
+    ctx = build_validation_context(
+        db, test_case.case_id, test_case.template_version_id, None
+    )
     actual = {finding.rule_id for finding in run_rules(ctx)}
     expected = set(test_case.expected_findings or [])
     found = len(expected & actual)

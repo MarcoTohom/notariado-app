@@ -6,7 +6,7 @@ Revisada el **8 de octubre de 2026**. [Índice](README.md) · [Arquitectura](arc
 
 SQLAlchemy 2.x utiliza SQLite y Alembic versiona las migraciones de [backend/alembic](../backend/alembic). La ubicación predeterminada es `backend/app.db`, resuelta a una ruta absoluta; `DATABASE_URL` permite cambiarla. Plantillas y adjuntos se guardan en `backend/uploads`, borradores en `backend/generated`. La configuración y los scripts consultan las rutas efectivas.
 
-La referencia tiene **17 tablas de dominio y `alembic_version`**, con revisión `phase11_experiment`. [El esquema conservado](testing/baseline/2026-10-08/database-schema.json) contiene columnas, índices y relaciones. La fase estructural 1 comprobó que permanece igual a la referencia inicial.
+La referencia tiene **17 tablas de dominio y `alembic_version`**, con revisión `phase11_experiment`. [El esquema conservado](testing/baseline/2026-10-08/database-schema.json) contiene columnas, índices y relaciones. Las fases estructurales 1 y 5 comprobaron que permanece igual a la referencia inicial, incluidos índices y relaciones.
 
 | Tablas | Modelo y propósito |
 |---|---|
@@ -14,8 +14,8 @@ La referencia tiene **17 tablas de dominio y `alembic_version`**, con revisión 
 | `audit_logs` | [audit.py](../backend/app/models/audit.py): acciones y trazabilidad |
 | `clients`, `legal_entities` | [client.py](../backend/app/models/client.py), [legal_entity.py](../backend/app/models/legal_entity.py): fichas de personas individuales y jurídicas |
 | `cases`, `case_parties` | [case.py](../backend/app/models/case.py), [case_party.py](../backend/app/models/case_party.py): expedientes y comparecientes |
-| `templates`, `template_versions`, `template_fields` | [dynamic_field.py](../backend/app/models/dynamic_field.py): plantillas, versiones y definiciones de campos |
-| `case_field_values`, `field_attachments` | [dynamic_field.py](../backend/app/models/dynamic_field.py): valores JSON por expediente/versión y metadatos de adjuntos |
+| `templates`, `template_versions`, `template_fields` | [template.py](../backend/app/models/template.py) y [dynamic_field.py](../backend/app/models/dynamic_field.py): plantillas, versiones y definiciones de campos |
+| `case_field_values`, `field_attachments` | [case_field_values.py](../backend/app/models/case_field_values.py) y [field_attachment.py](../backend/app/models/field_attachment.py): valores JSON por expediente/versión y metadatos de adjuntos |
 | `validation_runs` | [validation.py](../backend/app/models/validation.py): historial de hallazgos |
 | `documents`, `document_versions` | [document.py](../backend/app/models/document.py): borradores, versiones, snapshots y estado de verificación |
 | `test_cases`, `test_executions`, `time_measurements` | [experiment.py](../backend/app/models/experiment.py): corpus, revisiones completas y duración de etapas |

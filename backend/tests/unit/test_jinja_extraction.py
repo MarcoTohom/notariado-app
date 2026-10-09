@@ -12,15 +12,15 @@ from pathlib import Path
 import pytest
 from docx import Document
 
-from app.services.template_docx_service import (
+from app.services.docx.analysis import (
     JinjaExtraction,
-    build_sample_context,
     extract_jinja_variables,
     find_residual_variables,
     humanize_label,
-    sanitize_original_name,
     suggest_field_type,
 )
+from app.services.docx.context import build_sample_context
+from app.services.docx.files import sanitize_original_name
 
 
 def _make_docx(

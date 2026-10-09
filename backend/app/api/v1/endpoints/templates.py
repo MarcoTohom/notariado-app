@@ -8,11 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_db, require_permission
 from app.models.user import User
-from app.schemas.template import (
-    PreviewResult,
-    TemplateDetail,
-    TemplateListResponse,
-)
+from app.schemas.template import PreviewResult, TemplateDetail, TemplateListResponse
 from app.services import template_docx_service as service
 
 router = APIRouter()

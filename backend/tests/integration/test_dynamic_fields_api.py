@@ -7,7 +7,9 @@ from pypdf import PdfWriter
 
 from app.core.security import create_access_token
 from app.models.audit import AuditLog
-from app.models.dynamic_field import CaseFieldValues, TemplateField, TemplateVersion
+from app.models.case_field_values import CaseFieldValues
+from app.models.dynamic_field import TemplateField
+from app.models.template import TemplateVersion
 from app.models.user import User
 
 BASE = "/api/v1/fields"

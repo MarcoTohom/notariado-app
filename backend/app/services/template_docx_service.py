@@ -5,22 +5,20 @@ extracción léxica de variables Jinja2 -> registro de campos detectados ->
 activación de una única versión vigente -> render de prueba verificado.
 """
 
-import hashlib
 import re
-from dataclasses import dataclass, field
 from pathlib import Path
 from uuid import uuid4
 
-from docx import Document
 from docxtpl import DocxTemplate
 from fastapi import HTTPException, UploadFile
 from jinja2 import ChainableUndefined, Environment
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.core.config import settings
+from app.db.operations import flush
 from app.models.audit import AuditLog
-from app.models.dynamic_field import Template, TemplateField, TemplateVersion
+from app.models.dynamic_field import TemplateField
+from app.models.template import Template, TemplateVersion
 from app.models.user import User
 from app.schemas.template import (
     PreviewResult,
@@ -30,10 +28,22 @@ from app.schemas.template import (
     TemplateSummary,
     TemplateVersionInfo,
 )
-from app.services.dynamic_field_service import flush, verify_file
+from app.services.docx.analysis import (
+    JinjaExtraction,
+    extract_jinja_variables,
+    find_residual_variables,
+    humanize_label,
+    suggest_field_type,
+)
+from app.services.docx.context import build_sample_context
+from app.services.docx.files import (
+    DOCX_SUFFIX,
+    preview_storage_dir,
+    read_valid_docx,
+    sha256_hex,
+    template_storage_dir,
+)
 
-DOCX_SUFFIX = ".docx"
-MAX_TEMPLATE_BYTES = 10 * 1024 * 1024  # 10 MB por archivo (security.md)
 VALID_CASE_TYPES = {
     "COMPRAVENTA",
     "DONACION",
@@ -42,26 +52,9 @@ VALID_CASE_TYPES = {
     "SOCIEDAD",
 }
 
-# --- Patrones léxicos Jinja2 (skill docx-template, paso 2) ---
-RE_VARIABLE = re.compile(r"\{\{\s*([a-zA-Z0-9_\.]+)\s*\}\}")
-RE_LOOP = re.compile(r"\{%\s*for\s+(\w+)\s+in\s+([a-zA-Z0-9_]+)\s*%\}")
-RE_CONDITIONAL = re.compile(r"\{%\s*if\s+([a-zA-Z0-9_\.]+)\s*%\}")
-
-
-@dataclass
-class JinjaExtraction:
-    """Variables detectadas en el documento, en orden de primera aparición."""
-
-    variables: list[str] = field(default_factory=list)
-    loops: list[dict[str, str]] = field(default_factory=list)
-    conditionals: list[str] = field(default_factory=list)
-
-    def loop_item_prefixes(self) -> list[str]:
-        return [loop["item"] for loop in self.loops]
-
 
 # ---------------------------------------------------------------------------
-# Auditoría y utilidades de archivo
+# Auditoría de plantillas
 # ---------------------------------------------------------------------------
 
 
@@ -79,169 +72,9 @@ def _audit(db: Session, user: User, action: str, record_id: str, details: str) -
     )
 
 
-def sanitize_original_name(name: str) -> str:
-    """Nombre de archivo seguro: basename sin caracteres de control ni rutas."""
-    cleaned = re.sub(r"[\x00-\x1f]", "", name.replace("\\", "/").split("/")[-1])
-    return cleaned[:200] or "plantilla.docx"
-
-
-def sha256_hex(content: bytes) -> str:
-    return hashlib.sha256(content).hexdigest()
-
-
-def _template_storage_dir() -> Path:
-    directory = settings.UPLOAD_DIR / "templates"
-    directory.mkdir(parents=True, exist_ok=True)
-    return directory
-
-
-def _preview_storage_dir() -> Path:
-    directory = settings.GENERATED_DIR / "previews"
-    directory.mkdir(parents=True, exist_ok=True)
-    return directory
-
-
-async def _read_valid_docx(file: UploadFile) -> tuple[bytes, str]:
-    """Valida extensión, tamaño (10 MB) e integridad OpenXML del archivo."""
-    original = sanitize_original_name(file.filename or "")
-    suffix = Path(original).suffix.lower()
-    if suffix != DOCX_SUFFIX:
-        raise HTTPException(422, "Solo se permiten archivos con extensión .docx.")
-    content = await file.read(MAX_TEMPLATE_BYTES + 1)
-    if not content:
-        raise HTTPException(422, "El archivo está vacío.")
-    if len(content) > MAX_TEMPLATE_BYTES:
-        raise HTTPException(413, "El archivo supera el máximo de 10 MB.")
-    verify_file(content, DOCX_SUFFIX)  # zip íntegro, sin macros ni XXE
-    return content, original
-
-
 # ---------------------------------------------------------------------------
-# Extracción léxica de variables Jinja2 (US-05.2)
+# Registro de campos detectados (US-05.2)
 # ---------------------------------------------------------------------------
-
-
-def _iter_document_text(document: Document) -> list[str]:
-    """Texto de párrafos y celdas de tablas (incluidas tablas anidadas)."""
-    chunks: list[str] = []
-
-    def visit_tables(tables) -> None:
-        for table in tables:
-            for row in table.rows:
-                for cell in row.cells:
-                    chunks.extend(p.text for p in cell.paragraphs)
-                    visit_tables(cell.tables)
-
-    chunks.extend(p.text for p in document.paragraphs)
-    visit_tables(document.tables)
-    return chunks
-
-
-def extract_jinja_variables(path: Path) -> JinjaExtraction:
-    """Detecta variables {{ ... }}, bucles {% for %} y condiciones {% if %}."""
-    try:
-        document = Document(str(path))
-    except Exception as exc:
-        raise HTTPException(422, "No se pudo abrir el DOCX para su análisis.") from exc
-
-    extraction = JinjaExtraction()
-    seen_vars: set[str] = set()
-    seen_loops: set[str] = set()
-    seen_ifs: set[str] = set()
-
-    for text in _iter_document_text(document):
-        for match in RE_VARIABLE.finditer(text):
-            var = match.group(1)
-            if var not in seen_vars:
-                seen_vars.add(var)
-                extraction.variables.append(var)
-        for match in RE_LOOP.finditer(text):
-            item, collection = match.group(1), match.group(2)
-            if collection not in seen_loops:
-                seen_loops.add(collection)
-                extraction.loops.append({"item": item, "collection": collection})
-        for match in RE_CONDITIONAL.finditer(text):
-            var = match.group(1)
-            if var not in seen_ifs:
-                seen_ifs.add(var)
-                extraction.conditionals.append(var)
-    return extraction
-
-
-def find_residual_variables(path: Path) -> list[str]:
-    """Variables {{ ... }} que persisten tras el render (RULE-017)."""
-    document = Document(str(path))
-    residuals: list[str] = []
-    seen: set[str] = set()
-    for text in _iter_document_text(document):
-        for match in RE_VARIABLE.finditer(text):
-            var = match.group(1)
-            if var not in seen:
-                seen.add(var)
-                residuals.append(var)
-    return residuals
-
-
-# ---------------------------------------------------------------------------
-# Sugerencia de tipos de campo (US-05.2, mapeo automático)
-# ---------------------------------------------------------------------------
-
-_CURRENCY_HINTS = (
-    "precio",
-    "monto",
-    "total",
-    "honorario",
-    "renta",
-    "capital",
-    "valor",
-    "pago",
-    "saldo",
-    "deposito",
-)
-_DATE_HINTS = ("fecha", "vencimiento")
-_TEXTAREA_HINTS = ("direccion", "observacion", "descripcion", "clausula", "texto")
-_NAME_HINTS = ("nombre", "razon_social", "apellido", "compareciente")
-
-
-def suggest_field_type(variable: str) -> str:
-    """Heurística de tipo según el nombre de la variable Jinja2."""
-    name = variable.lower()
-    if "dpi" in name or "cui" in name:
-        return "dpi"
-    if "nit" in name:
-        return "nit"
-    if "correo" in name or "email" in name:
-        return "email"
-    if "telefono" in name or "phone" in name:
-        return "phone"
-    if any(hint in name for hint in _DATE_HINTS):
-        return "date"
-    if "porcentaje" in name or "percent" in name:
-        return "percentage"
-    if any(hint in name for hint in _CURRENCY_HINTS):
-        return "currency"
-    if any(hint in name for hint in _NAME_HINTS):
-        return "name"
-    if any(hint in name for hint in _TEXTAREA_HINTS):
-        return "textarea"
-    return "text"
-
-
-_ACRONYMS = {"dpi", "nit", "cui", "s.a.", "sa"}
-
-
-def humanize_label(variable: str) -> str:
-    """Etiqueta legible: 'comprador.dpi' -> 'Comprador - DPI'."""
-    parts = [segment.replace("_", " ").strip() for segment in variable.split(".")]
-    humanized: list[str] = []
-    for part in parts:
-        words = [
-            word.upper() if word.lower() in _ACRONYMS else word.capitalize()
-            for word in part.split()
-            if word
-        ]
-        humanized.append(" ".join(words))
-    return " - ".join(p for p in humanized if p)[:150] or variable[:150]
 
 
 def _field_key(variable: str, taken: set[str]) -> str:
@@ -373,7 +206,7 @@ def _build_version(
         or 0
     ) + 1
     storage_name = f"{uuid4()}{DOCX_SUFFIX}"
-    destination = _template_storage_dir() / storage_name
+    destination = template_storage_dir() / storage_name
     version = TemplateVersion(
         template_id=template.id,
         version_number=number,
@@ -421,7 +254,7 @@ async def create_template_from_docx(
     clean_name = name.strip()
     if len(clean_name) < 3:
         raise HTTPException(422, "El nombre debe tener al menos 3 caracteres.")
-    content, original = await _read_valid_docx(file)
+    content, original = await read_valid_docx(file)
 
     template = Template(
         name=clean_name,
@@ -453,7 +286,7 @@ async def add_docx_version(
     template = db.get(Template, template_id)
     if template is None or template.status != "ACTIVE":
         raise HTTPException(404, "Plantilla no encontrada o inactiva.")
-    content, original = await _read_valid_docx(file)
+    content, original = await read_valid_docx(file)
     _build_version(db, template, user, content, original, notes)
     return get_template_detail(db, template.id)
 
@@ -515,71 +348,6 @@ def deactivate_template(db: Session, template_id: str, user: User) -> TemplateDe
 # Render de prueba con verificación (skill docx-template, paso 3)
 # ---------------------------------------------------------------------------
 
-_SAMPLE_BY_TYPE = {
-    "dpi": "1234567890101",
-    "nit": "1234567-8",
-    "name": "Nombre Sintético de Prueba",
-    "email": "prueba@example.com",
-    "phone": "00000000",
-    "date": "1 de enero de 2026",
-    "currency": "0.00",
-    "percentage": "0",
-    "boolean": True,
-    "text": "[valor de prueba]",
-    "textarea": "[valor de prueba]",
-    "list": "[valor de prueba]",
-}
-
-
-def _sample_for(variable: str) -> object:
-    return _SAMPLE_BY_TYPE[suggest_field_type(variable)]
-
-
-def _assign_nested(context: dict, dotted: str, value: object) -> None:
-    parts = dotted.split(".")
-    node = context
-    for part in parts[:-1]:
-        existing = node.get(part)
-        if not isinstance(existing, dict):
-            existing = {}
-            node[part] = existing
-        node = existing
-    node[parts[-1]] = value
-
-
-def build_sample_context(extraction: JinjaExtraction) -> dict:
-    """Contexto sintético para el render de prueba (nunca datos reales)."""
-    context: dict = {}
-    loop_items = {loop["item"]: loop for loop in extraction.loops}
-    collections = {loop["collection"]: loop for loop in extraction.loops}
-
-    for loop in extraction.loops:
-        item_vars = [
-            var for var in extraction.variables if var.startswith(f"{loop['item']}.")
-        ]
-        rows = []
-        for index in range(2):  # dos elementos de muestra por lista
-            row: dict = {}
-            for var in item_vars:
-                leaf = var.split(".", 1)[1]
-                row[leaf] = _sample_for(var)
-            row["indice"] = index + 1
-            rows.append(row)
-        context[loop["collection"]] = rows
-
-    for variable in extraction.variables:
-        parts = variable.split(".")
-        if parts[0] in collections:
-            continue  # ya cubierto por la colección del bucle
-        if len(parts) == 1 and variable in loop_items:
-            continue  # el item del bucle no existe fuera del for
-        _assign_nested(context, variable, _sample_for(variable))
-
-    for variable in extraction.conditionals:
-        if variable not in extraction.variables:
-            _assign_nested(context, variable, True)
-    return context
-
 
 def render_preview(
     db: Session, template_id: str, version_id: str, user: User
@@ -597,7 +365,7 @@ def render_preview(
     extraction = extract_jinja_variables(Path(version.file_path))
     context = build_sample_context(extraction)
     preview_name = f"{uuid4()}.docx"
-    destination = _preview_storage_dir() / preview_name
+    destination = preview_storage_dir() / preview_name
     jinja_env = Environment(undefined=ChainableUndefined, autoescape=False)
     try:
         document = DocxTemplate(str(version.file_path))
@@ -635,7 +403,7 @@ def preview_file_path(file_name: str) -> Path:
     """Ruta segura de un preview generado (anti path-traversal)."""
     if not re.fullmatch(r"[0-9a-f-]{36}\.docx", file_name):
         raise HTTPException(404, "Archivo no encontrado.")
-    path = _preview_storage_dir() / file_name
+    path = preview_storage_dir() / file_name
     if not path.is_file():
         raise HTTPException(404, "Archivo no encontrado o expirado.")
     return path

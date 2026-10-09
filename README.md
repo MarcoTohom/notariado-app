@@ -1,4 +1,4 @@
-﻿# Sistema de Borradores de Escrituras Públicas y Validación Documental Notarial
+# Sistema de Borradores de Escrituras Públicas y Validación Documental Notarial
 
 > **Proyecto de Graduación 2**
 > **Facultad de Ingeniería en Sistemas de Información y Ciencias de la Computación**
@@ -420,6 +420,7 @@ Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y ca
 | a48ef71 | Estructural 0–1 | Referencia verificada, instalación repetible, dependencias fijadas y scripts Windows |
 | 338d6b0 | Estructural 2 | Índice, arquitectura, mapa de módulos, convenciones y referencias documentales verificadas |
 | da9d93b | Estructural 3 | API y tipos por funcionalidad, cliente HTTP compartido y composición de la aplicación |
+| 8531a74 | Estructural 4 | UI común, controles de captura y editor por responsabilidad |
 | 209c9cb | Fase 1 | Base modular: FastAPI, SQLite, Alembic, React, Tailwind, test suite |
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |

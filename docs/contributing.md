@@ -17,7 +17,7 @@ Estas convenciones acompañan las [reglas permanentes](../AGENTS.md), el [mapa a
 | Utilidad frontend | `frontend/src/lib/`; nombre descriptivo en `camelCase` o convención existente |
 | Operación Windows | `scripts/<operacion>.ps1`; rutas resueltas desde el script y errores con salida fallida |
 
-No todos los módulos requieren subcarpetas `hooks`, `pages` o `components`: crearlas cuando el contenido lo justifique. Los modelos de campos, plantillas y adjuntos permanecen agrupados actualmente; su división pertenece a la fase 5.
+No todos los módulos requieren subcarpetas `hooks`, `pages` o `components`: crearlas cuando el contenido lo justifique. Los modelos de plantillas están en `models/template.py`, los valores en `models/case_field_values.py`, los adjuntos en `models/field_attachment.py` y las definiciones en `models/dynamic_field.py`. Importar desde su módulo propietario. `models/__init__.py` registra todas las clases para SQLAlchemy; no es una capa de compatibilidad.
 
 ## Tipos, HTTP e imports
 
