@@ -2,7 +2,7 @@
 
 [Índice documental](README.md) · [Mapa de módulos](modules.md) · [Convenciones de contribución](contributing.md).
 
-La preparación nueva y repetida y los comandos operativos de esta guía se verificaron en la [fase estructural 1](testing/FASE_1_ESTRUCTURAL.md), con Windows PowerShell 5.1. Esta fase documental conserva ese procedimiento.
+La preparación nueva y repetida se verificó en la [fase estructural 1](testing/FASE_1_ESTRUCTURAL.md), con Windows PowerShell 5.1. [El cierre estructural](testing/FASE_7_ESTRUCTURAL.md) repite preparación, arranque/proxy, corpus y respaldo sobre datos temporales y registra el ajuste de espera del proxy.
 
 ## Requisitos
 
@@ -75,7 +75,7 @@ Estas variables son públicas; no colocar claves, contraseñas ni tokens en ella
 .\scripts\test.ps1 -E2E
 ```
 
-La segunda variante añade el escenario de navegador con servidores, base y archivos temporales. `test.ps1` prepara su carpeta temporal y configura la ubicación de Chromium automáticamente. Un fallo de cualquier herramienta detiene el script y produce un error; no se anuncia éxito después de un fallo.
+La segunda variante añade los tres escenarios de navegador con servidores, base y archivos temporales. `test.ps1` prepara su carpeta temporal y configura la ubicación de Chromium automáticamente. Un fallo de cualquier herramienta detiene el script y produce un error; no se anuncia éxito después de un fallo.
 
 Para crear o restablecer las cuentas demo sintéticas:
 
@@ -91,7 +91,7 @@ El sembrador aplica migraciones y restablece los perfiles y contraseñas de las 
 .\scripts\dev.ps1 -Check
 ```
 
-`dev.ps1` aplica las migraciones antes de arrancar. El backend predeterminado está en `http://127.0.0.1:8000`; la interfaz, en `http://127.0.0.1:5173`. Swagger: `/api/v1/docs`; salud: `/api/v1/health`. `-FrontendPort` cambia el puerto de Vite; `-NoReload` desactiva la recarga del backend. `-Check` usa los datos configurados: para una comprobación aislada, establecer previamente `DATABASE_URL`, `UPLOAD_DIR` y `GENERATED_DIR` a rutas temporales.
+`dev.ps1` aplica las migraciones antes de arrancar. El backend predeterminado está en `http://127.0.0.1:8000`; la interfaz, en `http://127.0.0.1:5173`. Swagger: `/api/v1/docs`; salud: `/api/v1/health`. `-FrontendPort` cambia el puerto de Vite; `-NoReload` desactiva la recarga del backend. `-Check` espera la disponibilidad de servidores y proxy con reintentos acotados a 30 segundos y cierra sus procesos. Usa los datos configurados: para una comprobación aislada, establecer previamente `DATABASE_URL`, `UPLOAD_DIR` y `GENERATED_DIR` a rutas temporales.
 
 ## Respaldos y experimento
 
@@ -106,3 +106,5 @@ El respaldo lee la base y las carpetas realmente configuradas. Utiliza la API de
 `experiment.ps1` requiere una base migrada y un administrador; utiliza el servicio existente para generar el corpus sintético. No inventa ni registra tiempos de investigación: estos se miden desde `/tesis`.
 
 Los respaldos, bases, documentos locales, logs, cachés y resultados de navegador están excluidos de Git. Los generadores antiguos se conservan como texto en [docs/archive/bootstrap](archive/bootstrap/README.md), fuera del procedimiento operativo. La [referencia inicial](testing/BASELINE_ESTRUCTURAL.md) describe las comprobaciones previas y sus límites.
+
+El [informe final](testing/FASE_7_ESTRUCTURAL.md) registra preparación repetida conservando configuración, datos y DOCX, arranque/proxy y dos respaldos verificados sobre SQLite temporal. [El verificador operativo](testing/phase7/verify-operations.ps1) configura expresamente almacenamiento aislado antes de usar los scripts; no ejecutarlo como sustituto del experimento de investigación.

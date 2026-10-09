@@ -31,7 +31,7 @@ La UI común está en `components/common/`: Modal reúne contenedor y cabecera; 
 
 Los controles dinámicos están en `features/fields/controls/`; FieldControls conserva registro y composición. ListInput recibe el renderizador anidado por prop para evitar un ciclo con FieldControls. El estado de actividad de adjuntos está en FileActivityContext y lo consume DynamicForm. Las secciones del editor están en `features/fields/editor/`; reciben una definición y un callback de cambios parciales. Orden, expansión y recursión pertenecen a FieldDefinitionEditor. Conservar merges de options_json, tipos y normalización al añadir opciones.
 
-En backend, mantener la entrada HTTP en routers y la coordinación en servicios. Exponer funciones compartidas con nombre público y responsabilidad explícita; evitar nuevos imports de funciones privadas de otro servicio. Los imports existentes de `_build_context` se resolverán en fase 5. Cualquier extracción debe preservar commit, flush, rollback y errores: un cambio de ubicación no autoriza modificar límites de transacción.
+En backend, mantener la entrada HTTP en routers y la coordinación en servicios. Exponer funciones compartidas con nombre público y responsabilidad explícita; evitar nuevos imports de funciones privadas de otro servicio. Validación, documentos y experimento utilizan `services/validation_context.py`; DOCX usa `services/docx/` y persistencia común usa `db/operations.py`. Cualquier extracción debe preservar commit, flush, rollback y errores: un cambio de ubicación no autoriza modificar límites de transacción.
 
 ## Datos, archivos y pruebas
 

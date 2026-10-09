@@ -87,10 +87,25 @@ El [OpenAPI conservado](testing/baseline/2026-10-08/openapi.json) contiene 47 ru
 | Transporte y permisos frontend | [client.test](../frontend/src/shared/api/__tests__/client.test.ts), [errors.test](../frontend/src/shared/api/__tests__/errors.test.ts), [RequireAuth.test](../frontend/src/features/auth/__tests__/RequireAuth.test.tsx) |
 | UI común y editor | [Modal.test](../frontend/src/components/common/__tests__/Modal.test.tsx), [FieldDefinitionEditor.test](../frontend/src/features/fields/__tests__/FieldDefinitionEditor.test.tsx) |
 
-[test.ps1](../scripts/test.ps1) ejecuta calidad, backend, frontend y compilación; `-E2E` añade los escenarios de campos dinámicos y modales. Los informes de [fase 1](testing/FASE_1_ESTRUCTURAL.md), [fase 3](testing/FASE_3_ESTRUCTURAL.md) y [fase 4](testing/FASE_4_ESTRUCTURAL.md) detallan resultados y límites de cobertura.
+[test.ps1](../scripts/test.ps1) ejecuta calidad, backend, frontend y compilación; `-E2E` añade los escenarios de campos dinámicos, modales y DOCX con historial y descarga por API autenticada. Los informes de [fase 1](testing/FASE_1_ESTRUCTURAL.md), [fase 3](testing/FASE_3_ESTRUCTURAL.md) y [fase 4](testing/FASE_4_ESTRUCTURAL.md) detallan resultados y límites de cobertura.
 
 ## Funcionalidades previstas
 
 La ingesta de XLSX/CSV/PDF y las cotizaciones, presupuestos, cobros y pagos siguen en la especificación y backlog. No tienen actualmente el conjunto de modelos, servicios, API y pantallas requerido para considerarlas implementadas. El adjunto de campos permite guardar y descargar archivos; no ejecuta esa ingesta. El MVP excluye OCR e IA generativa externa.
 
 La fase funcional 11 tiene un módulo de medición operativo. La investigación sobre reducción de tiempos requiere ejecutar y registrar el protocolo con 100 casos; no se declara completada por la presencia del módulo. Las fases funcionales del [plan maestro](MASTER_PLAN.md) y las fases de [reorganización estructural](PLAN_MEJORA_ESTRUCTURAL.md) tienen seguimiento separado.
+
+## Módulos compartidos backend y pruebas
+
+| Responsabilidad | Módulo propietario |
+|---|---|
+| Contexto de reglas, documentos y experimento | [validation_context.py](../backend/app/services/validation_context.py) |
+| Commit, flush y búsqueda con errores existentes | [db/operations.py](../backend/app/db/operations.py) |
+| Comprobación de estructura de archivos | [file_validation.py](../backend/app/services/file_validation.py) |
+| Jinja2, variables residuales, contexto y rutas DOCX | [services/docx](../backend/app/services/docx) |
+| Familias de reglas y orden estable | [rules](../backend/app/rules), registro en checks.py |
+| Plantillas, valores y adjuntos | [models](../backend/app/models), módulos propios; detalles en database.md |
+| Cuentas, autenticación, cliente/expediente y DOCX sintéticos | [tests/support](../backend/tests/support) |
+| Recorrido DOCX de navegador | [documents.spec.ts](../frontend/e2e/documents.spec.ts), descarga autenticada y verificación python-docx |
+
+[La fase 7](testing/FASE_7_ESTRUCTURAL.md) conserva 47 rutas API/62 operaciones, 18 tablas y los 260 escenarios backend; añade un tercer E2E para DOCX.

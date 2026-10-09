@@ -49,8 +49,7 @@ try {
     if ($Check) {
         $FrontendProcess = Start-Process -FilePath (Get-Command npm.cmd).Source -ArgumentList $FrontendArguments -WorkingDirectory $FrontendPath -WindowStyle Hidden -PassThru
         Wait-LocalService "http://127.0.0.1:$FrontendPort" $FrontendProcess
-        $ProxyResponse = Invoke-WebRequest -Uri "http://127.0.0.1:$FrontendPort$($ServerSettings.api)/health" -UseBasicParsing -TimeoutSec 5
-        if ($ProxyResponse.StatusCode -ne 200) { throw 'El proxy frontend no pudo consultar la API.' }
+        Wait-LocalService "http://127.0.0.1:$FrontendPort$($ServerSettings.api)/health" $FrontendProcess
         Write-Host '[OK] Backend, frontend y proxy disponibles. Cerrando la comprobación.' -ForegroundColor Green
     } else {
         Write-Host "Frontend: http://127.0.0.1:$FrontendPort. Ctrl+C detiene los servicios."

@@ -71,15 +71,17 @@ La [fase estructural 3](docs/testing/FASE_3_ESTRUCTURAL.md) registra la separaci
 
 La [fase estructural 4](docs/testing/FASE_4_ESTRUCTURAL.md) registra componentes comunes de modal, mensajes, carga y badges, y la división de controles y editor: 111 pruebas frontend, dos E2E, lint, tipos y compilación aprobados.
 
+El [cierre estructural](docs/testing/FASE_7_ESTRUCTURAL.md) registra **260 pruebas backend, 111 frontend y tres E2E**, lint/formato/tipos/build, equivalencia de API y SQLite, DOCX e historial, 100 casos y scripts Windows verificados. Los hallazgos funcionales fuera de alcance están identificados en ese informe.
+
 ```powershell
-.\scripts\test.ps1
+.\scripts\test.ps1 -E2E
 ```
 
 ---
 
 ## 7. Roadmap de Fases del Proyecto
 
-La reorganización de archivos, configuración y documentación tiene un [plan de mejora estructural](docs/PLAN_MEJORA_ESTRUCTURAL.md) con fases 0–7, entregables y criterios de cierre. Complementa las fases funcionales de la tesis que se describen a continuación.
+La reorganización de archivos, configuración y documentación completó las fases 0–7 de su [plan de mejora estructural](docs/PLAN_MEJORA_ESTRUCTURAL.md) con entregables y criterios de cierre verificados. Complementa las fases funcionales de la tesis que se describen a continuación.
 
 El estado del código revisado el **8 de octubre de 2026** se resume en el [mapa de módulos](docs/modules.md):
 
@@ -88,7 +90,7 @@ El estado del código revisado el **8 de octubre de 2026** se resume en el [mapa
 | Fases 1–7 | Módulos de base, seguridad, expedientes, campos, plantillas, reglas y borradores implementados |
 | Fase 8: ingesta XLSX/CSV/PDF | Prevista; los adjuntos actuales se guardan y descargan |
 | Fase 9: administración financiera | Prevista |
-| Fase 10: QA integral | Pruebas disponibles; los E2E actuales cubren campos dinámicos y formularios/modales compartidos |
+| Fase 10: QA integral | Suite estructural integral aprobada; campos, modales y generación DOCX con historial; límites en el informe de cierre |
 | Fase 11: medición de tesis | Módulo implementado; la reducción temporal requiere el experimento registrado |
 
 Los apartados siguientes conservan el historial de entregas y sus verificaciones reportadas. Las comprobaciones recientes y sus límites se encuentran en los informes de las [fases estructurales 0](docs/testing/BASELINE_ESTRUCTURAL.md), [1](docs/testing/FASE_1_ESTRUCTURAL.md), [2](docs/testing/FASE_2_ESTRUCTURAL.md), [3](docs/testing/FASE_3_ESTRUCTURAL.md) y [4](docs/testing/FASE_4_ESTRUCTURAL.md).
@@ -384,16 +386,15 @@ notariado-app/
 │   │   ├── core/              # Configuración, seguridad y permisos
 │   │   ├── db/                # Base y sesiones SQLAlchemy
 │   │   ├── models/            # Dominio, versiones, validación y experimento
-│   │   ├── repositories/      # Solo inicializador; pendiente de resolver en fase 5
-│   │   ├── rules/             # Motor RULE-001..020 y catálogos
+│   │   ├── rules/             # Registro, catálogo y familias de RULE-001..020
 │   │   ├── schemas/           # Contratos Pydantic
-│   │   ├── services/          # Coordinación y persistencia
+│   │   ├── services/          # Coordinación; DOCX, contexto y archivos compartidos
 │   │   └── utils/             # seed_users.py y synthetic_data.py
-│   ├── tests/                 # unit/ e integration/
+│   ├── tests/                 # unit/, integration/ y support/ sintético
 │   ├── pyproject.toml         # Configuración Ruff y pytest
 │   └── requirements*.txt      # Dependencias de ejecución/desarrollo y versiones fijadas
 ├── frontend/
-│   ├── e2e/                   # Escenario Playwright de campos dinámicos
+│   ├── e2e/                   # Campos, modales y recorrido DOCX con historial
 │   └── src/
 │       ├── app/               # Proveedores, rutas y layout
 │       ├── components/        # Navegación y UI común: modales, mensajes, carga y badges
@@ -409,7 +410,7 @@ notariado-app/
 └── README.md
 ```
 
-Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y cachés se excluyen de Git. La [arquitectura](docs/architecture.md), el [mapa de módulos](docs/modules.md) y las [convenciones](docs/contributing.md) detallan responsabilidades actuales y la reorganización pendiente.
+Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y cachés se excluyen de Git. La [arquitectura](docs/architecture.md), el [mapa de módulos](docs/modules.md) y las [convenciones](docs/contributing.md) detallan responsabilidades actuales y la reorganización completada.
 
 ---
 
@@ -421,6 +422,8 @@ Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y ca
 | 338d6b0 | Estructural 2 | Índice, arquitectura, mapa de módulos, convenciones y referencias documentales verificadas |
 | da9d93b | Estructural 3 | API y tipos por funcionalidad, cliente HTTP compartido y composición de la aplicación |
 | 8531a74 | Estructural 4 | UI común, controles de captura y editor por responsabilidad |
+| 05348e4 | Estructural 5 | Responsabilidades DOCX, contexto público, persistencia, modelos y reglas |
+| 5a6fd30 | Estructural 6 | Recursos sintéticos compartidos; escenarios y aserciones conservados |
 | 209c9cb | Fase 1 | Base modular: FastAPI, SQLite, Alembic, React, Tailwind, test suite |
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |
