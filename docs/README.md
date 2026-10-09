@@ -25,6 +25,7 @@ Referencia del código revisada el **8 de octubre de 2026**. El sistema organiza
 | [Organización frontend: fase 3](testing/FASE_3_ESTRUCTURAL.md) | API y tipos por funcionalidad, composición y pruebas de equivalencia |
 | [Componentes y controles: fase 4](testing/FASE_4_ESTRUCTURAL.md) | UI común, controles y editor por responsabilidad; 111 pruebas frontend y dos E2E |
 | [Responsabilidades backend: fase 5](testing/FASE_5_ESTRUCTURAL.md) | DOCX, contexto, persistencia, modelos y reglas separados; equivalencia de API y SQLite |
+| [Recursos de pruebas: fase 6](testing/FASE_6_ESTRUCTURAL.md) | Preparación compartida; 151 funciones y 260 identificadores conservados |
 | [Generadores archivados](archive/bootstrap/README.md) | Antecedentes de preparación, conservados como texto |
 
 Los informes fechados son evidencia de sus respectivas ejecuciones. Los E2E actuales cubren campos dinámicos y formularios/modales compartidos; la cobertura integral del flujo hasta el borrador se comprueba al cerrar el plan estructural.

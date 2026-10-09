@@ -21,20 +21,13 @@ from app.services.docx.analysis import (
 )
 from app.services.docx.context import build_sample_context
 from app.services.docx.files import sanitize_original_name
+from tests.support.documents import write_docx
 
 
 def _make_docx(
     tmp_path: Path, paragraphs: list[str], table_text: str | None = None
 ) -> Path:
-    document = Document()
-    for text in paragraphs:
-        document.add_paragraph(text)
-    if table_text is not None:
-        table = document.add_table(rows=1, cols=1)
-        table.cell(0, 0).text = table_text
-    target = tmp_path / "plantilla_prueba.docx"
-    document.save(str(target))
-    return target
+    return write_docx(tmp_path / "plantilla_prueba.docx", paragraphs, table_text)
 
 
 # ---------------------------------------------------------------------------

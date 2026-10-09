@@ -1,0 +1,10 @@
+{
+  "reference_commit": "05348e4",
+  "test_functions_unchanged": 151,
+  "backend_scenarios": 260,
+  "backend_scenario_ids": "identical",
+  "production_and_frontend": "unchanged",
+  "database": "isolated in-memory with savepoints",
+  "storage": "pytest temporary directories",
+  "status": "passed"
+}

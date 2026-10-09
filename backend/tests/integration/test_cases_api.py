@@ -3,8 +3,10 @@
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
 from app.models.user import User
+from tests.support.auth import auth_headers as _auth
+from tests.support.auth import create_account
+from tests.support.auth import login_token as _get_token
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -12,30 +14,9 @@ from app.models.user import User
 
 
 def _create_admin(db_session: Session, suffix: str) -> User:
-    user = User(
-        username=f"admin_{suffix}",
-        email=f"admin_{suffix}@bufetenotarial.demo",
-        full_name=f"Admin {suffix}",
-        password_hash=get_password_hash("Admin1234!"),
-        role="ADMINISTRADOR",
-        status="ACTIVE",
+    return create_account(
+        db_session, f"admin_{suffix}", f"Admin {suffix}", "ADMINISTRADOR"
     )
-    db_session.add(user)
-    db_session.commit()
-    return user
-
-
-def _get_token(client: TestClient, username: str) -> str:
-    resp = client.post(
-        "/api/v1/auth/login",
-        json={"username_or_email": username, "password": "Admin1234!"},
-    )
-    assert resp.status_code == 200, resp.text
-    return resp.json()["access_token"]
-
-
-def _auth(token: str) -> dict:
-    return {"Authorization": f"Bearer {token}"}
 
 
 def _create_client(

@@ -29,7 +29,7 @@ La revisión inicial fue de código y documentación: esta copia no tenía `back
 | 3 | Organizar API, tipos y composición del frontend | 2 | Completada |
 | 4 | Extraer componentes y controles compartidos | 3 | Completada |
 | 5 | Separar responsabilidades y dependencias del backend | 4 | Completada |
-| 6 | Organizar recursos compartidos de pruebas | 5 | Pendiente |
+| 6 | Organizar recursos compartidos de pruebas | 5 | Completada |
 | 7 | Verificar el conjunto y cerrar la documentación | 6 | Pendiente |
 
 Trabajar con cambios pequeños por módulo. Cada entrega debe dejar el proyecto coherente, con sus imports actualizados y sus comprobaciones registradas. No avanzar con una regresión nueva sin resolver.
@@ -209,3 +209,5 @@ Se aplican las [reglas permanentes del proyecto](../AGENTS.md) y los criterios p
 | 2026-10-08 | 4 | Once modales y confirmación usan UI común; controles y editor divididos, handlers y contratos conservados. 111 pruebas frontend y dos E2E aprobados, lint/tipos/build aprobados e imports sin ciclos. Documentación y verificadores actualizados. [Informe](testing/FASE_4_ESTRUCTURAL.md). | Completada |
 | 2026-10-08 | 4 | Entrega conservada en el commit `8531a74`. | Commit creado |
 | 2026-10-08 | 5 | DOCX, contexto público, operaciones de persistencia, modelos y familias de reglas separados; 260 pruebas aprobadas, API y esquema equivalentes. [Informe](testing/FASE_5_ESTRUCTURAL.md). | Completada |
+| 2026-10-08 | 5 | Entrega conservada en el commit `05348e4`. | Commit creado |
+| 2026-10-08 | 6 | Recursos sintéticos compartidos; 151 funciones y 260 escenarios conservados, aislamiento y ejecución comprobados. [Informe](testing/FASE_6_ESTRUCTURAL.md). | Completada |

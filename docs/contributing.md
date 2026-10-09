@@ -37,7 +37,7 @@ En backend, mantener la entrada HTTP en routers y la coordinación en servicios.
 
 DPI y NIT permanecen como texto. Dinero se calcula con `Decimal` y se transporta en texto. Generar DOCX en backend con `docxtpl`, verificar variables residuales con `python-docx` y conservar versiones anteriores. Usar únicamente datos sintéticos; no incorporar contraseñas, tokens, bases del bufete ni documentos reales a logs, fixtures o Git.
 
-Las pruebas backend se separan entre `tests/unit` y `tests/integration`; los recursos generales existentes están en `tests/conftest.py`. Mantener pruebas React junto a su módulo en `__tests__`; `src/test/setup.ts` configura Vitest. Los recursos compartidos se extraerán en fase 6 cuando haya repetición comprobada. Los E2E están en `frontend/e2e` y usan servicios y almacenamiento temporales.
+Las pruebas backend se separan entre `tests/unit` y `tests/integration`; los recursos generales existentes están en `tests/conftest.py`. Mantener pruebas React junto a su módulo en `__tests__`; `src/test/setup.ts` configura Vitest. `backend/tests/support/` contiene autenticación real, cuentas, clientes/expedientes y DOCX sintéticos compartidos. Mantener los escenarios específicos y las aserciones en sus pruebas. Añadir helpers frontend en `src/test/` solo cuando tengan varios consumidores. Los E2E están en `frontend/e2e` y usan servicios y almacenamiento temporales.
 
 Preparar el entorno según [installation.md](installation.md). Desde la raíz:
 

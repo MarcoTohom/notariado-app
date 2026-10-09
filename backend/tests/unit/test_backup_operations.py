@@ -2,7 +2,6 @@ import json
 import sqlite3
 
 import pytest
-
 from scripts.backup import create_backup
 
 
