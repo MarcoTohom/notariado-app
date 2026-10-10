@@ -6,7 +6,7 @@ colecciones para bucles {% for %}.
 """
 
 from app.models.dynamic_field import TemplateField
-from app.services.document_generation_service import build_render_context
+from app.services.docx.context import build_render_context
 
 
 def make_field(

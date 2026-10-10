@@ -1,47 +1,38 @@
-param([switch]$E2E)
-$ErrorActionPreference = "Stop"
-$RootPath = Split-Path -Parent $PSScriptRoot
-$BackendPath = Join-Path $RootPath "backend"
-$FrontendPath = Join-Path $RootPath "frontend"
+﻿param([switch]$E2E)
+$ErrorActionPreference = 'Stop'
+. (Join-Path $PSScriptRoot 'common.ps1')
+Assert-BackendEnvironment
+Assert-FrontendEnvironment
+$PreviousLocation = Get-Location
+$PreviousTemp = $env:TEMP
+$PreviousTmp = $env:TMP
+$PreviousBrowserPath = $env:PLAYWRIGHT_BROWSERS_PATH
 
-Write-Host "=== 1. Ejecutando Ruff (Linter & Format Check) ===" -ForegroundColor Cyan
-Set-Location $BackendPath
-& ".\.venv\Scripts\ruff.exe" check app tests
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-& ".\.venv\Scripts\ruff.exe" format --check app tests
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-
-Write-Host "`n=== 2. Ejecutando Pruebas Unitarias e Integracion Backend (pytest) ===" -ForegroundColor Cyan
-& ".\.venv\Scripts\pytest.exe" -v tests
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Fallo en pruebas backend." -ForegroundColor Red
-    exit $LASTEXITCODE
+try {
+    $env:TEMP = Join-Path $BackendPath '.venv\temp'
+    $env:TMP = $env:TEMP
+    New-Item -ItemType Directory -Force -Path $env:TEMP | Out-Null
+    Set-Location $BackendPath
+    Write-Host '1. Ruff: lint y formato' -ForegroundColor Cyan
+    Invoke-CheckedCommand $PythonExe @('-m', 'ruff', 'check', 'app', 'tests')
+    Invoke-CheckedCommand $PythonExe @('-m', 'ruff', 'format', '--check', 'app', 'tests')
+    Write-Host '2. Pruebas backend' -ForegroundColor Cyan
+    Invoke-CheckedCommand $PythonExe @('-m', 'pytest', '-v')
+    Set-Location $FrontendPath
+    Write-Host '3. Lint y pruebas frontend' -ForegroundColor Cyan
+    Invoke-CheckedCommand 'npm.cmd' @('run', 'lint')
+    Invoke-CheckedCommand 'npm.cmd' @('run', 'test')
+    Write-Host '4. Tipos y compilación' -ForegroundColor Cyan
+    Invoke-CheckedCommand 'npm.cmd' @('run', 'build')
+    if ($E2E) {
+        $env:PLAYWRIGHT_BROWSERS_PATH = Get-ProjectBrowserPath
+        Write-Host '5. Navegador y servidores temporales' -ForegroundColor Cyan
+        Invoke-CheckedCommand 'npm.cmd' @('run', 'test:e2e')
+    }
+    Write-Host '[OK] Todas las verificaciones solicitadas pasaron.' -ForegroundColor Green
+} finally {
+    $env:TEMP = $PreviousTemp
+    $env:TMP = $PreviousTmp
+    $env:PLAYWRIGHT_BROWSERS_PATH = $PreviousBrowserPath
+    Set-Location $PreviousLocation
 }
-
-Write-Host "`n=== 3. Pruebas Unitarias Frontend (Vitest + React Testing Library) ===" -ForegroundColor Cyan
-Set-Location $FrontendPath
-npm.cmd run lint
-if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-npm.cmd run test
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Fallo en pruebas frontend." -ForegroundColor Red
-    exit $LASTEXITCODE
-}
-
-Write-Host "`n=== 4. Compilacion y Verificacion de Tipos Frontend (tsc & vite) ===" -ForegroundColor Cyan
-npm.cmd run build
-
-if ($LASTEXITCODE -ne 0) {
-    Write-Host "Fallo en verificacion frontend." -ForegroundColor Red
-    exit $LASTEXITCODE
-}
-
-if ($E2E) {
-    Write-Host "Pruebas de navegador en base de datos temporal..." -ForegroundColor Cyan
-    npm.cmd run test:e2e
-    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
-}
-Write-Host "`n[OK] Todas las verificaciones solicitadas pasaron." -ForegroundColor Green
-Set-Location $RootPath

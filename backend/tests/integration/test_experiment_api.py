@@ -8,37 +8,11 @@ estadística real -> exportación XLSX/CSV -> RBAC.
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
-from app.models.user import User
+from tests.support.auth import auth_headers as _auth
+from tests.support.auth import create_user as _create_user
+from tests.support.auth import login_token as _token
 
 BASE = "/api/v1"
-
-
-def _create_user(db_session: Session, suffix: str, role: str) -> User:
-    user = User(
-        username=f"user_{suffix}",
-        email=f"user_{suffix}@bufetenotarial.demo",
-        full_name=f"Usuario {suffix}",
-        password_hash=get_password_hash("Admin1234!"),
-        role=role,
-        status="ACTIVE",
-    )
-    db_session.add(user)
-    db_session.commit()
-    return user
-
-
-def _token(client: TestClient, username: str) -> str:
-    resp = client.post(
-        f"{BASE}/auth/login",
-        json={"username_or_email": username, "password": "Admin1234!"},
-    )
-    assert resp.status_code == 200, resp.text
-    return resp.json()["access_token"]
-
-
-def _auth(token: str) -> dict:
-    return {"Authorization": f"Bearer {token}"}
 
 
 def _generate_corpus(client: TestClient, token: str) -> dict:

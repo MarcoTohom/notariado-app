@@ -7,65 +7,12 @@ valores -> POST /validations/run -> hallazgos persistidos con trazabilidad.
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
-from app.models.user import User
+from tests.support.auth import auth_headers as _auth
+from tests.support.auth import create_user as _create_user
+from tests.support.auth import login_token as _token
+from tests.support.records import create_case_with_party as _setup_case_with_party
 
 BASE = "/api/v1"
-
-
-def _create_user(db_session: Session, suffix: str, role: str) -> User:
-    user = User(
-        username=f"user_{suffix}",
-        email=f"user_{suffix}@bufetenotarial.demo",
-        full_name=f"Usuario {suffix}",
-        password_hash=get_password_hash("Admin1234!"),
-        role=role,
-        status="ACTIVE",
-    )
-    db_session.add(user)
-    db_session.commit()
-    return user
-
-
-def _token(client: TestClient, username: str) -> str:
-    resp = client.post(
-        f"{BASE}/auth/login",
-        json={"username_or_email": username, "password": "Admin1234!"},
-    )
-    assert resp.status_code == 200, resp.text
-    return resp.json()["access_token"]
-
-
-def _auth(token: str) -> dict:
-    return {"Authorization": f"Bearer {token}"}
-
-
-def _setup_case_with_party(client: TestClient, token: str) -> tuple[str, str]:
-    """Cliente + expediente COMPRAVENTA con compareciente COMPRADOR."""
-    resp = client.post(
-        f"{BASE}/clients",
-        json={
-            "first_name": "Carlos",
-            "last_name": "Mendez Ruiz",
-            "dpi": "1234567890101",
-            "nit": "1234567-8",
-        },
-        headers=_auth(token),
-    )
-    assert resp.status_code == 201, resp.text
-    client_id = resp.json()["id"]
-
-    resp = client.post(
-        f"{BASE}/cases",
-        json={
-            "title": "Compraventa de inmueble para motor de reglas",
-            "case_type": "COMPRAVENTA",
-            "parties": [{"client_id": client_id, "party_role": "COMPRADOR"}],
-        },
-        headers=_auth(token),
-    )
-    assert resp.status_code == 201, resp.text
-    return resp.json()["id"], client_id
 
 
 def _create_version(client: TestClient, token: str) -> str:

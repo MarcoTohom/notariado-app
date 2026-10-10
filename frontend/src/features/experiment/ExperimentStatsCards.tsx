@@ -1,6 +1,6 @@
 import React from "react";
-import { ExperimentStats } from "../../types";
-import { experimentService } from "../../services/api";
+import type { ExperimentStats } from "./types";
+import { experimentService } from "./api";
 import { Download, TrendingDown, FlaskConical, Sigma, Clock, AlertCircle } from "lucide-react";
 
 /**

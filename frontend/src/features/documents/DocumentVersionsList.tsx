@@ -1,5 +1,5 @@
 import React from "react";
-import { DocumentVersionInfo } from "../../types";
+import type { DocumentVersionInfo } from "./types";
 import { formatBytes, formatDateTime, shortHash } from "../../lib/format";
 import { CheckCircle2, AlertTriangle, Download, FileText } from "lucide-react";
 

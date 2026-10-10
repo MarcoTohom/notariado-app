@@ -1,0 +1,195 @@
+{
+  "groups": {
+    "db/operations.py": [
+      [
+        "services/dynamic_field_service.py",
+        [
+          "require_record",
+          "commit",
+          "flush"
+        ]
+      ]
+    ],
+    "services/file_validation.py": [
+      [
+        "services/dynamic_field_service.py",
+        [
+          "MIME_TYPES",
+          "verify_file"
+        ]
+      ]
+    ],
+    "services/validation_context.py": [
+      [
+        "services/validation_service.py",
+        [
+          "_build_context"
+        ]
+      ]
+    ],
+    "services/docx/analysis.py": [
+      [
+        "services/template_docx_service.py",
+        [
+          "RE_VARIABLE",
+          "RE_LOOP",
+          "RE_CONDITIONAL",
+          "JinjaExtraction",
+          "_iter_document_text",
+          "extract_jinja_variables",
+          "find_residual_variables",
+          "_CURRENCY_HINTS",
+          "_DATE_HINTS",
+          "_TEXTAREA_HINTS",
+          "_NAME_HINTS",
+          "_ACRONYMS",
+          "suggest_field_type",
+          "humanize_label"
+        ]
+      ]
+    ],
+    "services/docx/files.py": [
+      [
+        "services/template_docx_service.py",
+        [
+          "DOCX_SUFFIX",
+          "MAX_TEMPLATE_BYTES",
+          "sanitize_original_name",
+          "sha256_hex",
+          "_template_storage_dir",
+          "_preview_storage_dir",
+          "_read_valid_docx"
+        ]
+      ],
+      [
+        "services/document_generation_service.py",
+        [
+          "_document_storage_dir"
+        ]
+      ]
+    ],
+    "services/docx/context.py": [
+      [
+        "services/template_docx_service.py",
+        [
+          "_SAMPLE_BY_TYPE",
+          "_sample_for",
+          "_assign_nested",
+          "build_sample_context"
+        ]
+      ],
+      [
+        "services/document_generation_service.py",
+        [
+          "build_render_context"
+        ]
+      ]
+    ],
+    "models/template.py": [
+      [
+        "models/dynamic_field.py",
+        [
+          "Template",
+          "TemplateVersion"
+        ]
+      ]
+    ],
+    "models/case_field_values.py": [
+      [
+        "models/dynamic_field.py",
+        [
+          "CaseFieldValues"
+        ]
+      ]
+    ],
+    "models/field_attachment.py": [
+      [
+        "models/dynamic_field.py",
+        [
+          "FieldAttachment"
+        ]
+      ]
+    ],
+    "rules/checks_common.py": [
+      [
+        "rules/checks.py",
+        [
+          "_rule_severity",
+          "_base",
+          "_parent"
+        ]
+      ]
+    ],
+    "rules/identity_checks.py": [
+      [
+        "rules/checks.py",
+        [
+          "DPI_REGEX",
+          "NIT_REGEX",
+          "rule_001_required",
+          "rule_002_dpi_format",
+          "rule_003_nit_format",
+          "_pair_party_values",
+          "rule_004_dpi_consistency",
+          "rule_005_nit_consistency",
+          "rule_006_name_consistency",
+          "rule_020_duplicates"
+        ]
+      ]
+    ],
+    "rules/temporal_amount_checks.py": [
+      [
+        "rules/checks.py",
+        [
+          "_FILLER_WORDS",
+          "_CURRENCY_HINTS",
+          "_LETTERS_HINTS",
+          "_letters_only",
+          "rule_007_dates",
+          "rule_008_amount_letters",
+          "rule_018_percentage_sum"
+        ]
+      ]
+    ],
+    "rules/registry_checks.py": [
+      [
+        "rules/checks.py",
+        [
+          "REGISTRY_CASE_TYPES",
+          "_registry_check",
+          "rule_009_finca",
+          "rule_010_folio",
+          "rule_011_libro",
+          "rule_012_department",
+          "rule_013_municipality"
+        ]
+      ]
+    ],
+    "rules/document_checks.py": [
+      [
+        "rules/checks.py",
+        [
+          "JINJA_REGEX",
+          "ALLOWED_ATTACHMENT_SUFFIXES",
+          "MAX_ATTACHMENT_BYTES",
+          "_ORDINAL_WORDS",
+          "_extract_ordinal",
+          "rule_014_015_016_clauses",
+          "rule_017_placeholders",
+          "rule_019_attachments"
+        ]
+      ]
+    ]
+  },
+  "renames": {
+    "_build_context": "build_validation_context",
+    "_assign_nested": "assign_nested",
+    "_template_storage_dir": "template_storage_dir",
+    "_preview_storage_dir": "preview_storage_dir",
+    "_document_storage_dir": "document_storage_dir",
+    "_read_valid_docx": "read_valid_docx",
+    "_rule_severity": "rule_severity",
+    "_base": "base_key",
+    "_parent": "parent_path"
+  }
+}

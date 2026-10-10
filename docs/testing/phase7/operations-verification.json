@@ -1,0 +1,13 @@
+﻿{
+    "backup_integrity":  "ok",
+    "seed":  "passed",
+    "repeat_setup":  "passed",
+    "status":  "passed",
+    "backups":  2,
+    "powershell":  "5.1.26100.9444",
+    "startup_and_proxy":  "passed",
+    "document_hashes":  "equal",
+    "caller_location_restored":  true,
+    "corpus_cases":  100,
+    "configuration_database_documents_preserved":  true
+}

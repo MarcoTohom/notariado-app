@@ -1,4 +1,4 @@
-﻿# Sistema de Borradores de Escrituras Públicas y Validación Documental Notarial
+# Sistema de Borradores de Escrituras Públicas y Validación Documental Notarial
 
 > **Proyecto de Graduación 2**
 > **Facultad de Ingeniería en Sistemas de Información y Ciencias de la Computación**
@@ -16,7 +16,7 @@ Este sistema es una solución tecnológica integral orientada a bufetes jurídic
 
 ## 2. Pila Tecnológica (Stack)
 
-* **Backend:** Python 3.12+ (probado en Python 3.14), FastAPI, SQLAlchemy 2.x, Alembic, SQLite, Pydantic v2, PyJWT, Argon2-cffi, python-docx, docxtpl, pandas, openpyxl, pypdf, pytest, Ruff.
+* **Backend:** Python 3.12+ (referencia estructural verificada con 3.12.14), FastAPI, SQLAlchemy 2.x, Alembic, SQLite, Pydantic v2, PyJWT, Argon2-cffi, python-docx, docxtpl, pandas, openpyxl, pypdf, pytest, Ruff.
 * **Frontend:** React 18, TypeScript, Vite, Tailwind CSS, Lucide React, Axios, React Router 6, React Hook Form + Zod, TanStack Query, Vitest + React Testing Library.
 * **Automatización:** Scripts PowerShell nativos para Windows 10/11 (`dev.ps1`, `test.ps1`, `seed.ps1`, `backup.ps1`).
 
@@ -26,38 +26,25 @@ Este sistema es una solución tecnológica integral orientada a bufetes jurídic
 
 1. **Sistema Operativo:** Windows 10 o Windows 11 (64-bit).
 2. **Python:** 3.12 o superior instalado y disponible en el PATH del sistema.
-3. **Node.js:** Versión 22.13 o superior con `npm` (verificado con 22.16.0).
+3. **Node.js:** Versión 22.13 o superior con `npm` (referencia verificada con 24.19.0 y npm 11.17.0).
 4. **Git:** Para control de versiones local.
 
 ---
 
 ## 4. Instalación Rápida
 
-1. **Clonar o abrir el repositorio:**
-   ```powershell
-   cd C:\git\apps\notariado-app
-   ```
+Desde la carpeta del repositorio:
 
-2. **Configurar el Backend:**
-   ```powershell
-   cd backend
-   python -m venv .venv
-   .\.venv\Scripts\pip install -r requirements.txt
-   .\.venv\Scripts\alembic upgrade head
-   cd ..
-   ```
+```powershell
+.\scripts\setup.ps1 -E2E
+.\scripts\test.ps1 -E2E
+.\scripts\seed.ps1
+.\scripts\dev.ps1
+```
 
-3. **Poblar usuarios iniciales (seed):**
-   ```powershell
-   .\scripts\seed.ps1
-   ```
+`setup.ps1` instala las versiones verificadas, prepara Chromium cuando se solicita `-E2E` y crea `.env` solo si falta. No aplica migraciones ni modifica datos; puede repetirse. `seed.ps1` aplica migraciones y restablece las cuentas demo. Para una instalación existente, ejecutar el sembrador únicamente si se desean esos usuarios sintéticos.
 
-4. **Configurar el Frontend:**
-   ```powershell
-   cd frontend
-   npm install
-   cd ..
-   ```
+La [guía de instalación](docs/installation.md) explica cómo indicar otra ruta de Python, configurar las rutas locales y verificar el arranque. El [índice documental](docs/README.md) reúne las guías técnicas y académicas; el [mapa de módulos](docs/modules.md) permite localizar pantallas, API, servicios y pruebas.
 
 ---
 
@@ -76,13 +63,37 @@ Para arrancar el backend y frontend en un solo comando:
 
 ## 6. Pruebas Automatizadas y Calidad
 
+La [referencia estructural del 8 de octubre de 2026](docs/testing/BASELINE_ESTRUCTURAL.md) registra el entorno verificado, los resultados, los contratos iniciales y las limitaciones de cobertura para la reorganización.
+
+La [fase estructural 1](docs/testing/FASE_1_ESTRUCTURAL.md) registra la instalación nueva/repetida y los scripts verificados en Windows PowerShell 5.1, con 260 pruebas backend, 85 frontend y un E2E aprobados.
+
+La [fase estructural 3](docs/testing/FASE_3_ESTRUCTURAL.md) registra la separación frontend de API, tipos y composición: 102 pruebas frontend, un E2E, lint, tipos y compilación aprobados; contratos, rutas y permisos conservados.
+
+La [fase estructural 4](docs/testing/FASE_4_ESTRUCTURAL.md) registra componentes comunes de modal, mensajes, carga y badges, y la división de controles y editor: 111 pruebas frontend, dos E2E, lint, tipos y compilación aprobados.
+
+El [cierre estructural](docs/testing/FASE_7_ESTRUCTURAL.md) registra **260 pruebas backend, 111 frontend y tres E2E**, lint/formato/tipos/build, equivalencia de API y SQLite, DOCX e historial, 100 casos y scripts Windows verificados. Los hallazgos funcionales fuera de alcance están identificados en ese informe.
+
 ```powershell
-.\scripts\test.ps1
+.\scripts\test.ps1 -E2E
 ```
 
 ---
 
 ## 7. Roadmap de Fases del Proyecto
+
+La reorganización de archivos, configuración y documentación completó las fases 0–7 de su [plan de mejora estructural](docs/PLAN_MEJORA_ESTRUCTURAL.md) con entregables y criterios de cierre verificados. Complementa las fases funcionales de la tesis que se describen a continuación.
+
+El estado del código revisado el **8 de octubre de 2026** se resume en el [mapa de módulos](docs/modules.md):
+
+| Alcance funcional | Estado actual |
+|---|---|
+| Fases 1–7 | Módulos de base, seguridad, expedientes, campos, plantillas, reglas y borradores implementados |
+| Fase 8: ingesta XLSX/CSV/PDF | Prevista; los adjuntos actuales se guardan y descargan |
+| Fase 9: administración financiera | Prevista |
+| Fase 10: QA integral | Suite estructural integral aprobada; campos, modales y generación DOCX con historial; límites en el informe de cierre |
+| Fase 11: medición de tesis | Módulo implementado; la reducción temporal requiere el experimento registrado |
+
+Los apartados siguientes conservan el historial de entregas y sus verificaciones reportadas. Las comprobaciones recientes y sus límites se encuentran en los informes de las [fases estructurales 0](docs/testing/BASELINE_ESTRUCTURAL.md), [1](docs/testing/FASE_1_ESTRUCTURAL.md), [2](docs/testing/FASE_2_ESTRUCTURAL.md), [3](docs/testing/FASE_3_ESTRUCTURAL.md) y [4](docs/testing/FASE_4_ESTRUCTURAL.md).
 
 ### FASE 1 — Monolito Modular Base — COMPLETADA (commit 209c9cb)
 
@@ -223,9 +234,7 @@ Motor de 20 tipos con configuración versionada, DynamicForm (React Hook Form + 
 Acceso: **Formularios** en la navegación o desde el detalle del expediente. [Guía, contratos y pruebas](docs/dynamic-fields.md).
 
 ```powershell
-cd frontend
-npx.cmd playwright install chromium
-cd ..
+.\scripts\setup.ps1 -E2E
 .\scripts\test.ps1 -E2E
 ```
 
@@ -327,7 +336,7 @@ Objetivo: Generación de borradores con docxtpl en backend, verificación de cer
 
 ---
 
-### FASE 11 — Experimento de Medición de Tiempos (100 Casos Sintéticos) — COMPLETADA (commit b8ca802)
+### FASE 11 — Experimento de Medición de Tiempos (100 Casos Sintéticos) — MÓDULO IMPLEMENTADO (commit b8ca802)
 
 Objetivo: corpus experimental estratificado, medición cronometrada TRADITIONAL vs SYSTEM por etapas y estadística real para la validación de la hipótesis (línea base 240 min, meta experimental 60 min).
 
@@ -369,40 +378,39 @@ Objetivo: corpus experimental estratificado, medición cronometrada TRADITIONAL 
 
 ```text
 notariado-app/
-├── .agents/                    # Reglas e invariantes locales Antigravity
-│   ├── rules/                  # Reglas notariales, de tesis y arquitectura
-│   └── skills/                 # Skills para DOCX, validacion y experimentacion
-├── backend/                    # API FastAPI, SQLAlchemy, SQLite
-│   ├── alembic/                # Migraciones de base de datos
+├── .agents/                    # Reglas y procedimientos locales
+├── backend/
+│   ├── alembic/                # Migraciones versionadas
 │   ├── app/
-│   │   ├── api/v1/endpoints/   # auth, users, audit, health, clients, cases, legal_entities, dynamic_fields, templates
-│   │   ├── core/               # config.py, security.py, roles.py
-│   │   ├── db/                 # Sesion y base SQLAlchemy
-│   │   ├── models/             # User, Client, LegalEntity, Case, CaseParty, AuditLog, dynamic_field (Template*)
-│   │   ├── repositories/       # Capa de acceso a datos
-│   │   ├── rules/              # Motor RULE-001..020: engine, checks, catalog, gt_catalog, number_words
-│   │   ├── schemas/            # Esquemas Pydantic v2 (client, case, legal_entity, dynamic_field, template, validation, document)
-│   │   ├── services/           # user, client, case, legal_entity, audit, dynamic_field, template_docx, validation, document_generation
-│   │   └── utils/              # seed_users.py
-│   ├── tests/
-│   │   ├── integration/        # auth, users, audit, clients, cases, dynamic_fields, templates, validations, documents
-│   │   └── unit/               # security, config, dynamic_fields, jinja_extraction, number_words, rule_engine, document_context
-│   └── requirements.txt
-├── frontend/                   # Interfaz React + TypeScript + Vite
+│   │   ├── api/v1/endpoints/   # Entradas HTTP por módulo
+│   │   ├── core/              # Configuración, seguridad y permisos
+│   │   ├── db/                # Base y sesiones SQLAlchemy
+│   │   ├── models/            # Dominio, versiones, validación y experimento
+│   │   ├── rules/             # Registro, catálogo y familias de RULE-001..020
+│   │   ├── schemas/           # Contratos Pydantic
+│   │   ├── services/          # Coordinación; DOCX, contexto y archivos compartidos
+│   │   └── utils/             # seed_users.py y synthetic_data.py
+│   ├── tests/                 # unit/, integration/ y support/ sintético
+│   ├── pyproject.toml         # Configuración Ruff y pytest
+│   └── requirements*.txt      # Dependencias de ejecución/desarrollo y versiones fijadas
+├── frontend/
+│   ├── e2e/                   # Campos, modales y recorrido DOCX con historial
 │   └── src/
-│       ├── components/         # Navbar, LoginModal, UserManagementModal, SystemHealthBadge
-│       │   └── common/         # ClientSearchSelect, ConfirmDialog
-│       ├── context/            # AuthContext
-│       ├── features/           # dashboard/, clients/, cases/, fields/, templates/, validation/, documents/
-│       ├── lib/                # validators.ts (Zod), labels.ts, format.ts
-│       ├── services/           # api.ts (auth, users, clients, legal-entities, cases, templates, validations)
-│       ├── test/               # setup Vitest + Testing Library
-│       └── types/              # index.ts
-├── docs/                       # Documentacion formal de arquitectura, scrum y tesis
-├── scripts/                    # dev.ps1, test.ps1, seed.ps1, backup.ps1, experiment.ps1
-├── AGENTS.md                   # Reglas maestras del proyecto (Antigravity)
-└── README.md                   # Guia de inicio rapido y estado del proyecto
+│       ├── app/               # Proveedores, rutas y layout
+│       ├── components/        # Navegación y UI común: modales, mensajes, carga y badges
+│       ├── features/          # dashboard, auth, users, audit, clients, cases, fields,
+│       │                      # templates, validation, documents y experiment;
+│       │                      # API y tipos propios por funcionalidad
+│       ├── lib/               # Validadores, etiquetas y formato
+│       ├── shared/            # Cliente HTTP, errores comunes y CaseType
+│       └── test/              # Preparación Vitest
+├── docs/                      # Índice, guías, planificación, evidencia y antecedentes
+├── scripts/                   # setup, dev, test, seed, backup, experiment y baseline
+├── AGENTS.md                  # Reglas permanentes
+└── README.md
 ```
+
+Los archivos locales de SQLite, plantillas, adjuntos, borradores, respaldos y cachés se excluyen de Git. La [arquitectura](docs/architecture.md), el [mapa de módulos](docs/modules.md) y las [convenciones](docs/contributing.md) detallan responsabilidades actuales y la reorganización completada.
 
 ---
 
@@ -410,6 +418,12 @@ notariado-app/
 
 | Commit | Fase | Descripcion |
 |---|---|---|
+| a48ef71 | Estructural 0–1 | Referencia verificada, instalación repetible, dependencias fijadas y scripts Windows |
+| 338d6b0 | Estructural 2 | Índice, arquitectura, mapa de módulos, convenciones y referencias documentales verificadas |
+| da9d93b | Estructural 3 | API y tipos por funcionalidad, cliente HTTP compartido y composición de la aplicación |
+| 8531a74 | Estructural 4 | UI común, controles de captura y editor por responsabilidad |
+| 05348e4 | Estructural 5 | Responsabilidades DOCX, contexto público, persistencia, modelos y reglas |
+| 5a6fd30 | Estructural 6 | Recursos sintéticos compartidos; escenarios y aserciones conservados |
 | 209c9cb | Fase 1 | Base modular: FastAPI, SQLite, Alembic, React, Tailwind, test suite |
 | 67a67d3 | Fase 2 | Auth JWT/Argon2, RBAC, modelos de dominio, auditoria, seed, tests integracion |
 | 5d745a5 | Fase 3 | Backend: endpoints y servicios de clients, legal-entities, cases y parties |

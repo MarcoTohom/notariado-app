@@ -1,0 +1,12 @@
+[
+  {
+    "path": "frontend/e2e/dynamic-fields.spec.ts",
+    "initial_sha256": "ede875eebdb362daa2b20970177a5267e9a3cc2b5836c47e2c1e9318cf3911b9",
+    "verified_sha256": "64bcd6c8157d4d2ec0c8b6f153c36abc9e38810dcc4536ec14bf4c79457dbe33"
+  },
+  {
+    "path": "frontend/src/components/Navbar.tsx",
+    "initial_sha256": "5769b5b0345f7008e65497809e1c102df8d19391d5f5b2d5cce626245b4d5599",
+    "verified_sha256": "5ea4392bdc10746316f2303f27b9c37941e944c3a6f4807458d55dedd4455fbf"
+  }
+]

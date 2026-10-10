@@ -3,6 +3,8 @@
 **Investigador:** Marco Antonio Lares Tohom  
 **Metodología:** Scrum / Agile adaptado a Investigación Aplicada en Ingeniería de Software
 
+> **Carácter del documento:** planificación académica y funcional original. Las historias y fechas no acreditan por sí mismas implementación ni resultados de investigación. El estado actual está en el [mapa de módulos](../modules.md), y la evidencia y guías en el [índice documental](../README.md).
+
 ---
 
 ## 1. Estructura de Épicas (Epics)

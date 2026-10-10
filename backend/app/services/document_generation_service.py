@@ -14,16 +14,13 @@ from jinja2 import ChainableUndefined, Environment
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.core.config import settings
+from app.db.operations import flush
 from app.models.audit import AuditLog
 from app.models.case import Case
+from app.models.case_field_values import CaseFieldValues
 from app.models.document import Document, DocumentVersion
-from app.models.dynamic_field import (
-    CaseFieldValues,
-    Template,
-    TemplateField,
-    TemplateVersion,
-)
+from app.models.dynamic_field import TemplateField
+from app.models.template import Template, TemplateVersion
 from app.models.user import User
 from app.rules.engine import run_rules, summarize
 from app.schemas.document import (
@@ -32,42 +29,14 @@ from app.schemas.document import (
     DocumentSummary,
     DocumentVersionInfo,
 )
-from app.services.dynamic_field_service import flush
-from app.services.template_docx_service import (
-    _assign_nested,
-    find_residual_variables,
-    sha256_hex,
-)
-from app.services.validation_service import _build_context
+from app.services.docx.analysis import find_residual_variables
+from app.services.docx.context import build_render_context
+from app.services.docx.files import document_storage_dir, sha256_hex
+from app.services.validation_context import build_validation_context
 
 # ---------------------------------------------------------------------------
-# Construcción del contexto Jinja2 desde los valores del formulario
+# Resolución de versión y valores del expediente
 # ---------------------------------------------------------------------------
-
-
-def build_render_context(fields: list[TemplateField], values: dict) -> dict:
-    """Mapea los valores planos del formulario a las variables Jinja2.
-
-    - Variables planas se copian tal cual (compatibilidad con claves directas).
-    - Los valores None se omiten: Jinja2 los imprimiría como texto "None".
-    - `docx_variable` con punto (comprador.dpi) anida en diccionarios.
-    - Campos lista (testigos) pasan como colecciones de filas para {% for %}.
-    """
-    context: dict = {key: value for key, value in values.items() if value is not None}
-    for field in fields:
-        if not field.docx_variable:
-            continue
-        value = values.get(field.key)
-        if value is None:
-            continue
-        variable = field.docx_variable
-        if field.field_type == "list":
-            context[variable] = value if isinstance(value, list) else []
-        elif "." in variable:
-            _assign_nested(context, variable, value)
-        else:
-            context[variable] = value
-    return context
 
 
 # ---------------------------------------------------------------------------
@@ -130,7 +99,7 @@ def _enforce_no_critical_findings(
     db: Session, case_id: str, version_id: str, values: dict
 ) -> None:
     """El botón Generar DOCX exige cero hallazgos CRITICAL (spec §39)."""
-    ctx = _build_context(db, case_id, version_id, values)
+    ctx = build_validation_context(db, case_id, version_id, values)
     findings = run_rules(ctx)
     critical = [f for f in findings if f.severity == "CRITICAL"]
     if critical:
@@ -147,12 +116,6 @@ def _enforce_no_critical_findings(
 # ---------------------------------------------------------------------------
 # Generación, verificación y versionamiento (US-07.1 y US-07.2)
 # ---------------------------------------------------------------------------
-
-
-def _document_storage_dir() -> Path:
-    directory = settings.GENERATED_DIR / "documents"
-    directory.mkdir(parents=True, exist_ok=True)
-    return directory
 
 
 def generate_draft(
@@ -180,7 +143,7 @@ def generate_draft(
     # renderizan vacío en lugar de abortar; RULE-001 ya vigila lo obligatorio.
     jinja_env = Environment(undefined=ChainableUndefined, autoescape=False)
     storage_name = f"{uuid4()}.docx"
-    destination = _document_storage_dir() / storage_name
+    destination = document_storage_dir() / storage_name
     try:
         document = DocxTemplate(str(version.file_path))
         document.render(context, jinja_env=jinja_env)

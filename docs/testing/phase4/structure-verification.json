@@ -1,0 +1,85 @@
+{
+  "phase": 4,
+  "reference_commit": "da9d93b",
+  "control_bodies_unchanged": 23,
+  "registry_types_and_upload_context_unchanged": true,
+  "editor_actions_unchanged": 3,
+  "editor_sections_equivalent": 3,
+  "modal_handlers_and_setup_unchanged": 12,
+  "modal_headers_and_animations_unchanged": true,
+  "modal_variants": [
+    {
+      "file": "features/auth/LoginModal.tsx",
+      "size": "md",
+      "height": "content"
+    },
+    {
+      "file": "features/cases/CaseDetailModal.tsx",
+      "size": "3xl",
+      "height": "90vh"
+    },
+    {
+      "file": "features/cases/CaseFormModal.tsx",
+      "size": "3xl",
+      "height": "90vh"
+    },
+    {
+      "file": "features/clients/ClientFormModal.tsx",
+      "size": "2xl",
+      "height": "90vh"
+    },
+    {
+      "file": "features/clients/LegalEntityFormModal.tsx",
+      "size": "2xl",
+      "height": "90vh"
+    },
+    {
+      "file": "features/documents/DocumentDetailModal.tsx",
+      "size": "2xl",
+      "height": "90vh"
+    },
+    {
+      "file": "features/documents/GenerateDocumentModal.tsx",
+      "size": "2xl",
+      "height": "90vh"
+    },
+    {
+      "file": "features/templates/TemplateDetailModal.tsx",
+      "size": "4xl",
+      "height": "90vh"
+    },
+    {
+      "file": "features/templates/TemplateUploadModal.tsx",
+      "size": "lg",
+      "height": "90vh"
+    },
+    {
+      "file": "features/users/UserManagementModal.tsx",
+      "size": "4xl",
+      "height": "85vh"
+    },
+    {
+      "file": "features/validation/CaseValidationModal.tsx",
+      "size": "3xl",
+      "height": "90vh"
+    }
+  ],
+  "contracts_and_infrastructure_files_unchanged": 36,
+  "existing_frontend_test_files_unchanged": 11,
+  "existing_e2e_unchanged": true,
+  "relative_imports_checked": 295,
+  "runtime_import_cycles": [],
+  "forbidden_changes": [],
+  "file_lines": {
+    "FieldControls": {
+      "before": 600,
+      "after": 121
+    },
+    "FieldDefinitionEditor": {
+      "before": 553,
+      "after": 94
+    }
+  },
+  "errors": [],
+  "status": "passed"
+}

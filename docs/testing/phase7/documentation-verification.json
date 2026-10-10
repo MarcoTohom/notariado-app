@@ -1,0 +1,17 @@
+{
+  "date": "2026-10-08",
+  "phase": 7,
+  "reference_commit": "5a6fd30",
+  "markdown_files": 25,
+  "internal_links_checked": 374,
+  "external_links_not_fetched": 0,
+  "documented_api_operations_checked": 11,
+  "frontend_routes_checked": 7,
+  "database_tables_checked": 18,
+  "operational_scripts_checked": 6,
+  "out_of_scope_changes": [],
+  "diff_check": "passed",
+  "errors": [],
+  "status": "passed",
+  "functional_suite": "full suite recorded in phase7/verification-results.json"
+}

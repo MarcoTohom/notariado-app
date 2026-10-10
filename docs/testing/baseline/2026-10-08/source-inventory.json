@@ -1,0 +1,1089 @@
+{
+  "backend_imports": {
+    "backend/app/__init__.py": [],
+    "backend/app/api/__init__.py": [],
+    "backend/app/api/deps.py": [
+      "app.core.roles:ROLE_PERMISSIONS",
+      "app.core.roles:RoleEnum",
+      "app.core.roles:UserStatusEnum",
+      "app.core.security:decode_access_token",
+      "app.db.session:get_db",
+      "app.models.user:User"
+    ],
+    "backend/app/api/v1/__init__.py": [],
+    "backend/app/api/v1/api.py": [
+      "app.api.v1.endpoints:audit",
+      "app.api.v1.endpoints:auth",
+      "app.api.v1.endpoints:cases",
+      "app.api.v1.endpoints:clients",
+      "app.api.v1.endpoints:documents",
+      "app.api.v1.endpoints:dynamic_fields",
+      "app.api.v1.endpoints:experiment",
+      "app.api.v1.endpoints:health",
+      "app.api.v1.endpoints:legal_entities",
+      "app.api.v1.endpoints:templates",
+      "app.api.v1.endpoints:users",
+      "app.api.v1.endpoints:validations"
+    ],
+    "backend/app/api/v1/endpoints/__init__.py": [],
+    "backend/app/api/v1/endpoints/audit.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.audit:AuditLog",
+      "app.models.user:User",
+      "app.schemas.audit:AuditLogListResponse"
+    ],
+    "backend/app/api/v1/endpoints/auth.py": [
+      "app.api.deps:get_current_user",
+      "app.api.deps:get_db",
+      "app.core.config:settings",
+      "app.core.roles:get_permissions_for_role",
+      "app.core.security:create_access_token",
+      "app.core.security:verify_password",
+      "app.models.user:User",
+      "app.schemas.auth:LoginRequest",
+      "app.schemas.auth:Token",
+      "app.schemas.auth:UserSession",
+      "app.services.audit_service:record_audit"
+    ],
+    "backend/app/api/v1/endpoints/cases.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.user:User",
+      "app.schemas.case:AddPartyRequest",
+      "app.schemas.case:CaseCreate",
+      "app.schemas.case:CaseListResponse",
+      "app.schemas.case:CasePartyResponse",
+      "app.schemas.case:CaseResponse",
+      "app.schemas.case:CaseUpdate",
+      "app.services.case_service:add_party_to_case",
+      "app.services.case_service:create_case",
+      "app.services.case_service:delete_case_logical",
+      "app.services.case_service:get_case_by_id",
+      "app.services.case_service:get_cases",
+      "app.services.case_service:remove_party_from_case",
+      "app.services.case_service:update_case"
+    ],
+    "backend/app/api/v1/endpoints/clients.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.user:User",
+      "app.schemas.client:ClientCreate",
+      "app.schemas.client:ClientListResponse",
+      "app.schemas.client:ClientResponse",
+      "app.schemas.client:ClientUpdate",
+      "app.services.client_service:create_client",
+      "app.services.client_service:delete_client_logical",
+      "app.services.client_service:get_client_by_id",
+      "app.services.client_service:get_clients",
+      "app.services.client_service:update_client"
+    ],
+    "backend/app/api/v1/endpoints/documents.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.user:User",
+      "app.schemas.document:DocumentDetail",
+      "app.schemas.document:DocumentListResponse",
+      "app.schemas.document:GenerateDocumentRequest",
+      "app.services:document_generation_service"
+    ],
+    "backend/app/api/v1/endpoints/dynamic_fields.py": [
+      "app.api.deps:require_permission",
+      "app.core.config:settings",
+      "app.db.session:get_db",
+      "app.models.dynamic_field:FieldAttachment",
+      "app.models.dynamic_field:TemplateVersion",
+      "app.models.user:User",
+      "app.schemas.dynamic_field:DefinitionCreate",
+      "app.schemas.dynamic_field:ValidationResult",
+      "app.schemas.dynamic_field:ValuesRequest",
+      "app.schemas.dynamic_field:ValuesResponse",
+      "app.schemas.dynamic_field:VersionCreate",
+      "app.schemas.dynamic_field:VersionResponse",
+      "app.services:dynamic_field_service"
+    ],
+    "backend/app/api/v1/endpoints/experiment.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.experiment:TestCase",
+      "app.models.user:User",
+      "app.schemas.experiment:CorpusGenerationResult",
+      "app.schemas.experiment:FinishExecutionRequest",
+      "app.schemas.experiment:StartExecutionRequest",
+      "app.schemas.experiment:StartStageRequest",
+      "app.schemas.experiment:TestCaseListResponse",
+      "app.schemas.experiment:TestExecutionOut",
+      "app.schemas.experiment:TimeMeasurementOut",
+      "app.services:experiment_service"
+    ],
+    "backend/app/api/v1/endpoints/health.py": [
+      "app.core.config:settings",
+      "app.db.session:get_db",
+      "app.schemas.health:HealthResponse",
+      "app.schemas.health:SystemInfo"
+    ],
+    "backend/app/api/v1/endpoints/legal_entities.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.user:User",
+      "app.schemas.legal_entity:LegalEntityCreate",
+      "app.schemas.legal_entity:LegalEntityListResponse",
+      "app.schemas.legal_entity:LegalEntityResponse",
+      "app.schemas.legal_entity:LegalEntityUpdate",
+      "app.services.legal_entity_service:create_legal_entity",
+      "app.services.legal_entity_service:delete_legal_entity_logical",
+      "app.services.legal_entity_service:get_legal_entities",
+      "app.services.legal_entity_service:get_legal_entity_by_id",
+      "app.services.legal_entity_service:update_legal_entity"
+    ],
+    "backend/app/api/v1/endpoints/templates.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.user:User",
+      "app.schemas.template:PreviewResult",
+      "app.schemas.template:TemplateDetail",
+      "app.schemas.template:TemplateListResponse",
+      "app.services:template_docx_service"
+    ],
+    "backend/app/api/v1/endpoints/users.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.user:User",
+      "app.schemas.user:UserCreate",
+      "app.schemas.user:UserListResponse",
+      "app.schemas.user:UserResponse",
+      "app.schemas.user:UserUpdate",
+      "app.services:user_service"
+    ],
+    "backend/app/api/v1/endpoints/validations.py": [
+      "app.api.deps:get_db",
+      "app.api.deps:require_permission",
+      "app.models.user:User",
+      "app.rules.engine:rule_catalog_public",
+      "app.schemas.validation:RuleCatalogItem",
+      "app.schemas.validation:RunValidationRequest",
+      "app.schemas.validation:ValidationRunListResponse",
+      "app.schemas.validation:ValidationRunResponse",
+      "app.services:validation_service"
+    ],
+    "backend/app/core/__init__.py": [],
+    "backend/app/core/config.py": [],
+    "backend/app/core/roles.py": [],
+    "backend/app/core/security.py": [
+      "app.core.config:settings"
+    ],
+    "backend/app/db/__init__.py": [
+      "app.db.base:Base",
+      "app.db.session:SessionLocal",
+      "app.db.session:engine",
+      "app.db.session:get_db"
+    ],
+    "backend/app/db/base.py": [],
+    "backend/app/db/session.py": [
+      "app.core.config:settings"
+    ],
+    "backend/app/main.py": [
+      "app.api.v1.api:api_router",
+      "app.core.config:settings"
+    ],
+    "backend/app/models/__init__.py": [
+      "app.models.audit:AuditLog",
+      "app.models.base:IdentifiableMixin",
+      "app.models.case:Case",
+      "app.models.case_party:CaseParty",
+      "app.models.client:Client",
+      "app.models.document:Document",
+      "app.models.document:DocumentVersion",
+      "app.models.dynamic_field:CaseFieldValues",
+      "app.models.dynamic_field:FieldAttachment",
+      "app.models.dynamic_field:Template",
+      "app.models.dynamic_field:TemplateField",
+      "app.models.dynamic_field:TemplateVersion",
+      "app.models.experiment:TestCase",
+      "app.models.experiment:TestExecution",
+      "app.models.experiment:TimeMeasurement",
+      "app.models.legal_entity:LegalEntity",
+      "app.models.user:User",
+      "app.models.validation:ValidationRun"
+    ],
+    "backend/app/models/audit.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin"
+    ],
+    "backend/app/models/base.py": [
+      "app.db.base:TimestampMixin"
+    ],
+    "backend/app/models/case.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin",
+      "app.models.case_party:CaseParty"
+    ],
+    "backend/app/models/case_party.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin",
+      "app.models.case:Case",
+      "app.models.client:Client"
+    ],
+    "backend/app/models/client.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin",
+      "app.models.case_party:CaseParty",
+      "app.models.legal_entity:LegalEntity"
+    ],
+    "backend/app/models/document.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin"
+    ],
+    "backend/app/models/dynamic_field.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin"
+    ],
+    "backend/app/models/experiment.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin"
+    ],
+    "backend/app/models/legal_entity.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin",
+      "app.models.client:Client"
+    ],
+    "backend/app/models/user.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin"
+    ],
+    "backend/app/models/validation.py": [
+      "app.db.base:Base",
+      "app.models.base:IdentifiableMixin"
+    ],
+    "backend/app/repositories/__init__.py": [],
+    "backend/app/rules/__init__.py": [],
+    "backend/app/rules/catalog.py": [],
+    "backend/app/rules/checks.py": [
+      "app.core.config:settings",
+      "app.rules.catalog:RULES_CATALOG",
+      "app.rules.context:ValidationContext",
+      "app.rules.context:normalize_identifier",
+      "app.rules.context:normalize_text",
+      "app.rules.finding:Finding",
+      "app.rules.finding:make_finding",
+      "app.rules.gt_catalog:DEPARTMENT_NAMES",
+      "app.rules.gt_catalog:MUNICIPALITY_TO_DEPARTMENT",
+      "app.rules.number_words:amount_to_words"
+    ],
+    "backend/app/rules/context.py": [
+      "app.models.case:Case",
+      "app.models.dynamic_field:TemplateField"
+    ],
+    "backend/app/rules/engine.py": [
+      "app.rules.catalog:RULES_CATALOG",
+      "app.rules.catalog:SEVERITY_ORDER",
+      "app.rules.checks:RULE_FUNCTIONS",
+      "app.rules.context:ValidationContext",
+      "app.rules.finding:Finding"
+    ],
+    "backend/app/rules/finding.py": [
+      "app.rules.catalog:RULES_CATALOG"
+    ],
+    "backend/app/rules/gt_catalog.py": [],
+    "backend/app/rules/number_words.py": [],
+    "backend/app/schemas/__init__.py": [
+      "app.schemas.health:HealthResponse",
+      "app.schemas.health:SystemInfo"
+    ],
+    "backend/app/schemas/audit.py": [],
+    "backend/app/schemas/auth.py": [],
+    "backend/app/schemas/case.py": [
+      "app.schemas.client:ClientResponse"
+    ],
+    "backend/app/schemas/client.py": [],
+    "backend/app/schemas/document.py": [],
+    "backend/app/schemas/dynamic_field.py": [
+      "app.services.field_validation:decimal_value",
+      "app.services.field_validation:expression_tree",
+      "app.services.field_validation:validate_pattern"
+    ],
+    "backend/app/schemas/experiment.py": [],
+    "backend/app/schemas/health.py": [],
+    "backend/app/schemas/legal_entity.py": [
+      "app.schemas.client:ClientResponse"
+    ],
+    "backend/app/schemas/template.py": [],
+    "backend/app/schemas/user.py": [],
+    "backend/app/schemas/validation.py": [],
+    "backend/app/services/__init__.py": [],
+    "backend/app/services/audit_service.py": [
+      "app.models.audit:AuditLog"
+    ],
+    "backend/app/services/case_service.py": [
+      "app.models.case:Case",
+      "app.models.case:CaseStatusEnum",
+      "app.models.case:CaseTypeEnum",
+      "app.models.case_party:CaseParty",
+      "app.models.client:Client",
+      "app.models.user:User",
+      "app.schemas.case:AddPartyRequest",
+      "app.schemas.case:CaseCreate",
+      "app.schemas.case:CaseUpdate",
+      "app.services.audit_service:record_audit"
+    ],
+    "backend/app/services/client_service.py": [
+      "app.models.client:Client",
+      "app.models.user:User",
+      "app.schemas.client:ClientCreate",
+      "app.schemas.client:ClientUpdate",
+      "app.services.audit_service:record_audit"
+    ],
+    "backend/app/services/document_generation_service.py": [
+      "app.core.config:settings",
+      "app.models.audit:AuditLog",
+      "app.models.case:Case",
+      "app.models.document:Document",
+      "app.models.document:DocumentVersion",
+      "app.models.dynamic_field:CaseFieldValues",
+      "app.models.dynamic_field:Template",
+      "app.models.dynamic_field:TemplateField",
+      "app.models.dynamic_field:TemplateVersion",
+      "app.models.user:User",
+      "app.rules.engine:run_rules",
+      "app.rules.engine:summarize",
+      "app.schemas.document:DocumentDetail",
+      "app.schemas.document:DocumentListResponse",
+      "app.schemas.document:DocumentSummary",
+      "app.schemas.document:DocumentVersionInfo",
+      "app.services.dynamic_field_service:flush",
+      "app.services.template_docx_service:_assign_nested",
+      "app.services.template_docx_service:find_residual_variables",
+      "app.services.template_docx_service:sha256_hex",
+      "app.services.validation_service:_build_context"
+    ],
+    "backend/app/services/dynamic_field_service.py": [
+      "app.core.config:settings",
+      "app.models.audit:AuditLog",
+      "app.models.case:Case",
+      "app.models.client:Client",
+      "app.models.dynamic_field:CaseFieldValues",
+      "app.models.dynamic_field:FieldAttachment",
+      "app.models.dynamic_field:Template",
+      "app.models.dynamic_field:TemplateField",
+      "app.models.dynamic_field:TemplateVersion",
+      "app.schemas.dynamic_field:FieldDefinition",
+      "app.schemas.dynamic_field:VersionResponse",
+      "app.services.field_validation:check_definitions",
+      "app.services.field_validation:validate_values"
+    ],
+    "backend/app/services/experiment_service.py": [
+      "app.core.config:settings",
+      "app.models.audit:AuditLog",
+      "app.models.case:Case",
+      "app.models.case_party:CaseParty",
+      "app.models.client:Client",
+      "app.models.dynamic_field:CaseFieldValues",
+      "app.models.dynamic_field:Template",
+      "app.models.dynamic_field:TemplateField",
+      "app.models.dynamic_field:TemplateVersion",
+      "app.models.experiment:TestCase",
+      "app.models.experiment:TestExecution",
+      "app.models.experiment:TimeMeasurement",
+      "app.models.user:User",
+      "app.rules.engine:run_rules",
+      "app.services.dynamic_field_service:flush",
+      "app.services.validation_service:_build_context",
+      "app.utils:synthetic_data"
+    ],
+    "backend/app/services/field_validation.py": [
+      "app.schemas.dynamic_field:FieldIssue",
+      "app.schemas.dynamic_field:ValidationResult"
+    ],
+    "backend/app/services/legal_entity_service.py": [
+      "app.models.client:Client",
+      "app.models.legal_entity:LegalEntity",
+      "app.models.user:User",
+      "app.schemas.legal_entity:LegalEntityCreate",
+      "app.schemas.legal_entity:LegalEntityUpdate",
+      "app.services.audit_service:record_audit"
+    ],
+    "backend/app/services/template_docx_service.py": [
+      "app.core.config:settings",
+      "app.models.audit:AuditLog",
+      "app.models.dynamic_field:Template",
+      "app.models.dynamic_field:TemplateField",
+      "app.models.dynamic_field:TemplateVersion",
+      "app.models.user:User",
+      "app.schemas.template:PreviewResult",
+      "app.schemas.template:TemplateDetail",
+      "app.schemas.template:TemplateFieldInfo",
+      "app.schemas.template:TemplateListResponse",
+      "app.schemas.template:TemplateSummary",
+      "app.schemas.template:TemplateVersionInfo",
+      "app.services.dynamic_field_service:flush",
+      "app.services.dynamic_field_service:verify_file"
+    ],
+    "backend/app/services/user_service.py": [
+      "app.core.roles:RoleEnum",
+      "app.core.roles:UserStatusEnum",
+      "app.core.security:get_password_hash",
+      "app.models.user:User",
+      "app.schemas.user:UserCreate",
+      "app.schemas.user:UserUpdate",
+      "app.services.audit_service:record_audit"
+    ],
+    "backend/app/services/validation_service.py": [
+      "app.models.audit:AuditLog",
+      "app.models.case:Case",
+      "app.models.case_party:CaseParty",
+      "app.models.client:Client",
+      "app.models.dynamic_field:CaseFieldValues",
+      "app.models.dynamic_field:FieldAttachment",
+      "app.models.dynamic_field:TemplateField",
+      "app.models.dynamic_field:TemplateVersion",
+      "app.models.user:User",
+      "app.models.validation:ValidationRun",
+      "app.rules.context:PartyInfo",
+      "app.rules.context:ValidationContext",
+      "app.rules.engine:run_rules",
+      "app.rules.engine:summarize",
+      "app.schemas.validation:ValidationRunResponse"
+    ],
+    "backend/app/utils/__init__.py": [],
+    "backend/app/utils/seed_users.py": [
+      "app.core.roles:RoleEnum",
+      "app.core.roles:UserStatusEnum",
+      "app.core.security:get_password_hash",
+      "app.db.session:SessionLocal",
+      "app.models.user:User"
+    ],
+    "backend/app/utils/synthetic_data.py": [
+      "app.rules.number_words:amount_to_words"
+    ]
+  },
+  "files": [
+    {
+      "path": "backend/alembic/env.py",
+      "sha256": "c648a5d9733b6ad6bfa5a9ac269cefe028e4f18674a32c07f070c7bfa8e06e23"
+    },
+    {
+      "path": "backend/alembic/versions/06f3bdb3abdb_add_users_and_audit_logs_tables.py",
+      "sha256": "5b74556e2e3dbb23b1c1df25d98c9c3bab988acf288802e09d6266ca9fa99a05"
+    },
+    {
+      "path": "backend/alembic/versions/eaf2f5a69767_initial_baseline_migration.py",
+      "sha256": "502b3e5b8ed3a37f4a68ce3db5aeedab5215a9db28e3b927471d32a5d124898a"
+    },
+    {
+      "path": "backend/alembic/versions/phase11_experiment.py",
+      "sha256": "91c8af7d702c7676ecb0c4948ed444ef8057629985dea4508105bebd1717384f"
+    },
+    {
+      "path": "backend/alembic/versions/phase3_subjects.py",
+      "sha256": "a8a2303efe5e1e7481ae86de20ee1d25d24bc277ba3498dff8acb56e71cfa269"
+    },
+    {
+      "path": "backend/alembic/versions/phase4_fields.py",
+      "sha256": "bc5a54b54eaea51b74c35b9f063d64788bc0fa55aef2c42fa5a8add01445daf9"
+    },
+    {
+      "path": "backend/alembic/versions/phase5_templates.py",
+      "sha256": "f802ab3ee7fd9e3839a5e678af1193d1b52db02e7c2df5b1bca46002a9e80795"
+    },
+    {
+      "path": "backend/alembic/versions/phase6_rules.py",
+      "sha256": "5136049d479276dee3aaa5b72085f9bc57eb2a1496a15fa481cbeba1a5eb9408"
+    },
+    {
+      "path": "backend/alembic/versions/phase7_documents.py",
+      "sha256": "8713e054a804ac67d2c28a1729e2d62c6e05b6307c4f91d44fa795aa2d09e01c"
+    },
+    {
+      "path": "backend/app/__init__.py",
+      "sha256": "c2e3621cd969b6738bf7f2f9139d7709ef15a06bfeb280007c126984f03914eb"
+    },
+    {
+      "path": "backend/app/api/__init__.py",
+      "sha256": "6cdf8e303d22fbbb6a673c53d5e06388300827bbcbbf0d317d3f8889841d01bb"
+    },
+    {
+      "path": "backend/app/api/deps.py",
+      "sha256": "f0f0c14340a2874e3e434fae94732d056c11ea4f5c930e43d02f2f0bb6094b8f"
+    },
+    {
+      "path": "backend/app/api/v1/__init__.py",
+      "sha256": "53576ecaca2bff751d306385aea23be662ae0b32f60b04b4698713e52af4e4db"
+    },
+    {
+      "path": "backend/app/api/v1/api.py",
+      "sha256": "e756cd0c817dbe9aca7b5ebe9a6e8083321d73a34bf690f49f496ecdc6a2d17e"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/__init__.py",
+      "sha256": "e66f2f1a0446ef0e92c0d372d45d6388e259191b1f897bc0283c8b03d00eaa57"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/audit.py",
+      "sha256": "9dbe7cc3b3e364ff0112362b9050e67f1082b9a21159513228ef8343afc4fd92"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/auth.py",
+      "sha256": "f09a5254cb15e1cd009b9ed2c6b22691e63695a133cb26e4d4810381feef9961"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/cases.py",
+      "sha256": "d2b395297db65bb8e80e5da39eed6f65707fd5beed5f557bb5f66b885ca8284a"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/clients.py",
+      "sha256": "3582e70c8821ee4272e59378d46a06b1d2fb0700b6e645412900cff61ba0acaa"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/documents.py",
+      "sha256": "ed466ca874fcd5a1bfbaee32e269f2e4785402137962edb0e8c50ea799d7eb8f"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/dynamic_fields.py",
+      "sha256": "80f75d2b76a1ef3c106f6f2e1a1c42725ad0d307a9639fd56cfe5ed38ce81461"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/experiment.py",
+      "sha256": "cc42ef28c102849efc31d45a9d5c8610c9a8e4add4b28de7d40fbd3991073cb2"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/health.py",
+      "sha256": "fb25b65f87a85294b7cbb9d9a05e6937178929e0b0a0871f326afe6fe34dad9b"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/legal_entities.py",
+      "sha256": "d2aa1c6c8d7747328b8e352ced2fdfcc3a2415a5f00df66f07ae6a692f2497a9"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/templates.py",
+      "sha256": "7152cfa6c70d994d3daa3caffb09ce18230e8cc4d5e94daaf6628ee335dcadcc"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/users.py",
+      "sha256": "6c19d674ef24968fda86004f9a7ec6ceeb677f10281f7c266b850281f1881585"
+    },
+    {
+      "path": "backend/app/api/v1/endpoints/validations.py",
+      "sha256": "86aeb01719290953c00d51d82b98b27ed44f4257abfc16ae806769048df3f35e"
+    },
+    {
+      "path": "backend/app/core/__init__.py",
+      "sha256": "42cf090fa1658824b4176a96a567ba86d7fdaf14da149838295815b9182c0f4a"
+    },
+    {
+      "path": "backend/app/core/config.py",
+      "sha256": "7b380919bf43e34858dcfcf897458a1ec18c2cbb4d6dfe83312896347dfbee4e"
+    },
+    {
+      "path": "backend/app/core/roles.py",
+      "sha256": "07d90e0a9c6cd9a4f8e06c3313439bb74b2150884037eae95dc1183a0375d17a"
+    },
+    {
+      "path": "backend/app/core/security.py",
+      "sha256": "24fa008d31354ba83644cdf691c50bf4a2b464e31085f6a05506e33be1321fbc"
+    },
+    {
+      "path": "backend/app/db/__init__.py",
+      "sha256": "fc77e3e6fb3d681140a7e835c57f7c3050bc5cbff80d24bcb16bb076632afe16"
+    },
+    {
+      "path": "backend/app/db/base.py",
+      "sha256": "8003ecc8d22ecdc2081bee72685ab49ac14a71ed17f77dcea608e32e679b9056"
+    },
+    {
+      "path": "backend/app/db/session.py",
+      "sha256": "19285789cd3d21a7e877613de94295d7b8e9dd5e18fd2792311483fe06847572"
+    },
+    {
+      "path": "backend/app/main.py",
+      "sha256": "b9cf27fb5925d61bb5a621a805e3312ed5fa89b9c73ff177b9b59e8d0bfa526c"
+    },
+    {
+      "path": "backend/app/models/__init__.py",
+      "sha256": "4f46897c60cabe02bf935b88819a689afbd9eeed60c676bc8a5ec11ead76d166"
+    },
+    {
+      "path": "backend/app/models/audit.py",
+      "sha256": "7198e762477f5d8d906b0fbe7be5b0d914b2aff97338c030d927e8aa7a0caef9"
+    },
+    {
+      "path": "backend/app/models/base.py",
+      "sha256": "354e2fa1fc7ce785b6d08e23d40679c0649b9418aabdf03241f4d6e96ff0c1a2"
+    },
+    {
+      "path": "backend/app/models/case.py",
+      "sha256": "12e760237950eac00af8987cd1807db0952a0bcf8e568698ffb2f94f0e7e8e6d"
+    },
+    {
+      "path": "backend/app/models/case_party.py",
+      "sha256": "26d47ac9511f04d95f39180a4f9db209cf6c58bd5d3ffcc949e0794f48c4d4e8"
+    },
+    {
+      "path": "backend/app/models/client.py",
+      "sha256": "6450932d5684a189e1a2791c1ce9f9ca5a89fb21ddcafb7e3bbf55c7c798f678"
+    },
+    {
+      "path": "backend/app/models/document.py",
+      "sha256": "840e509ca6006ea5fccf396996e9223d7a763d7a549cbf8a54358f6f28b0fcf8"
+    },
+    {
+      "path": "backend/app/models/dynamic_field.py",
+      "sha256": "faf3bc9c46d2445abf924ad1968929963cb4b03d7f338a7f03c9315192506407"
+    },
+    {
+      "path": "backend/app/models/experiment.py",
+      "sha256": "2f5051bab1d5b3163eac104e993593f3e09ef1b56e4e991d53e28143f6fd717c"
+    },
+    {
+      "path": "backend/app/models/legal_entity.py",
+      "sha256": "f2e36b8fd839d399150e622391ee68c01805a034ac9e591396fa11f3ed8b684e"
+    },
+    {
+      "path": "backend/app/models/user.py",
+      "sha256": "3858bc4999745e53966757f22bd8310fb1981e4ee13ccc335ed3d7ab1f7c85a5"
+    },
+    {
+      "path": "backend/app/models/validation.py",
+      "sha256": "603abc9f11f72234aa634aeee1b4a1dfa11d384438442bff8b0ef236b86f5d67"
+    },
+    {
+      "path": "backend/app/repositories/__init__.py",
+      "sha256": "5a0ac8194b9ff44d74da46811398f026776d81118b7de71ed2a3dff06d040ffc"
+    },
+    {
+      "path": "backend/app/rules/__init__.py",
+      "sha256": "bc98f66fff3395a0182c8bfe7fcbcd4e9ecfc60bb93c290d8779ede7901ecbe9"
+    },
+    {
+      "path": "backend/app/rules/catalog.py",
+      "sha256": "47cf34bd528c898b4c54e7b6afc6b1e86318b52405a3abc5671bed4c46de9fae"
+    },
+    {
+      "path": "backend/app/rules/checks.py",
+      "sha256": "932127a194f7f6528998ddc8ae4d7f7ccaefccd76549315a38cb0cb7d20c6f54"
+    },
+    {
+      "path": "backend/app/rules/context.py",
+      "sha256": "4494ecd8046307d7e9a42eb9fa6f6e01bd360b1dda0fe4144f9e176f279a36f4"
+    },
+    {
+      "path": "backend/app/rules/engine.py",
+      "sha256": "516155b60214b38554a2c626c120e3f6bb0830e5738928508821f27a970739e6"
+    },
+    {
+      "path": "backend/app/rules/finding.py",
+      "sha256": "5c9d0d776aca7b6ff2b8202208ef973c4ccecb748e8715d2657af292b7b2362d"
+    },
+    {
+      "path": "backend/app/rules/gt_catalog.py",
+      "sha256": "de11712a0513902c0e75f60c3864733204e34831f71908efddb50a56d94ab723"
+    },
+    {
+      "path": "backend/app/rules/number_words.py",
+      "sha256": "8d7c3b7dbe20e35634ac3382d19778f4a75d0c862e41804da1c1f35a243214d5"
+    },
+    {
+      "path": "backend/app/schemas/__init__.py",
+      "sha256": "22e071a96697877d96d4ffebd138cba3a81544b021cb11773f32e7bd19a01dae"
+    },
+    {
+      "path": "backend/app/schemas/audit.py",
+      "sha256": "51825946ffe173bf01eb2732c6f19cbe8e8c73ca602bf2f326b86000bb77bde9"
+    },
+    {
+      "path": "backend/app/schemas/auth.py",
+      "sha256": "62e69ad77536e730cb6789d5c2ff4edef8a5fbe32a990fb05357512b40392bbe"
+    },
+    {
+      "path": "backend/app/schemas/case.py",
+      "sha256": "1ef0f04f472f517c6b22ae5490bcd241b4161003c355fb5315201366676a6bf6"
+    },
+    {
+      "path": "backend/app/schemas/client.py",
+      "sha256": "66888ef8d9d98631b5cba9308cf4eebe343c357c0dbc849c4d3c4c79111c99b1"
+    },
+    {
+      "path": "backend/app/schemas/document.py",
+      "sha256": "1d429246e2864d5c7f230612f56b86322535c84b8f9ed222ad149cc160fd0b4e"
+    },
+    {
+      "path": "backend/app/schemas/dynamic_field.py",
+      "sha256": "30191ff898d1d1ec6c16cd1e70ffe5efe439701122a6c3a5d11958d251efde1e"
+    },
+    {
+      "path": "backend/app/schemas/experiment.py",
+      "sha256": "b08efe2495e59aba9b1d97b4b5ce51b0d6eec8fbc0fcb326232a25a5965e32ce"
+    },
+    {
+      "path": "backend/app/schemas/health.py",
+      "sha256": "07c4a0b872597f7ac1acfe508c4335f3d2c1e9db0660a93e97b6249378c51d1e"
+    },
+    {
+      "path": "backend/app/schemas/legal_entity.py",
+      "sha256": "0e16273363abf3c00cff4da2132ef457622046e6b1986b7d990a0cea81a6e4a7"
+    },
+    {
+      "path": "backend/app/schemas/template.py",
+      "sha256": "911ed01d2dfdef4e397a0e19865349c343a1ebb5087d95a7a375fdcbd62651cd"
+    },
+    {
+      "path": "backend/app/schemas/user.py",
+      "sha256": "f5e607866587a033089ddaaa65e97d9224532bc9c827751aa8828e5a6d760934"
+    },
+    {
+      "path": "backend/app/schemas/validation.py",
+      "sha256": "fc8751084c7d75439d29de31ddeab18f5e652725fa5a7a8e06d7c374dcc93ee9"
+    },
+    {
+      "path": "backend/app/services/__init__.py",
+      "sha256": "e8a0538e2fd915a7d242a946d68ecc40e673d5c63a88ce8c71932b50c76429f4"
+    },
+    {
+      "path": "backend/app/services/audit_service.py",
+      "sha256": "219263ea07a2132b3ac2a61d55f8539cb060b6a721fdbe6bc417cbab44d251f3"
+    },
+    {
+      "path": "backend/app/services/case_service.py",
+      "sha256": "da5bda3a5c0dcffd0a510356602fe986c763dd6ade7c96818d8ca0a0776c8cc1"
+    },
+    {
+      "path": "backend/app/services/client_service.py",
+      "sha256": "c23addc1a603202ceea16d81a76c8d83eb0a5c52e7545984ef628157a092d70e"
+    },
+    {
+      "path": "backend/app/services/document_generation_service.py",
+      "sha256": "b20575959373a1b796d00519d4c7243af6cacfe35f1e28c16542e9ccefe0b9b3"
+    },
+    {
+      "path": "backend/app/services/dynamic_field_service.py",
+      "sha256": "b3ca0e9462d0b749986ccf5ae996c6ff4e0cb13bb16dd216ea067979c81d32e3"
+    },
+    {
+      "path": "backend/app/services/experiment_service.py",
+      "sha256": "c3f29a074aeaf355f2a8c5e3528c4df2b6dc5168c48233bb80d5c7fe52c96a7b"
+    },
+    {
+      "path": "backend/app/services/field_validation.py",
+      "sha256": "9df39442667f3effbe11b7747fab56f1998eff84315f31501f0dc41479a78c65"
+    },
+    {
+      "path": "backend/app/services/legal_entity_service.py",
+      "sha256": "6742a2b43cd0c5b715c314c5a67b73a76561d96f1ba2182467634fcc1fdb26c5"
+    },
+    {
+      "path": "backend/app/services/template_docx_service.py",
+      "sha256": "3e5ff894f74af052c2e6d71bb536bf6d7b95045608401208c448ffb7fe9c46b6"
+    },
+    {
+      "path": "backend/app/services/user_service.py",
+      "sha256": "9a6d78bf1a8fef0c3bf41e78a60210d33be0909a9d5f757552bc10cfd12b1fa0"
+    },
+    {
+      "path": "backend/app/services/validation_service.py",
+      "sha256": "a5dc9668ddd4697b6b3adde211f7409dda571fad134a9b96bb371f9e0ee3d4f7"
+    },
+    {
+      "path": "backend/app/utils/__init__.py",
+      "sha256": "5d0a19f37245d880dfdc67975e1d53d3462266627013543d05b422e4996f104e"
+    },
+    {
+      "path": "backend/app/utils/seed_users.py",
+      "sha256": "92e56899606cee9ebfa7b0089e65b07d9cd4de4ddc768fd05644d136d00e3cf4"
+    },
+    {
+      "path": "backend/app/utils/synthetic_data.py",
+      "sha256": "76b7a81412577a836bdcc9011e2ea36f53fb2bc616f5adf93cabddb87ea6b102"
+    },
+    {
+      "path": "backend/tests/conftest.py",
+      "sha256": "b8e54c4a462d712c05a8a280f8edd2b90a94e18d8c8ad43bcd98b0e81903e691"
+    },
+    {
+      "path": "backend/tests/e2e_server.py",
+      "sha256": "5e17ec095b2ef0a7fa994e408f946572ef01f51e734daa35aad6f2b95041a6e0"
+    },
+    {
+      "path": "backend/tests/integration/test_audit_api.py",
+      "sha256": "d8bc5332732a604b7de02fd49b3bd032ea89cc749a3c4015c628444e2b5869b0"
+    },
+    {
+      "path": "backend/tests/integration/test_auth_api.py",
+      "sha256": "c5ec72bcd806c6b7cc7b03cb211a06ccf1bd38399857e57750e3f2ef7170754a"
+    },
+    {
+      "path": "backend/tests/integration/test_cases_api.py",
+      "sha256": "b337c51678ca4afc1042e6aac00fa4de5d96e357b9d7c3f5a4150b0f0c81549e"
+    },
+    {
+      "path": "backend/tests/integration/test_clients_api.py",
+      "sha256": "1c8d1c5f74cbc4acfca131986fa2a429361cb4fb34f06f681be31e79df07ed6e"
+    },
+    {
+      "path": "backend/tests/integration/test_db.py",
+      "sha256": "21a0cd63a69fc63693b4ce311607cf743fba9804a45715646971414ad1cb2c12"
+    },
+    {
+      "path": "backend/tests/integration/test_documents_api.py",
+      "sha256": "4c9d67353624981ec35e50edfe4727029ee4fabb0d9cccf2c615d9e2a90d7dfb"
+    },
+    {
+      "path": "backend/tests/integration/test_dynamic_fields_api.py",
+      "sha256": "6c3b8871eb3b429c38168d1840718abec3684835add66ed69c66966a8afb41c5"
+    },
+    {
+      "path": "backend/tests/integration/test_experiment_api.py",
+      "sha256": "364f1438f294b1d5b4fcffb8237a30f77936dc0e7405e40763f556db4a5863b7"
+    },
+    {
+      "path": "backend/tests/integration/test_field_migrations.py",
+      "sha256": "6d045b2b515edf8e5f5a9496973595603a42ab86191952851d878bd1ab92e531"
+    },
+    {
+      "path": "backend/tests/integration/test_health.py",
+      "sha256": "d076adbbe51fce03503a4014faaca0d2fab264c5344a7ac3f19e92476fbc1dc6"
+    },
+    {
+      "path": "backend/tests/integration/test_templates_api.py",
+      "sha256": "15178003bd1914857791e3b1449c16d56bc3b94f8d49e0d17cad6e76a7b21f13"
+    },
+    {
+      "path": "backend/tests/integration/test_users_api.py",
+      "sha256": "d7749ce92c50ea35dee5eee69cb4dffbf779f881c7905d796ba7e82d30e6b235"
+    },
+    {
+      "path": "backend/tests/integration/test_validations_api.py",
+      "sha256": "c3fcafc59e2d6f34e3e158373e78871729b7a05e5d9ef8ea1bd9373582596dfc"
+    },
+    {
+      "path": "backend/tests/unit/test_config.py",
+      "sha256": "24db54e53301d72b3f2283c3ae8efec1d5bef3452deb73da3f2a49bf68a0166a"
+    },
+    {
+      "path": "backend/tests/unit/test_document_context.py",
+      "sha256": "7367ec9a55c010eba03642b9400d6548583a870f9d17f81f1a7931da4d848937"
+    },
+    {
+      "path": "backend/tests/unit/test_dynamic_fields.py",
+      "sha256": "698102e977fb17ba34e73dbdef6bd1fbc26693b6210ff35d80fbe3349c9fee7f"
+    },
+    {
+      "path": "backend/tests/unit/test_experiment_corpus.py",
+      "sha256": "bad4beb369cf1bec837c6f8b91038f837adf350d02f758d0450d1f8d2870f278"
+    },
+    {
+      "path": "backend/tests/unit/test_jinja_extraction.py",
+      "sha256": "41f28b813625a73e7912b57fe5f0090279dd9101dc99dae2bcc857b69d37fa50"
+    },
+    {
+      "path": "backend/tests/unit/test_number_words.py",
+      "sha256": "1bd458cf034b990273f6be0cf46263d8e5d828e12592cc32df67569dfc19e642"
+    },
+    {
+      "path": "backend/tests/unit/test_rule_engine.py",
+      "sha256": "1b5381ec0cc987b35120ac8d36b8ad98ae742e71bdc8cab9a89c8936d293d7ca"
+    },
+    {
+      "path": "backend/tests/unit/test_security.py",
+      "sha256": "18dca70dd743096059451dddf392457504b9e27c77c3f75d509753addfa02106"
+    },
+    {
+      "path": "frontend/e2e/dynamic-fields.spec.ts",
+      "sha256": "ede875eebdb362daa2b20970177a5267e9a3cc2b5836c47e2c1e9318cf3911b9"
+    },
+    {
+      "path": "frontend/src/App.tsx",
+      "sha256": "bd53a143b9e9f6c6ee361e64f7419fc2cd2f921b037251387b33e4b9b0124af7"
+    },
+    {
+      "path": "frontend/src/components/common/ClientSearchSelect.tsx",
+      "sha256": "60fa47e8151d831f7736b8c39306be1bbd650a0db2499aeed742b39107791ea3"
+    },
+    {
+      "path": "frontend/src/components/common/ConfirmDialog.tsx",
+      "sha256": "d18eab30e62f46519ef3de19aa375272f30f2de34e7128413c15fc203fb52554"
+    },
+    {
+      "path": "frontend/src/components/LoginModal.tsx",
+      "sha256": "e787f5b8efd4f29e78cda2b80e1ad811d0991a74833cd6334d7fa61c23d84a2c"
+    },
+    {
+      "path": "frontend/src/components/Navbar.tsx",
+      "sha256": "5769b5b0345f7008e65497809e1c102df8d19391d5f5b2d5cce626245b4d5599"
+    },
+    {
+      "path": "frontend/src/components/SystemHealthBadge.tsx",
+      "sha256": "6aadcf97d67d0a91e654ab9011ebd30dbc3b9e9d4e66346f9d688bac217b188e"
+    },
+    {
+      "path": "frontend/src/components/UserManagementModal.tsx",
+      "sha256": "111ca1671be4f2063b4ee472a53272df06ddb58ce929a4750d139058d0d6d932"
+    },
+    {
+      "path": "frontend/src/context/AuthContext.tsx",
+      "sha256": "711508eacb0944cadc6eb4cf8afc3e784405605d2d1d49a4df83ae900c7027a0"
+    },
+    {
+      "path": "frontend/src/features/cases/CaseDetailModal.tsx",
+      "sha256": "f805104b5515abf89c96ed836313aaf1ced2df8bae1100f9520116fa319f2093"
+    },
+    {
+      "path": "frontend/src/features/cases/CaseFormModal.tsx",
+      "sha256": "a90eb2528468e6821bae0da64ed403fc30788948fc83aebe4ad36d539ae6c478"
+    },
+    {
+      "path": "frontend/src/features/cases/CasesPage.tsx",
+      "sha256": "2f090183267874b08b2e85630ad1d2d39e8da163da796404d0b84bcbd8a20558"
+    },
+    {
+      "path": "frontend/src/features/clients/__tests__/ClientFormModal.test.tsx",
+      "sha256": "e2a3d9389da816c002d6f60e3f68787e6f50d3eea76bfe48e541ce97a3be0fde"
+    },
+    {
+      "path": "frontend/src/features/clients/ClientFormModal.tsx",
+      "sha256": "d21c4bd4cbac676040e175db9e92350cae686e397c7df3e88238c15a63659ade"
+    },
+    {
+      "path": "frontend/src/features/clients/ClientsPage.tsx",
+      "sha256": "eb1997ad120ec7f7491c3cd454f3ce826a04c39327af51f407be56235f8becc0"
+    },
+    {
+      "path": "frontend/src/features/clients/LegalEntityFormModal.tsx",
+      "sha256": "a4b21d39496a3eb4a33a2af430abfafb7da788866e9074c0e9a60bcb60c71e08"
+    },
+    {
+      "path": "frontend/src/features/dashboard/DashboardPage.tsx",
+      "sha256": "bc13918d2d33c07a83d02d927edcdd363406bce5984580b339f6440b3e2cd11e"
+    },
+    {
+      "path": "frontend/src/features/documents/__tests__/DocumentVersionsList.test.tsx",
+      "sha256": "b47d9365cf561cfd3dee7d7e25e5424b3081e84ce03448cde522f8b2fabc7c14"
+    },
+    {
+      "path": "frontend/src/features/documents/DocumentDetailModal.tsx",
+      "sha256": "abc08f1a0199b6b9205ed8dcc37cc42c8ab03446e5c0413d04b201dd7d45cf16"
+    },
+    {
+      "path": "frontend/src/features/documents/DocumentsPage.tsx",
+      "sha256": "c5a21c3ee207f8fe9d16f147f350ace66affff7d11bb60b910b5626fba156c6e"
+    },
+    {
+      "path": "frontend/src/features/documents/DocumentVersionsList.tsx",
+      "sha256": "f7f81411c95814f25b7a1b3e7a01a89f4af227c851e044c464f407def4052cc6"
+    },
+    {
+      "path": "frontend/src/features/documents/GenerateDocumentModal.tsx",
+      "sha256": "4bc1f74d37a226aab26f47df1749cafdf54fef3705af1c2cef6c1542c2434b22"
+    },
+    {
+      "path": "frontend/src/features/experiment/__tests__/ExperimentStatsCards.test.tsx",
+      "sha256": "3e29fafe1130b6830cafeaedf493d7709e80c946e850027dc9593c37fd71a73f"
+    },
+    {
+      "path": "frontend/src/features/experiment/ExperimentPage.tsx",
+      "sha256": "a6d4789152154c87743064da6549e2cf6e76314c58f3f8c4e61636912e45f59a"
+    },
+    {
+      "path": "frontend/src/features/experiment/ExperimentStatsCards.tsx",
+      "sha256": "e29a085663461c3f8c1aa1a67321541f4f252801cdb51610e21492f641d7b891"
+    },
+    {
+      "path": "frontend/src/features/fields/__tests__/DynamicForm.test.tsx",
+      "sha256": "8009b041b3820b8a3cab51b0b3b34d7cd2ac123785e4e28ae6bd0300808b9099"
+    },
+    {
+      "path": "frontend/src/features/fields/__tests__/validation.test.ts",
+      "sha256": "6ca57dd5e7d51ea5dbfbaf8edcc05c59baf2d688854cbb63addf3f60743d4bf3"
+    },
+    {
+      "path": "frontend/src/features/fields/api.ts",
+      "sha256": "b7544cdd857adb87f62f213fc7a3ac596dfd0d7d61493d8132339b2a56abe42d"
+    },
+    {
+      "path": "frontend/src/features/fields/DynamicForm.tsx",
+      "sha256": "dccb27b243894ef2540c4d390f6576f39ef3ba6a42cf845412681ab082d68407"
+    },
+    {
+      "path": "frontend/src/features/fields/FieldControls.tsx",
+      "sha256": "08d0fea7d9d1fd35ef3c40a6cebd98c4415b2df7de76141440250540041e4359"
+    },
+    {
+      "path": "frontend/src/features/fields/FieldDefinitionEditor.tsx",
+      "sha256": "0eadbaee4df3aab5ce90884decef6a398a667e2da65d31e26e903405956535da"
+    },
+    {
+      "path": "frontend/src/features/fields/FieldsPage.tsx",
+      "sha256": "92e81648ecde3551e1cae22531fcc812b51e19ac918cfb64461aee0375580106"
+    },
+    {
+      "path": "frontend/src/features/fields/types.ts",
+      "sha256": "8ebff10af5cda352c0aef4035d3de9034cd5aafff6a601910def63d954c7040c"
+    },
+    {
+      "path": "frontend/src/features/fields/validation.ts",
+      "sha256": "e0f95afa5addf59360550d817a18ac3eec4fa0229de01c502a18ca519289254c"
+    },
+    {
+      "path": "frontend/src/features/templates/__tests__/TemplateUploadModal.test.tsx",
+      "sha256": "ddfae7df83ba922be954025740d3f2b0e8ecca8773d1d3eff5b01602e24f0fc8"
+    },
+    {
+      "path": "frontend/src/features/templates/TemplateDetailModal.tsx",
+      "sha256": "b6e7f6dcf8a230a320de37bb950639619db0d4ea04b49ba6d16cdc9461b766a3"
+    },
+    {
+      "path": "frontend/src/features/templates/TemplatesPage.tsx",
+      "sha256": "1a9111f16747573d9d59f3013c9136c249946dd32c362c08821cf818ce95631c"
+    },
+    {
+      "path": "frontend/src/features/templates/TemplateUploadModal.tsx",
+      "sha256": "e15bbfff1a9e97640344b53b06b9766f3c8122dbd7e6dca4fbf1a12e7df801fa"
+    },
+    {
+      "path": "frontend/src/features/validation/__tests__/FindingsPanel.test.tsx",
+      "sha256": "e82d68ecd86e60be1f1027314701579e6b0089ad39ed73e69f1a8e2a3c039968"
+    },
+    {
+      "path": "frontend/src/features/validation/CaseValidationModal.tsx",
+      "sha256": "5b4a636d2fde77046cde828a086d9539bcc33fd7239c65a0bae285877622f2d5"
+    },
+    {
+      "path": "frontend/src/features/validation/FindingsPanel.tsx",
+      "sha256": "9e94b6894a7b86b2412152c7e2d1cee40aae4d3fdbd82ad5b748db6a0483dbb4"
+    },
+    {
+      "path": "frontend/src/lib/__tests__/validators.test.ts",
+      "sha256": "caae467065de48f7c76446585540ba35661c878b3ca227754fd67b10b6f93220"
+    },
+    {
+      "path": "frontend/src/lib/format.ts",
+      "sha256": "3294e9793ab6e59151c740b62b20937f07b47c3bab4b1fc7e809c818c9cfb085"
+    },
+    {
+      "path": "frontend/src/lib/labels.ts",
+      "sha256": "d43d0a137bb6501533577102d5ede085720febe31e29881f218813a58b388538"
+    },
+    {
+      "path": "frontend/src/lib/validators.ts",
+      "sha256": "392c9370781711344e70e86a24ddc4f5fb487e0b78499a5458162a0255681d00"
+    },
+    {
+      "path": "frontend/src/main.tsx",
+      "sha256": "b3dd7312d80b96de96a780729c348b697f063dcf7af4347edea377ef0a1700ff"
+    },
+    {
+      "path": "frontend/src/services/api.ts",
+      "sha256": "edbe734eb499d7220b69173e6619bc63cd09d8f22190c9840b6ac9ae8a579d4d"
+    },
+    {
+      "path": "frontend/src/test/setup.ts",
+      "sha256": "7594cb5ead6cec5ce7f869697d888196908009135896a6bcb7a9928f72f7b0e1"
+    },
+    {
+      "path": "frontend/src/types/index.ts",
+      "sha256": "6cc6c40682836eabbc34aaa5a9d72c339b8e7d1367147e4f8766869ca921527b"
+    },
+    {
+      "path": "frontend/src/vite-env.d.ts",
+      "sha256": "14a2cb75bd0388a4e80e0a039c577266a3911779a9134170337370c7a8e8f56c"
+    }
+  ]
+}

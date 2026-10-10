@@ -2,6 +2,8 @@
 **Sistema de Borradores de Escrituras Públicas en Python**  
 **Proyecto de Graduación - Universidad Mariano Gálvez de Guatemala**
 
+> **Carácter del documento:** planificación académica y funcional original. Las historias y fechas no acreditan por sí mismas implementación ni resultados de investigación. El estado actual está en el [mapa de módulos](../modules.md), y la evidencia y guías en el [índice documental](../README.md).
+
 ---
 
 ## 1. Parámetros del Proyecto y Calendario de Sprints

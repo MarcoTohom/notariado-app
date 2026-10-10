@@ -1,5 +1,7 @@
 # Fase 4: campos dinámicos
 
+La fase funcional 4 mantiene su numeración original. La reorganización estructural 4 dividió [los controles](../frontend/src/features/fields/controls) y [las secciones del editor](../frontend/src/features/fields/editor). FieldControls conserva registro/renderizado; FieldDefinitionEditor conserva orden y recursión. Tipos, validaciones y API permanecen en este módulo. [Informe y comprobaciones](testing/FASE_4_ESTRUCTURAL.md).
+
 Implementación de US-04.1, US-04.2 y US-04.3 (EPIC-04). Incluye el cálculo y las relaciones aunque US-04.3 figure en el Sprint 3: son parte de los veinte tipos de la fase cuatro.
 
 ## Uso
@@ -76,16 +78,14 @@ Tablas nuevas: `templates`, `template_versions`, `template_fields`, `case_field_
 
 ## Instalación y verificación Windows
 
-Después de instalar `backend/requirements.txt` y ejecutar `npm ci` en frontend:
+Desde la raíz del repositorio (véase la [guía de instalación](installation.md)):
 
 ```powershell
-cd backend
-.\.venv\Scripts\python.exe -m alembic upgrade head
-cd ..\frontend
-npx playwright install chromium
-cd ..
+.\scripts\setup.ps1 -E2E
 .\scripts\test.ps1 -E2E
 ```
+
+El instalador prepara Chromium en la ubicación usada por el script de pruebas. El [índice documental](README.md) y el [mapa de módulos](modules.md) enlazan el resto de flujos.
 
 `dev.ps1` aplica migraciones antes de iniciar. `phase3_subjects` incorpora la migración faltante de la fase anterior, conservando tablas preexistentes creadas por create_all. `phase4_fields` admite instalaciones que ya hayan creado esas tablas, sin borrar datos. Las pruebas de migración cubren una base nueva y otra preexistente. Las pruebas de API usan SQLite aislado y las de navegador arrancan servicios en 8011/5174 con una base temporal y datos sintéticos. No usan cuentas ni archivos del bufete.
 

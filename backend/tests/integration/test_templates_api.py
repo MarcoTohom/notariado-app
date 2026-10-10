@@ -4,57 +4,17 @@ Flujo: carga -> extracción de variables -> versionamiento inmutable ->
 activación única -> render de prueba verificado -> baja lógica.
 """
 
-import io
-
-from docx import Document
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
-from app.models.user import User
+from tests.support.auth import auth_headers as _auth
+from tests.support.auth import create_user as _create_user
+from tests.support.auth import login_token as _get_token
+from tests.support.documents import docx_bytes as _docx_bytes
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-
-def _create_user(db_session: Session, suffix: str, role: str) -> User:
-    user = User(
-        username=f"user_{suffix}",
-        email=f"user_{suffix}@bufetenotarial.demo",
-        full_name=f"Usuario {suffix}",
-        password_hash=get_password_hash("Admin1234!"),
-        role=role,
-        status="ACTIVE",
-    )
-    db_session.add(user)
-    db_session.commit()
-    return user
-
-
-def _get_token(client: TestClient, username: str) -> str:
-    resp = client.post(
-        "/api/v1/auth/login",
-        json={"username_or_email": username, "password": "Admin1234!"},
-    )
-    assert resp.status_code == 200, resp.text
-    return resp.json()["access_token"]
-
-
-def _auth(token: str) -> dict:
-    return {"Authorization": f"Bearer {token}"}
-
-
-def _docx_bytes(paragraphs: list[str], table_text: str | None = None) -> bytes:
-    document = Document()
-    for text in paragraphs:
-        document.add_paragraph(text)
-    if table_text is not None:
-        table = document.add_table(rows=1, cols=1)
-        table.cell(0, 0).text = table_text
-    buffer = io.BytesIO()
-    document.save(buffer)
-    return buffer.getvalue()
 
 
 def _upload(

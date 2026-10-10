@@ -6,8 +6,10 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import require_permission
 from app.core.config import settings
+from app.db.operations import require_record
 from app.db.session import get_db
-from app.models.dynamic_field import FieldAttachment, TemplateVersion
+from app.models.field_attachment import FieldAttachment
+from app.models.template import TemplateVersion
 from app.models.user import User
 from app.schemas.dynamic_field import (
     DefinitionCreate,
@@ -105,7 +107,7 @@ async def upload_file(
 def download_file(case_id: str, file_id: str, db: DB, user: Read):
     from fastapi import HTTPException
 
-    record = service.require_record(db, FieldAttachment, file_id)
+    record = require_record(db, FieldAttachment, file_id)
     if record.case_id != case_id:
         raise HTTPException(404, "Archivo no encontrado.")
     path = settings.UPLOAD_DIR / "attachments" / record.storage_name

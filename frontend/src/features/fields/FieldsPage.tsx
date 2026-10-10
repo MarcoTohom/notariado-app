@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import { caseService, getApiErrorMessage } from "../../services/api";
+import { useAuth } from "../auth/AuthContext";
+import { caseService } from "../cases/api";
+import { getApiErrorMessage } from "../../shared/api/errors";
 import { fieldsApi } from "./api";
 import { DynamicForm } from "./DynamicForm";
-import { FieldDefinitionEditor, newField } from "./FieldDefinitionEditor";
-import { inputClass } from "./FieldControls";
+import { FieldDefinitionEditor } from "./FieldDefinitionEditor";
+import { newField } from "./editor/defaults";
+import { dynamicInputClass as inputClass } from "../../components/common/formStyles";
 import { FieldDefinition, FormVersion } from "./types";
 
 const CASE_LABELS: Record<string, string> = {

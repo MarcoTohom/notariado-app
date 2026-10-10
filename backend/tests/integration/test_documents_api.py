@@ -11,46 +11,13 @@ from docx import Document as DocxDocument
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import Session
 
-from app.core.security import get_password_hash
-from app.models.user import User
+from tests.support.auth import auth_headers as _auth
+from tests.support.auth import create_user as _create_user
+from tests.support.auth import login_token as _token
+from tests.support.documents import docx_bytes as _docx_bytes
+from tests.support.records import create_case_with_party
 
 BASE = "/api/v1"
-
-
-def _create_user(db_session: Session, suffix: str, role: str) -> User:
-    user = User(
-        username=f"user_{suffix}",
-        email=f"user_{suffix}@bufetenotarial.demo",
-        full_name=f"Usuario {suffix}",
-        password_hash=get_password_hash("Admin1234!"),
-        role=role,
-        status="ACTIVE",
-    )
-    db_session.add(user)
-    db_session.commit()
-    return user
-
-
-def _token(client: TestClient, username: str) -> str:
-    resp = client.post(
-        f"{BASE}/auth/login",
-        json={"username_or_email": username, "password": "Admin1234!"},
-    )
-    assert resp.status_code == 200, resp.text
-    return resp.json()["access_token"]
-
-
-def _auth(token: str) -> dict:
-    return {"Authorization": f"Bearer {token}"}
-
-
-def _docx_bytes(paragraphs: list[str]) -> bytes:
-    document = DocxDocument()
-    for text in paragraphs:
-        document.add_paragraph(text)
-    buffer = io.BytesIO()
-    document.save(buffer)
-    return buffer.getvalue()
 
 
 def _setup_full_scenario(client: TestClient, db_session: Session, suffix: str):
@@ -58,28 +25,9 @@ def _setup_full_scenario(client: TestClient, db_session: Session, suffix: str):
     _create_user(db_session, suffix, "ADMINISTRADOR")
     token = _token(client, f"user_{suffix}")
 
-    resp = client.post(
-        f"{BASE}/clients",
-        json={
-            "first_name": "Carlos",
-            "last_name": "Mendez Ruiz",
-            "dpi": "1234567890101",
-            "nit": "1234567-8",
-        },
-        headers=_auth(token),
+    case_id, _ = create_case_with_party(
+        client, token, "Compraventa para generación de borrador"
     )
-    client_id = resp.json()["id"]
-
-    resp = client.post(
-        f"{BASE}/cases",
-        json={
-            "title": "Compraventa para generación de borrador",
-            "case_type": "COMPRAVENTA",
-            "parties": [{"client_id": client_id, "party_role": "COMPRADOR"}],
-        },
-        headers=_auth(token),
-    )
-    case_id = resp.json()["id"]
 
     # Plantilla DOCX con variables anidadas, condicional y bucle.
     content = _docx_bytes(

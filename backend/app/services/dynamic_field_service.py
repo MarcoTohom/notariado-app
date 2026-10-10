@@ -1,35 +1,23 @@
-import io
 import re
 from pathlib import Path
 from uuid import uuid4
-from xml.etree import ElementTree
-from zipfile import ZipFile
 
 from fastapi import HTTPException, UploadFile
 from sqlalchemy import func, update
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.core.config import settings
+from app.db.operations import commit, flush, require_record
 from app.models.audit import AuditLog
 from app.models.case import Case
+from app.models.case_field_values import CaseFieldValues
 from app.models.client import Client
-from app.models.dynamic_field import (
-    CaseFieldValues,
-    FieldAttachment,
-    Template,
-    TemplateField,
-    TemplateVersion,
-)
+from app.models.dynamic_field import TemplateField
+from app.models.field_attachment import FieldAttachment
+from app.models.template import Template, TemplateVersion
 from app.schemas.dynamic_field import FieldDefinition, VersionResponse
 from app.services.field_validation import check_definitions, validate_values
-
-
-def require_record(db, model, record_id):
-    record = db.get(model, record_id)
-    if record is None:
-        raise HTTPException(404, "Registro no encontrado.")
-    return record
+from app.services.file_validation import MIME_TYPES, verify_file
 
 
 def audit(db, user, action, record_id):
@@ -44,26 +32,6 @@ def audit(db, user, action, record_id):
             details="Operación de campos dinámicos; valores omitidos por privacidad.",
         )
     )
-
-
-def commit(db):
-    try:
-        db.commit()
-    except IntegrityError as exc:
-        db.rollback()
-        raise HTTPException(
-            409, "El registro cambió. Recargue antes de guardar."
-        ) from exc
-
-
-def flush(db):
-    try:
-        db.flush()
-    except IntegrityError as exc:
-        db.rollback()
-        raise HTTPException(
-            409, "El registro cambió. Recargue antes de guardar."
-        ) from exc
 
 
 def get_version(db: Session, version_id: str) -> VersionResponse:
@@ -231,61 +199,6 @@ def field_at_path(fields, path):
             raise HTTPException(404, "Campo no encontrado.")
         fields = field.options_json.fields
     raise HTTPException(404, "Campo no encontrado.")
-
-
-MIME_TYPES = {
-    ".pdf": "application/pdf",
-    ".csv": "text/csv",
-    ".docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    ".xlsx": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-}
-
-
-def verify_file(content, suffix):
-    try:
-        if suffix == ".pdf":
-            from pypdf import PdfReader
-
-            if not content.startswith(b"%PDF-"):
-                raise ValueError()
-            reader = PdfReader(io.BytesIO(content), strict=True)
-            if reader.is_encrypted:
-                raise ValueError()
-            len(reader.pages)
-        elif suffix == ".csv":
-            text = content.decode("utf-8-sig")
-            if "\x00" in text or not text.strip():
-                raise ValueError()
-        else:
-            with ZipFile(io.BytesIO(content)) as archive:
-                infos = archive.infolist()
-                if (
-                    len(infos) > 2000
-                    or sum(i.file_size for i in infos) > 30 * 1024 * 1024
-                ):
-                    raise ValueError()
-                required = (
-                    "word/document.xml" if suffix == ".docx" else "xl/workbook.xml"
-                )
-                if (
-                    required not in archive.namelist()
-                    or "[Content_Types].xml" not in archive.namelist()
-                ):
-                    raise ValueError()
-                if any("vbaproject" in i.filename.lower() for i in infos):
-                    raise ValueError()
-                if archive.testzip():
-                    raise ValueError()
-                for member in (required, "[Content_Types].xml"):
-                    xml = archive.read(member)
-                    if b"<!DOCTYPE" in xml or b"<!ENTITY" in xml:
-                        raise ValueError()
-                    ElementTree.fromstring(xml)
-    except Exception as exc:
-        # Parser exceptions are deliberately converted to a non-sensitive client error.
-        raise HTTPException(
-            422, "El contenido no corresponde a un archivo permitido válido."
-        ) from exc
 
 
 async def upload_file(db, case_id, version_id, path, file: UploadFile, user):

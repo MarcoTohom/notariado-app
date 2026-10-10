@@ -1,0 +1,78 @@
+{
+  "reference_commit": "338d6b0",
+  "api_declarations_unchanged": 13,
+  "type_declarations_unchanged": 50,
+  "existing_source_bodies_unchanged": 46,
+  "http_interceptor_unchanged": true,
+  "multipart_headers_unchanged": true,
+  "routes_and_permissions": [
+    {
+      "path": "/",
+      "permission": null,
+      "component": "DashboardPage",
+      "redirect": null,
+      "replace": false
+    },
+    {
+      "path": "/clientes",
+      "permission": "clients:read",
+      "component": "ClientsPage",
+      "redirect": null,
+      "replace": false
+    },
+    {
+      "path": "/expedientes",
+      "permission": "cases:read",
+      "component": "CasesPage",
+      "redirect": null,
+      "replace": false
+    },
+    {
+      "path": "/plantillas",
+      "permission": "templates:read",
+      "component": "TemplatesPage",
+      "redirect": null,
+      "replace": false
+    },
+    {
+      "path": "/documentos",
+      "permission": "documents:read",
+      "component": "DocumentsPage",
+      "redirect": null,
+      "replace": false
+    },
+    {
+      "path": "/tesis",
+      "permission": "experiment:read",
+      "component": "ExperimentPage",
+      "redirect": null,
+      "replace": false
+    },
+    {
+      "path": "/formularios",
+      "permission": "templates:read",
+      "component": "FieldsPage",
+      "redirect": null,
+      "replace": false
+    },
+    {
+      "path": "*",
+      "permission": null,
+      "component": null,
+      "redirect": "/",
+      "replace": true
+    }
+  ],
+  "provider_order": [
+    "QueryClientProvider",
+    "AuthProvider",
+    "BrowserRouter"
+  ],
+  "guard_and_layout_unchanged": true,
+  "query_defaults_unchanged": true,
+  "relative_imports_checked": 210,
+  "runtime_import_cycles": [],
+  "backend_and_operation_changes": [],
+  "errors": [],
+  "status": "passed"
+}

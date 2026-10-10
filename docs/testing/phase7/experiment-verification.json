@@ -1,0 +1,15 @@
+{
+  "corpus": 100,
+  "types": 5,
+  "clean": 50,
+  "anomalous": 50,
+  "persisted_rule_results_checked": 100,
+  "rule_results": "exactly match expected findings",
+  "xlsx": "passed",
+  "csv": "passed (empty without executions)",
+  "executions": 0,
+  "time_measurements": 0,
+  "reduction_percentage": null,
+  "baseline_minutes": 240,
+  "status": "passed"
+}

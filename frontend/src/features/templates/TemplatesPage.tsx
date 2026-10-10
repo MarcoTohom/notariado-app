@@ -1,8 +1,11 @@
+import { LoadingState } from "../../components/common/Feedback";
+import { Badge } from "../../components/common/Badge";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { CaseType, TemplateSummary } from "../../types";
-import { templateService } from "../../services/api";
-import { useAuth } from "../../context/AuthContext";
+import type { CaseType } from "../../shared/types";
+import type { TemplateSummary } from "./types";
+import { templateService } from "./api";
+import { useAuth } from "../auth/AuthContext";
 import { TemplateUploadModal } from "./TemplateUploadModal";
 import { TemplateDetailModal } from "./TemplateDetailModal";
 import { ConfirmDialog } from "../../components/common/ConfirmDialog";
@@ -16,7 +19,6 @@ import {
   RefreshCw,
   ChevronLeft,
   ChevronRight,
-  Loader2,
   CheckCircle2,
 } from "lucide-react";
 
@@ -139,10 +141,10 @@ export const TemplatesPage: React.FC = () => {
 
         {/* Tabla */}
         {templatesQuery.isLoading ? (
-          <div className="flex items-center justify-center py-16 text-slate-400">
-            <Loader2 className="w-5 h-5 animate-spin mr-2" />
+          <LoadingState className="py-16">
+
             <span className="text-xs">Cargando plantillas…</span>
-          </div>
+          </LoadingState>
         ) : templatesQuery.isError ? (
           <div className="py-16 text-center">
             <p className="text-xs text-red-600 font-medium">
@@ -191,15 +193,12 @@ export const TemplatesPage: React.FC = () => {
                       )}
                     </td>
                     <td className="py-2.5 px-4">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                          template.status === "ACTIVE"
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-slate-100 text-slate-500 border border-slate-200"
-                        }`}
-                      >
+                      <Badge className={`${template.status === "ACTIVE"
+                          ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          : "bg-slate-100 text-slate-500 border border-slate-200"
+                        }`}>
                         {template.status === "ACTIVE" ? "ACTIVA" : "INACTIVA"}
-                      </span>
+                      </Badge>
                     </td>
                     <td className="py-2.5 px-4 text-slate-500">
                       {new Date(template.created_at).toLocaleDateString("es-GT")}

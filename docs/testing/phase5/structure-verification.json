@@ -1,0 +1,11 @@
+{
+  "reference_commit": "8531a74",
+  "moved_declarations": 72,
+  "retained_declarations": 39,
+  "rule_order": "identical",
+  "openapi": "identical",
+  "sqlite_schema": "identical",
+  "tables": 18,
+  "migrations_permissions_catalog_schemas": "unchanged",
+  "status": "passed"
+}

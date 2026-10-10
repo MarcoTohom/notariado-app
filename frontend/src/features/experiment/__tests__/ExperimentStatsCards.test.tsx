@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ExperimentStatsCards } from "../ExperimentStatsCards";
-import { ExperimentStats } from "../../../types";
+import type { ExperimentStats } from "../types";
 
 /**
  * Pruebas del Dashboard Experimental (Fase 11):
