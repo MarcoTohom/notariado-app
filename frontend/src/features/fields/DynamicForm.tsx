@@ -15,18 +15,28 @@ import {
   Values,
 } from "./types";
 
+export interface DynamicFormApi {
+  setValue: (path: string, value: unknown) => void;
+  getValues: () => Values;
+  submit: () => void;
+}
+
 export function DynamicForm({
   version,
   caseId,
   initial,
   readOnly = false,
   onSaved,
+  onValuesChange,
+  onRegisterApi,
 }: {
   version: FormVersion;
   caseId: string;
   initial: SavedValues;
   readOnly?: boolean;
   onSaved?: (saved: SavedValues) => void;
+  onValuesChange?: (values: Values) => void;
+  onRegisterApi?: (api: DynamicFormApi) => void;
 }) {
   const schema = useMemo(() => formSchema(version.fields), [version.fields]);
   const form = useForm<Values>({
@@ -119,6 +129,25 @@ export function DynamicForm({
       subscription.unsubscribe();
     };
   }, [caseId, version, readOnly, watch, setValue, getValues, markError]);
+
+  // WP-07: el editor de borradores se suscribe a cada cambio de valores
+  // para alimentar la previsualización en vivo.
+  useEffect(() => {
+    if (!onValuesChange) return;
+    onValuesChange(getValues());
+    const subscription = watch((values) => onValuesChange(values as Values));
+    return () => subscription.unsubscribe();
+  }, [watch, getValues, onValuesChange]);
+
+  // WP-07/WP-08: expone setValue/getValues/submit a la página del editor
+  // (renumeración de incisos y atajos de teclado).
+  useEffect(() => {
+    onRegisterApi?.({
+      setValue: (path, value) => setValue(path, value, { shouldDirty: true }),
+      getValues,
+      submit: () => form.handleSubmit(submit)(),
+    });
+  }, [onRegisterApi, setValue, getValues]);
 
   const submit = async (values: Values) => {
     if (uploads > 0) return;

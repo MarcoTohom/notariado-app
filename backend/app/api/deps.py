@@ -6,7 +6,7 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
-from app.core.roles import ROLE_PERMISSIONS, RoleEnum, UserStatusEnum
+from app.core.roles import UserStatusEnum, get_effective_permissions
 from app.core.security import decode_access_token
 from app.db.session import get_db
 from app.models.user import User
@@ -60,11 +60,11 @@ def require_permission(*required_permissions: str) -> Callable:
     def permission_checker(
         current_user: Annotated[User, Depends(get_current_user)],
     ) -> User:
-        try:
-            role_enum = RoleEnum(current_user.role)
-            user_permissions = ROLE_PERMISSIONS.get(role_enum, set())
-        except ValueError:
-            user_permissions = set()
+        user_permissions = set(
+            get_effective_permissions(
+                current_user.role, current_user.permission_overrides
+            )
+        )
 
         missing = [
             perm for perm in required_permissions if perm not in user_permissions

@@ -12,6 +12,8 @@ from app.schemas.document import (
     DocumentDetail,
     DocumentListResponse,
     GenerateDocumentRequest,
+    PreviewRenderRequest,
+    PreviewRenderResponse,
 )
 from app.services import document_generation_service as service
 
@@ -37,6 +39,26 @@ def generate_document(
 ) -> DocumentDetail:
     return service.generate_draft(
         db, payload.case_id, payload.template_version_id, payload.notes, current_user
+    )
+
+
+@router.post(
+    "/preview-render",
+    response_model=PreviewRenderResponse,
+    summary="Render de previsualización en vivo para el editor (sin persistir)",
+    description=(
+        "Renderiza la plantilla con los valores enviados en memoria y devuelve "
+        "HTML escapado + verificación de placeholders residuales. Alimenta el "
+        "panel derecho del editor de borradores."
+    ),
+)
+def preview_render(
+    payload: PreviewRenderRequest,
+    db: DB,
+    _: Annotated[User, Depends(require_permission("documents:read"))],
+) -> PreviewRenderResponse:
+    return service.render_preview_html(
+        db, payload.case_id, payload.template_version_id, payload.values
     )
 
 

@@ -113,7 +113,26 @@ def update_user(
             status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado."
         )
 
+    # Self-protection for administrator
+    if operator_user and operator_user.id == db_user.id:
+        if user_in.status is not None and user_in.status != UserStatusEnum.ACTIVE.value:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No es posible desactivar la propia cuenta de administrador en sesión.",
+            )
+        if (
+            user_in.role is not None
+            and user_in.role != RoleEnum.ADMINISTRADOR.value
+            and db_user.role == RoleEnum.ADMINISTRADOR.value
+        ):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No es posible retirar el rol ADMINISTRADOR de la propia cuenta en sesión.",
+            )
+
     changes = []
+    is_permission_change = False
+
     if user_in.full_name is not None and user_in.full_name.strip() != db_user.full_name:
         db_user.full_name = user_in.full_name.strip()
         changes.append("full_name")
@@ -137,6 +156,7 @@ def update_user(
             )
         db_user.role = user_in.role
         changes.append(f"role={user_in.role}")
+        is_permission_change = True
 
     if user_in.status is not None and user_in.status != db_user.status:
         try:
@@ -147,6 +167,14 @@ def update_user(
             )
         db_user.status = user_in.status
         changes.append(f"status={user_in.status}")
+        is_permission_change = True
+
+    if user_in.permission_overrides is not None:
+        grant_list = [str(p) for p in user_in.permission_overrides.get("grant", [])]
+        revoke_list = [str(p) for p in user_in.permission_overrides.get("revoke", [])]
+        db_user.permission_overrides = {"grant": grant_list, "revoke": revoke_list}
+        changes.append("permission_overrides")
+        is_permission_change = True
 
     if user_in.password:
         db_user.password_hash = get_password_hash(user_in.password)
@@ -156,9 +184,10 @@ def update_user(
     db.refresh(db_user)
 
     if changes:
+        action = "PERMISSION_CHANGE" if is_permission_change else "UPDATE"
         record_audit(
             db=db,
-            action="UPDATE",
+            action=action,
             module="USUARIOS",
             record_id=db_user.id,
             user_id=operator_user.id if operator_user else None,

@@ -35,6 +35,19 @@ def assign_nested(context: dict, dotted: str, value: object) -> None:
     node[parts[-1]] = value
 
 
+def _xml_safe(value: object) -> object:
+    """Escape text before docxtpl injects it into document.xml."""
+    from xml.sax.saxutils import escape as xml_escape
+
+    if isinstance(value, str):
+        return xml_escape(value)
+    if isinstance(value, list):
+        return [_xml_safe(item) for item in value]
+    if isinstance(value, dict):
+        return {key: _xml_safe(item) for key, item in value.items()}
+    return value
+
+
 def build_sample_context(extraction: JinjaExtraction) -> dict:
     """Contexto sintético para el render de prueba (nunca datos reales)."""
     context: dict = {}
@@ -77,7 +90,9 @@ def build_render_context(fields: list[TemplateField], values: dict) -> dict:
     - `docx_variable` con punto (comprador.dpi) anida en diccionarios.
     - Campos lista (testigos) pasan como colecciones de filas para {% for %}.
     """
-    context: dict = {key: value for key, value in values.items() if value is not None}
+    context: dict = {
+        key: _xml_safe(value) for key, value in values.items() if value is not None
+    }
     for field in fields:
         if not field.docx_variable:
             continue
@@ -86,9 +101,9 @@ def build_render_context(fields: list[TemplateField], values: dict) -> dict:
             continue
         variable = field.docx_variable
         if field.field_type == "list":
-            context[variable] = value if isinstance(value, list) else []
+            context[variable] = _xml_safe(value) if isinstance(value, list) else []
         elif "." in variable:
-            assign_nested(context, variable, value)
+            assign_nested(context, variable, _xml_safe(value))
         else:
-            context[variable] = value
+            context[variable] = _xml_safe(value)
     return context

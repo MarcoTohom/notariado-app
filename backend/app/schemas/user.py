@@ -21,6 +21,7 @@ class UserUpdate(BaseModel):
     role: str | None = None
     status: str | None = None
     password: str | None = Field(None, min_length=8, max_length=100)
+    permission_overrides: dict[str, list[str]] | None = None
 
 
 class UserResponse(BaseModel):
@@ -35,6 +36,7 @@ class UserResponse(BaseModel):
     created_at: datetime
     updated_at: datetime
     last_login: datetime | None = None
+    permission_overrides: dict[str, list[str]] | None = None
 
 
 class UserListResponse(BaseModel):

@@ -6,7 +6,8 @@ import { auditService } from "../audit/api";
 import type { UserItem } from "./types";
 import type { AuditLogItem } from "../audit/types";
 import { useAuth } from "../auth/AuthContext";
-import { Users, Shield, History, RefreshCw } from "lucide-react";
+import { EditUserModal } from "./EditUserModal";
+import { Edit3, Users, Shield, History, RefreshCw } from "lucide-react";
 
 interface UserManagementModalProps {
   isOpen: boolean;
@@ -19,6 +20,7 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen
   const [users, setUsers] = useState<UserItem[]>([]);
   const [auditLogs, setAuditLogs] = useState<AuditLogItem[]>([]);
   const [loading, setLoading] = useState(false);
+  const [editingUser, setEditingUser] = useState<UserItem | null>(null);
 
   const loadData = async () => {
     setLoading(true);
@@ -105,6 +107,9 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen
                   <th className="py-2.5 px-4">Correo</th>
                   <th className="py-2.5 px-4">Rol Notarial</th>
                   <th className="py-2.5 px-4">Estado</th>
+                  {hasPermission("users:update") && (
+                    <th className="py-2.5 px-4 text-right">Acciones</th>
+                  )}
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200">
@@ -127,6 +132,17 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen
                         {u.status}
                       </Badge>
                     </td>
+                    {hasPermission("users:update") && (
+                      <td className="py-2.5 px-4 text-right">
+                        <button
+                          onClick={() => setEditingUser(u)}
+                          className="inline-flex items-center gap-1 rounded-lg border border-slate-200 px-2 py-1 text-[11px] font-semibold text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                          Editar
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
@@ -172,6 +188,13 @@ export const UserManagementModal: React.FC<UserManagementModalProps> = ({ isOpen
           </div>
         )}
       </ModalBody>
+
+      <EditUserModal
+        user={editingUser}
+        isOpen={Boolean(editingUser)}
+        onClose={() => setEditingUser(null)}
+        onSaved={loadData}
+      />
     </Modal>
   );
 };

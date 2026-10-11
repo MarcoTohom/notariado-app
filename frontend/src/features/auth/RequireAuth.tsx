@@ -7,11 +7,13 @@ import { LockKeyhole, ShieldX, LogIn } from "lucide-react";
 interface RequireAuthProps {
   /** Permiso granular requerido (matriz RBAC, ej. "clients:read"). */
   permission?: string;
+  /** Restringe exclusivamente a usuarios con rol ADMINISTRADOR. */
+  adminOnly?: boolean;
   children: React.ReactNode;
 }
 
-export const RequireAuth: React.FC<RequireAuthProps> = ({ permission, children }) => {
-  const { user, loading, hasPermission } = useAuth();
+export const RequireAuth: React.FC<RequireAuthProps> = ({ permission, adminOnly, children }) => {
+  const { user, loading, hasPermission, hasRole } = useAuth();
   const [loginOpen, setLoginOpen] = useState(false);
 
   if (loading) {
@@ -41,6 +43,21 @@ export const RequireAuth: React.FC<RequireAuthProps> = ({ permission, children }
           Iniciar Sesión
         </button>
         <LoginModal isOpen={loginOpen} onClose={() => setLoginOpen(false)} />
+      </div>
+    );
+  }
+
+  if (adminOnly && !hasRole("ADMINISTRADOR")) {
+    return (
+      <div className="max-w-md mx-auto mt-16 bg-white border border-slate-200 rounded-2xl p-8 shadow-sm text-center">
+        <div className="bg-red-100 w-12 h-12 rounded-xl flex items-center justify-center mx-auto mb-4">
+          <ShieldX className="w-6 h-6 text-red-600" />
+        </div>
+        <h2 className="text-base font-bold text-slate-900">Acceso restringido</h2>
+        <p className="text-xs text-slate-500 mt-2 leading-relaxed">
+          Esta sección está reservada exclusivamente para el rol{" "}
+          <span className="font-mono font-semibold">ADMINISTRADOR</span>.
+        </p>
       </div>
     );
   }

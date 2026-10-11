@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, get_db
 from app.core.config import settings
-from app.core.roles import get_permissions_for_role
+from app.core.roles import get_effective_permissions
 from app.core.security import create_access_token, verify_password
 from app.models.user import User
 from app.schemas.auth import LoginRequest, Token, UserSession
@@ -131,7 +131,9 @@ async def login(
     description="Retorna la identidad del usuario autenticado y su lista de permisos según rol.",
 )
 def get_me(current_user: Annotated[User, Depends(get_current_user)]) -> UserSession:
-    permissions = get_permissions_for_role(current_user.role)
+    permissions = get_effective_permissions(
+        current_user.role, current_user.permission_overrides
+    )
     return UserSession(
         id=current_user.id,
         username=current_user.username,

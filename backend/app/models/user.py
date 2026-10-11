@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import DateTime, String
+from sqlalchemy import JSON, DateTime, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.db.base import Base
@@ -26,6 +26,9 @@ class User(Base, IdentifiableMixin):
     )
     last_login: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
+    )
+    permission_overrides: Mapped[dict | None] = mapped_column(
+        JSON, nullable=True, default=None
     )
 
     def __repr__(self) -> str:
