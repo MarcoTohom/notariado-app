@@ -1,6 +1,6 @@
 # Mapa de módulos implementados
 
-Revisado el **8 de octubre de 2026** contra [las rutas FastAPI](../backend/app/api/v1/api.py), [las rutas React](../frontend/src/app/AppRoutes.tsx) y los archivos de cada módulo. [Índice](README.md) · [Arquitectura](architecture.md) · [Convenciones](contributing.md).
+Revisado el **10 de octubre de 2026** contra [las rutas FastAPI](../backend/app/api/v1/api.py), [las rutas React](../frontend/src/app/AppRoutes.tsx) y los archivos de cada módulo. [Índice](README.md) · [Arquitectura](architecture.md) · [Convenciones](contributing.md).
 
 ## Pantallas y responsabilidades
 
@@ -8,7 +8,9 @@ Los prefijos de la tabla son relativos a `/api/v1`; OpenAPI detalla métodos, pa
 
 | Funcionalidad | Interfaz y acceso | API y servicio |
 |---|---|---|
-| Inicio y salud | `/`, [DashboardPage](../frontend/src/features/dashboard/DashboardPage.tsx), acceso público | `/health`, [health.py](../backend/app/api/v1/endpoints/health.py) |
+| Inicio público | `/`, [LandingPage](../frontend/src/features/landing/LandingPage.tsx), acceso público | Presentación local del sistema; sin API propia |
+| Panel y salud | `/panel`, [DashboardPage](../frontend/src/features/dashboard/DashboardPage.tsx), sesión activa | `/health`, [health.py](../backend/app/api/v1/endpoints/health.py) |
+| Panel técnico de proyecto | `/admin/proyecto`, rol `ADMINISTRADOR`, [features/admin](../frontend/src/features/admin) | Estado de fases desde datos locales de frontend; sin API propia |
 | Sesión, usuarios y auditoría | [AuthContext](../frontend/src/features/auth/AuthContext.tsx), [LoginModal](../frontend/src/features/auth/LoginModal.tsx) y [UserManagementModal](../frontend/src/features/users/UserManagementModal.tsx); accesos desde la navegación | `/auth`, `/users`, `/audit`; [user_service](../backend/app/services/user_service.py), [audit_service](../backend/app/services/audit_service.py) |
 | Clientes y personas jurídicas | `/clientes`, `clients:read`, [features/clients](../frontend/src/features/clients) | `/clients`, `/legal-entities`; [client_service](../backend/app/services/client_service.py), [legal_entity_service](../backend/app/services/legal_entity_service.py) |
 | Expedientes y comparecientes | `/expedientes`, `cases:read`, [features/cases](../frontend/src/features/cases) | `/cases`; [case_service](../backend/app/services/case_service.py) |
@@ -16,6 +18,9 @@ Los prefijos de la tabla son relativos a `/api/v1`; OpenAPI detalla métodos, pa
 | Plantillas DOCX | `/plantillas`, `templates:read`, [features/templates](../frontend/src/features/templates) | `/templates`; [template_docx_service](../backend/app/services/template_docx_service.py) |
 | Consistencia documental | [CaseValidationModal](../frontend/src/features/validation/CaseValidationModal.tsx) y [FindingsPanel](../frontend/src/features/validation/FindingsPanel.tsx), desde Expedientes | `/validations`; [validation_service](../backend/app/services/validation_service.py), [rules](../backend/app/rules) |
 | Borradores e historial | `/documentos`, `documents:read`, [features/documents](../frontend/src/features/documents) | `/documents`; [document_generation_service](../backend/app/services/document_generation_service.py) |
+| Inventario de archivos | `/archivos`, `files:read`, [features/files](../frontend/src/features/files) | `/files`; [file_inventory_service](../backend/app/services/file_inventory_service.py) |
+| Editor de borradores | `/editor`, `cases:update`, [features/editor](../frontend/src/features/editor) | `/documents/preview-render`, `/fields`, `/cases`; preview en memoria sin persistencia |
+| Guía operativa | `/guia`, sesión activa, [GuidePage](../frontend/src/features/guide/GuidePage.tsx) | Documentación navegable de conceptos; sin API propia |
 | Experimento | `/tesis`, `experiment:read`, [features/experiment](../frontend/src/features/experiment) | `/experiment`; [experiment_service](../backend/app/services/experiment_service.py), [synthetic_data](../backend/app/utils/synthetic_data.py) |
 
 Los esquemas se localizan en [schemas](../backend/app/schemas), la persistencia en [models](../backend/app/models) y el detalle de tablas en [database.md](database.md). Cada funcionalidad frontend tiene sus llamadas HTTP y contratos propios. El [cliente común](../frontend/src/shared/api/client.ts) mantiene configuración y sesión; [errors.ts](../frontend/src/shared/api/errors.ts) mantiene los mensajes de error. [shared/types.ts](../frontend/src/shared/types.ts) contiene CaseType, utilizado por varios módulos.
@@ -34,6 +39,7 @@ Los esquemas se localizan en [schemas](../backend/app/schemas), la persistencia 
 | Plantillas | [templates/api.ts](../frontend/src/features/templates/api.ts) | [templates/types.ts](../frontend/src/features/templates/types.ts) |
 | Validación | [validation/api.ts](../frontend/src/features/validation/api.ts) | [validation/types.ts](../frontend/src/features/validation/types.ts) |
 | Borradores | [documents/api.ts](../frontend/src/features/documents/api.ts) | [documents/types.ts](../frontend/src/features/documents/types.ts) |
+| Archivos | [files/api.ts](../frontend/src/features/files/api.ts) | [files/types.ts](../frontend/src/features/files/types.ts) |
 | Experimento | [experiment/api.ts](../frontend/src/features/experiment/api.ts) | [experiment/types.ts](../frontend/src/features/experiment/types.ts) |
 
 [AppProviders](../frontend/src/app/AppProviders.tsx) compone TanStack Query, sesión y BrowserRouter. [AppRoutes](../frontend/src/app/AppRoutes.tsx) conserva rutas y permisos; [AppLayout](../frontend/src/app/AppLayout.tsx) contiene navegación y pie. [RequireAuth](../frontend/src/features/auth/RequireAuth.tsx) conserva los estados de carga, inicio de sesión y acceso restringido.
@@ -60,6 +66,9 @@ Estas rutas completas corresponden al contrato de referencia:
 |---|---|---|
 | POST | `/api/v1/validations/run` | Ejecutar reglas y guardar una corrida |
 | POST | `/api/v1/documents/generate` | Generar una nueva versión de borrador |
+| POST | `/api/v1/documents/preview-render` | Renderizar vista previa del editor sin persistir |
+| GET | `/api/v1/files/inventory` | Inventariar archivos gestionados y verificar persistencia |
+| GET | `/api/v1/files/preview/{kind}/{record_id}` | Extraer vista previa textual o tabular sin descarga |
 | POST | `/api/v1/experiment/cases/generate` | Crear el corpus sintético |
 | GET | `/api/v1/experiment/cases` | Consultar casos del corpus |
 | POST | `/api/v1/experiment/executions/start` | Iniciar revisión tradicional o con sistema |
@@ -82,10 +91,12 @@ El [OpenAPI conservado](testing/baseline/2026-10-08/openapi.json) contiene 47 ru
 | Plantillas | [test_jinja_extraction](../backend/tests/unit/test_jinja_extraction.py), [test_templates_api](../backend/tests/integration/test_templates_api.py), [TemplateUploadModal](../frontend/src/features/templates/__tests__/TemplateUploadModal.test.tsx) |
 | Reglas | [test_rule_engine](../backend/tests/unit/test_rule_engine.py), [test_number_words](../backend/tests/unit/test_number_words.py), [test_validations_api](../backend/tests/integration/test_validations_api.py), [FindingsPanel](../frontend/src/features/validation/__tests__/FindingsPanel.test.tsx) |
 | Documentos | [test_document_context](../backend/tests/unit/test_document_context.py), [test_documents_api](../backend/tests/integration/test_documents_api.py), [DocumentVersionsList](../frontend/src/features/documents/__tests__/DocumentVersionsList.test.tsx) |
+| Archivos y preview | [test_files_api](../backend/tests/integration/test_files_api.py), [test_preview_render_api](../backend/tests/integration/test_preview_render_api.py), [FilePreviewModal](../frontend/src/features/files/__tests__/FilePreviewModal.test.tsx) |
 | Experimento | [test_experiment_corpus](../backend/tests/unit/test_experiment_corpus.py), [test_experiment_api](../backend/tests/integration/test_experiment_api.py), [ExperimentStatsCards](../frontend/src/features/experiment/__tests__/ExperimentStatsCards.test.tsx) |
 | Operación y navegador | [test_backup_operations](../backend/tests/unit/test_backup_operations.py), [dynamic-fields.spec.ts](../frontend/e2e/dynamic-fields.spec.ts), [shared-modals.spec.ts](../frontend/e2e/shared-modals.spec.ts) |
 | Transporte y permisos frontend | [client.test](../frontend/src/shared/api/__tests__/client.test.ts), [errors.test](../frontend/src/shared/api/__tests__/errors.test.ts), [RequireAuth.test](../frontend/src/features/auth/__tests__/RequireAuth.test.tsx) |
-| UI común y editor | [Modal.test](../frontend/src/components/common/__tests__/Modal.test.tsx), [FieldDefinitionEditor.test](../frontend/src/features/fields/__tests__/FieldDefinitionEditor.test.tsx) |
+| UI común, landing, admin y editor | [Modal.test](../frontend/src/components/common/__tests__/Modal.test.tsx), [FieldDefinitionEditor.test](../frontend/src/features/fields/__tests__/FieldDefinitionEditor.test.tsx), [LandingPage](../frontend/src/features/landing/__tests__/LandingPage.test.tsx), [ProjectPanelPage](../frontend/src/features/admin/__tests__/ProjectPanelPage.test.tsx), [editor.test](../frontend/src/features/editor/__tests__/editor.test.ts) |
+| Semilla de demostración | [test_seed_demo](../backend/tests/unit/test_seed_demo.py) |
 
 [test.ps1](../scripts/test.ps1) ejecuta calidad, backend, frontend y compilación; `-E2E` añade los escenarios de campos dinámicos, modales y DOCX con historial y descarga por API autenticada. Los informes de [fase 1](testing/FASE_1_ESTRUCTURAL.md), [fase 3](testing/FASE_3_ESTRUCTURAL.md) y [fase 4](testing/FASE_4_ESTRUCTURAL.md) detallan resultados y límites de cobertura.
 

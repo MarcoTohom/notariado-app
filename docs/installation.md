@@ -85,6 +85,14 @@ Para crear o restablecer las cuentas demo sintéticas:
 
 El sembrador aplica migraciones y restablece los perfiles y contraseñas de las cuentas demo existentes. Ejecutarlo solamente cuando se desean esos usuarios. La instalación no lo ejecuta automáticamente.
 
+Para además tener archivos que revisar en la interfaz (plantillas, borradores y adjuntos sintéticos):
+
+```powershell
+.\scripts\seed_demo.ps1
+```
+
+Es opcional e idempotente; ver [semilla de demostración](seed_demo.md).
+
 ```powershell
 .\scripts\dev.ps1
 # Arranca, comprueba backend/frontend/proxy y cierra sus procesos:
@@ -92,6 +100,26 @@ El sembrador aplica migraciones y restablece los perfiles y contraseñas de las 
 ```
 
 `dev.ps1` aplica las migraciones antes de arrancar. El backend predeterminado está en `http://127.0.0.1:8000`; la interfaz, en `http://127.0.0.1:5173`. Swagger: `/api/v1/docs`; salud: `/api/v1/health`. `-FrontendPort` cambia el puerto de Vite; `-NoReload` desactiva la recarga del backend. `-Check` espera la disponibilidad de servidores y proxy con reintentos acotados a 30 segundos y cierra sus procesos. Usa los datos configurados: para una comprobación aislada, establecer previamente `DATABASE_URL`, `UPLOAD_DIR` y `GENERATED_DIR` a rutas temporales.
+
+### Rutas protegidas y pruebas manuales
+
+Las descargas y exportaciones exigen el JWT (`documents:read`, `templates:read`, `experiment:read`). Pegar la URL en el navegador devuelve **401**, porque el navegador no envía la cabecera `Authorization`; la interfaz usa `downloadAuthenticated` (`frontend/src/shared/api/client.ts`) para pedirlas con el cliente autenticado. Para comprobarlas desde la terminal:
+
+```powershell
+$token = (Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/auth/login" -Method Post `
+  -ContentType "application/json" `
+  -Body '{"username_or_email":"admin","password":"Admin123!"}').access_token
+
+Invoke-WebRequest "http://127.0.0.1:8000/api/v1/files/inventory" -Headers @{ Authorization = "Bearer $token" }
+```
+
+Dos errores frecuentes al probarlas:
+
+| Síntoma | Causa | Corrección |
+|---|---|---|
+| 401 al abrir la URL | falta el JWT | usar `-Headers @{ Authorization = "Bearer $token" }` o la interfaz |
+| 404 con `/api/v1/api/v1/...` | el prefijo se antepone dos veces | la API ya devuelve `/api/v1/...`; no añadirlo otra vez |
+| 404 «no existe en disco» | el registro apunta a un archivo eliminado | el inventario lo marca `NO_ENCONTRADO`; regenerar con `seed_demo.ps1` |
 
 ## Respaldos y experimento
 

@@ -9,6 +9,7 @@ Referencia del código revisada el **8 de octubre de 2026**. El sistema organiza
 | [Inicio rápido](../README.md) | Requisitos, comandos y antecedentes de desarrollo |
 | [Instalación](installation.md) | Preparación repetible, configuración, arranque, respaldo y corpus sintético en Windows |
 | [Campos dinámicos](dynamic-fields.md) | Configuración de formularios, tipos, adjuntos y contratos de captura |
+| [Semilla de demostración](seed_demo.md) | Archivos sintéticos para revisar la interfaz: plantillas, borradores y adjuntos |
 | [Mapa de módulos](modules.md) | Pantallas, permisos, API, servicios y pruebas actuales |
 
 ## Desarrollo y verificación

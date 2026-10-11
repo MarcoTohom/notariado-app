@@ -6,6 +6,8 @@
 > **Investigador:** Marco Antonio Lares Tohom
 > **Línea Base:** 240 minutos → **Meta Experimental:** 60 minutos por escritura
 
+> 📋 **Plan de trabajo vigente:** [`docs/PLAN_DESARROLLO.md`](docs/PLAN_DESARROLLO.md) — paquetes de trabajo WP-01 a WP-08 (landing, admin, usuarios, archivos, guía, editor de borradores con preview en vivo y atajos).
+
 ---
 
 ## 1. Descripción y Objetivo
@@ -38,11 +40,27 @@ Desde la carpeta del repositorio:
 ```powershell
 .\scripts\setup.ps1 -E2E
 .\scripts\test.ps1 -E2E
-.\scripts\seed.ps1
+.\scripts\seed.ps1          # cuentas demo (4 roles)
+.\scripts\seed_demo.ps1     # archivos de demostración: plantillas, borradores y adjuntos
 .\scripts\dev.ps1
 ```
 
 `setup.ps1` instala las versiones verificadas, prepara Chromium cuando se solicita `-E2E` y crea `.env` solo si falta. No aplica migraciones ni modifica datos; puede repetirse. `seed.ps1` aplica migraciones y restablece las cuentas demo. Para una instalación existente, ejecutar el sembrador únicamente si se desean esos usuarios sintéticos.
+
+`seed_demo.ps1` es opcional y **solo crea datos sintéticos**: 5 plantillas DOCX con marcadores Jinja2 (creadas por el mismo servicio de ingesta que usa la interfaz, con hash SHA-256 y versión activada), 3 expedientes con comparecientes y datos capturados, 20 borradores renderizados con `docxtpl` y 30 adjuntos de ejemplo (DOCX, PDF con texto, PDF sin capa de texto, CSV y XLSX) que alimentan el inventario de archivos y su vista previa en modal. Es idempotente: puede repetirse sin duplicar registros. Detalle en [seed_demo](docs/seed_demo.md).
+
+**Descarga de archivos en desarrollo.** Las rutas de descarga (`/api/v1/documents/versions/{id}/download` y `/api/v1/templates/preview-files/{archivo}`) exigen el JWT y **no funcionan al pegar la URL en el navegador**: sin la cabecera `Authorization` el backend responde 401. La interfaz las consume con `downloadAuthenticated`, que pide el binario por el cliente autenticado y dispara la descarga con un enlace temporal. Para probarlas manualmente, use `curl` con el token:
+
+```powershell
+$token = (Invoke-RestMethod -Uri "http://127.0.0.1:8000/api/v1/auth/login" -Method Post `
+  -ContentType "application/json" `
+  -Body '{"username_or_email":"admin","password":"Admin123!"}').access_token
+
+Invoke-WebRequest "http://127.0.0.1:8000/api/v1/documents/versions/<id>/download" `
+  -Headers @{ Authorization = "Bearer $token" } -OutType Stream -OutFile "borrador.docx"
+```
+
+Una URL con prefijo duplicado (`/api/v1/api/v1/...`) indica que se está concatenando a mano el `baseURL`; la API ya devuelve las rutas con `/api/v1` incluido.
 
 La [guía de instalación](docs/installation.md) explica cómo indicar otra ruta de Python, configurar las rutas locales y verificar el arranque. El [índice documental](docs/README.md) reúne las guías técnicas y académicas; el [mapa de módulos](docs/modules.md) permite localizar pantallas, API, servicios y pruebas.
 
@@ -143,6 +161,7 @@ Objetivo: Sistema de identidad completo con JWT + Argon2, control de acceso basa
 | DELETE /users/{id} | OK | Baja logica (status = INACTIVE), protege auto-desactivacion |
 | seed_users.py | OK | Genera usuarios demo sinteticos por cada rol |
 | scripts/seed.ps1 | OK | Script PowerShell para ejecutar seed |
+| seed_demo.py | OK | Semilla opcional con archivos reales: 5 plantillas DOCX, 3 expedientes, 20 borradores y 30 adjuntos (DOCX/PDF/CSV/XLSX), idempotente |
 
 #### Backend — Modelos de Dominio Notarial
 
@@ -398,8 +417,9 @@ notariado-app/
 │   └── src/
 │       ├── app/               # Proveedores, rutas y layout
 │       ├── components/        # Navegación y UI común: modales, mensajes, carga y badges
-│       ├── features/          # dashboard, auth, users, audit, clients, cases, fields,
-│       │                      # templates, validation, documents y experiment;
+│       ├── features/          # landing, dashboard, admin, auth, users, audit, clients,
+│       │                      # cases, fields, templates, validation, documents, files,
+│       │                      # guide, editor y experiment;
 │       │                      # API y tipos propios por funcionalidad
 │       ├── lib/               # Validadores, etiquetas y formato
 │       ├── shared/            # Cliente HTTP, errores comunes y CaseType
