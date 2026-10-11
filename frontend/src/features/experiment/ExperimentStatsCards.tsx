@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import type { ExperimentStats } from "./types";
 import { experimentService } from "./api";
-import { Download, TrendingDown, FlaskConical, Sigma, Clock, AlertCircle } from "lucide-react";
+import { downloadAuthenticated } from "../../shared/api/client";
+import { getApiErrorMessage } from "../../shared/api/errors";
+import { Download, TrendingDown, FlaskConical, Sigma, Clock, AlertCircle, Loader2 } from "lucide-react";
 
 /**
  * Dashboard experimental (Fase 11): métricas calculadas EXCLUSIVAMENTE desde
@@ -10,6 +12,24 @@ import { Download, TrendingDown, FlaskConical, Sigma, Clock, AlertCircle } from 
  */
 export const ExperimentStatsCards: React.FC<{ stats: ExperimentStats }> = ({ stats }) => {
   const { traditional, system, paired_test: paired } = stats;
+  const [exporting, setExporting] = useState<"xlsx" | "csv" | null>(null);
+  const [exportError, setExportError] = useState<string | null>(null);
+
+  /** Las exportaciones exigen JWT: un `<a href>` sin cabecera daría 401. */
+  const handleExport = async (format: "xlsx" | "csv") => {
+    setExporting(format);
+    setExportError(null);
+    try {
+      await downloadAuthenticated(
+        format === "xlsx" ? experimentService.exportXlsxUrl : experimentService.exportCsvUrl,
+        format === "xlsx" ? "experimento_tesis.xlsx" : "experimento_tesis.csv",
+      );
+    } catch (err) {
+      setExportError(getApiErrorMessage(err, "No se pudo exportar el archivo."));
+    } finally {
+      setExporting(null);
+    }
+  };
 
   return (
     <div className="space-y-4" data-testid="experiment-stats">
@@ -144,23 +164,30 @@ export const ExperimentStatsCards: React.FC<{ stats: ExperimentStats }> = ({ sta
           Exportar datos reales para el Capítulo IV de la tesis (SPSS / R).
         </p>
         <div className="flex gap-2">
-          <a
-            href={experimentService.exportXlsxUrl}
-            download
-            className="text-xs font-semibold bg-slate-900 hover:bg-slate-700 text-white px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+          <button
+            type="button"
+            onClick={() => void handleExport("xlsx")}
+            disabled={exporting === "xlsx"}
+            className="text-xs font-semibold bg-slate-900 hover:bg-slate-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
           >
-            <Download className="w-3.5 h-3.5" />
+            {exporting === "xlsx" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
             Exportar XLSX
-          </a>
-          <a
-            href={experimentService.exportCsvUrl}
-            download
-            className="text-xs font-semibold bg-white hover:bg-slate-100 text-slate-700 border border-slate-300 px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+          </button>
+          <button
+            type="button"
+            onClick={() => void handleExport("csv")}
+            disabled={exporting === "csv"}
+            className="text-xs font-semibold bg-white hover:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed text-slate-700 border border-slate-300 px-3.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
           >
-            <Download className="w-3.5 h-3.5" />
+            {exporting === "csv" ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Download className="w-3.5 h-3.5" />}
             Exportar CSV
-          </a>
+          </button>
         </div>
+        {exportError && (
+          <p role="alert" className="w-full text-xs text-red-700 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            {exportError}
+          </p>
+        )}
       </div>
     </div>
   );

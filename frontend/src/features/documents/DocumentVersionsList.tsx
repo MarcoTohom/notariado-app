@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import type { DocumentVersionInfo } from "./types";
 import { formatBytes, formatDateTime, shortHash } from "../../lib/format";
-import { CheckCircle2, AlertTriangle, Download, FileText } from "lucide-react";
+import { downloadAuthenticated } from "../../shared/api/client";
+import { getApiErrorMessage } from "../../shared/api/errors";
+import { CheckCircle2, AlertTriangle, Download, FileText, Loader2 } from "lucide-react";
 
 interface DocumentVersionsListProps {
   versions: DocumentVersionInfo[];
@@ -13,6 +15,26 @@ interface DocumentVersionsListProps {
  * descarga autenticada. Las versiones jamás se sobrescriben.
  */
 export const DocumentVersionsList: React.FC<DocumentVersionsListProps> = ({ versions }) => {
+  const [busyId, setBusyId] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  /**
+   * La descarga va por el cliente autenticado: un `<a href>` no envía el JWT y
+   * el backend respondería 401. Ver `downloadAuthenticated`.
+   */
+  const handleDownload = async (version: DocumentVersionInfo) => {
+    if (!version.download_url) return;
+    setBusyId(version.id);
+    setError(null);
+    try {
+      await downloadAuthenticated(version.download_url, `borrador_v${version.version_number}.docx`);
+    } catch (err) {
+      setError(getApiErrorMessage(err, "No se pudo descargar el borrador."));
+    } finally {
+      setBusyId(null);
+    }
+  };
+
   if (versions.length === 0) {
     return (
       <p className="text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-300 rounded-lg px-3 py-4 text-center">
@@ -70,19 +92,32 @@ export const DocumentVersionsList: React.FC<DocumentVersionsListProps> = ({ vers
               </div>
             </div>
             {version.download_url && (
-              <a
-                href={version.download_url}
-                download
-                className="shrink-0 text-[11px] font-semibold bg-slate-900 hover:bg-slate-700 text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
+              <button
+                type="button"
+                onClick={() => void handleDownload(version)}
+                disabled={busyId === version.id}
+                className="shrink-0 text-[11px] font-semibold bg-slate-900 hover:bg-slate-700 disabled:bg-slate-400 disabled:cursor-not-allowed text-white px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-colors"
                 title={`Descargar versión v${version.version_number}`}
               >
-                <Download className="w-3 h-3" />
+                {busyId === version.id ? (
+                  <Loader2 className="w-3 h-3 animate-spin" />
+                ) : (
+                  <Download className="w-3 h-3" />
+                )}
                 Descargar
-              </a>
+              </button>
             )}
           </div>
         </li>
       ))}
+      {error && (
+        <p
+          role="alert"
+          className="text-[11px] text-red-700 bg-red-50 border border-red-200 rounded-lg px-2.5 py-2"
+        >
+          {error}
+        </p>
+      )}
     </ul>
   );
 };

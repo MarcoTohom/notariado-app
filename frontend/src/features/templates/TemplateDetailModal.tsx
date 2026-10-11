@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import type { PreviewResult, TemplateVersionInfo } from "./types";
 import { getApiErrorMessage } from "../../shared/api/errors";
+import { downloadAuthenticated } from "../../shared/api/client";
 import { templateService } from "./api";
 import { useAuth } from "../auth/AuthContext";
 import {
@@ -45,6 +46,8 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
   const [previewResult, setPreviewResult] = useState<PreviewResult | null>(null);
+  const [downloadingPreview, setDownloadingPreview] = useState(false);
+  const [previewDownloadError, setPreviewDownloadError] = useState<string | null>(null);
   const [versionFile, setVersionFile] = useState<File | null>(null);
   const [versionNotes, setVersionNotes] = useState("");
 
@@ -64,9 +67,27 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
     setSelectedVersionId(null);
     setActionError(null);
     setPreviewResult(null);
+    setPreviewDownloadError(null);
     setVersionFile(null);
     setVersionNotes("");
   }, [templateId]);
+
+  /**
+   * El DOCX de prueba se descarga con el cliente autenticado. Un
+   * `<a href download>` no envía el JWT, el backend responde 401 y el
+   * navegador no entrega el archivo.
+   */
+  const handleDownloadPreview = async (url: string, fallbackName: string) => {
+    setDownloadingPreview(true);
+    setPreviewDownloadError(null);
+    try {
+      await downloadAuthenticated(url, fallbackName);
+    } catch (err) {
+      setPreviewDownloadError(getApiErrorMessage(err, "No se pudo descargar el DOCX de prueba."));
+    } finally {
+      setDownloadingPreview(false);
+    }
+  };
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: ["template", templateId] });
@@ -296,14 +317,29 @@ export const TemplateDetailModal: React.FC<TemplateDetailModalProps> = ({
                           </>
                         )}
                       </p>
-                      <a
-                        href={previewResult.download_url}
-                        download
-                        className="mt-1.5 inline-flex items-center gap-1 font-semibold underline underline-offset-2"
+                      <button
+                        type="button"
+                        onClick={() =>
+                          void handleDownloadPreview(
+                            previewResult.download_url,
+                            `vista_previa_${selectedVersion?.version_number ?? 1}.docx`,
+                          )
+                        }
+                        disabled={downloadingPreview}
+                        className="mt-1.5 inline-flex items-center gap-1 font-semibold underline underline-offset-2 disabled:text-slate-400 disabled:no-underline disabled:cursor-not-allowed"
                       >
-                        <Download className="w-3 h-3" />
+                        {downloadingPreview ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Download className="w-3 h-3" />
+                        )}
                         Descargar DOCX de prueba
-                      </a>
+                      </button>
+                      {previewDownloadError && (
+                        <p role="alert" className="mt-1 text-red-700 font-semibold">
+                          {previewDownloadError}
+                        </p>
+                      )}
                     </div>
                   )}
 

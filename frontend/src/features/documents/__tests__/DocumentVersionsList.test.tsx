@@ -1,11 +1,28 @@
-import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { DocumentVersionsList } from "../DocumentVersionsList";
 import type { DocumentVersionInfo } from "../types";
+
+// La descarga se delega en el cliente autenticado; aquí se aísla para verificar
+// que el componente la invoca con la ruta y el nombre de reserva correctos.
+const mocks = vi.hoisted(() => ({ downloadAuthenticated: vi.fn() }));
+vi.mock("../../../shared/api/client", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../shared/api/client")>()),
+  downloadAuthenticated: mocks.downloadAuthenticated,
+}));
+const downloadMock = mocks.downloadAuthenticated;
+
+beforeEach(() => {
+  downloadMock.mockReset();
+});
 
 /**
  * Pruebas del historial inmutable de versiones de borradores (US-07.3):
  * estado de verificación, hash, tamaño, notas y descarga autenticada.
+ *
+ * La descarga se hace por el cliente autenticado (no un `<a href>`, que no
+ * enviaría el JWT y recibiría 401 del backend).
  */
 
 const makeVersion = (overrides: Partial<DocumentVersionInfo> = {}): DocumentVersionInfo => ({
@@ -32,7 +49,7 @@ describe("DocumentVersionsList", () => {
     expect(screen.getByText(/Aún no hay versiones generadas/)).toBeInTheDocument();
   });
 
-  it("muestra la versión verificada con hash, tamaño y enlace de descarga", () => {
+  it("muestra la versión verificada con hash, tamaño y botón de descarga", () => {
     render(<DocumentVersionsList versions={[makeVersion({ notes: "Revisión inicial" })]} />);
 
     expect(screen.getByText("Versión v1")).toBeInTheDocument();
@@ -41,9 +58,39 @@ describe("DocumentVersionsList", () => {
     expect(screen.getByText("24.0 KB")).toBeInTheDocument();
     expect(screen.getByText("Revisión inicial")).toBeInTheDocument();
 
-    const download = screen.getByRole("link", { name: /Descargar/ });
-    expect(download).toHaveAttribute("href", "/api/v1/documents/versions/v1/download");
-    expect(download).toHaveAttribute("download");
+    // Es un botón (no un enlace) porque la descarga requiere la cabecera JWT.
+    const download = screen.getByRole("button", { name: /Descargar/ });
+    expect(download).toHaveAttribute("type", "button");
+    expect(download).not.toHaveAttribute("href");
+  });
+
+  it("descarga con el cliente autenticado al pulsar el botón", async () => {
+    const user = userEvent.setup();
+    downloadMock.mockResolvedValue(undefined);
+
+    render(<DocumentVersionsList versions={[makeVersion()]} />);
+    await user.click(screen.getByRole("button", { name: /Descargar/ }));
+
+    await waitFor(() => expect(downloadMock).toHaveBeenCalledTimes(1));
+    expect(downloadMock).toHaveBeenCalledWith(
+      "/api/v1/documents/versions/v1/download",
+      "borrador_v1.docx",
+    );
+  });
+
+  it("muestra un mensaje legible cuando la descarga falla", async () => {
+    const user = userEvent.setup();
+    downloadMock.mockRejectedValue(
+      Object.assign(new Error("fallo"), {
+        isAxiosError: true,
+        response: { status: 401, data: { detail: "No autenticado." } },
+      }),
+    );
+
+    render(<DocumentVersionsList versions={[makeVersion()]} />);
+    await user.click(screen.getByRole("button", { name: /Descargar/ }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("No autenticado.");
   });
 
   it("alerta cuando la versión quedó con placeholders residuales", () => {
@@ -74,6 +121,6 @@ describe("DocumentVersionsList", () => {
     );
     expect(screen.getByText("Versión v2")).toBeInTheDocument();
     expect(screen.getByText("Versión v1")).toBeInTheDocument();
-    expect(screen.getAllByRole("link", { name: /Descargar/ })).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: /Descargar/ })).toHaveLength(2);
   });
 });

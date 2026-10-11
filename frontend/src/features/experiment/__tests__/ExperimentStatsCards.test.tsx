@@ -1,7 +1,20 @@
-import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ExperimentStatsCards } from "../ExperimentStatsCards";
 import type { ExperimentStats } from "../types";
+
+// La exportación se delega en el cliente autenticado (las rutas exigen JWT).
+const mocks = vi.hoisted(() => ({ downloadAuthenticated: vi.fn() }));
+vi.mock("../../../shared/api/client", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("../../../shared/api/client")>()),
+  downloadAuthenticated: mocks.downloadAuthenticated,
+}));
+const downloadMock = mocks.downloadAuthenticated;
+
+beforeEach(() => {
+  downloadMock.mockReset();
+});
 
 /**
  * Pruebas del Dashboard Experimental (Fase 11):
@@ -91,11 +104,44 @@ describe("ExperimentStatsCards", () => {
     expect(screen.queryByTestId("hypothesis-decision")).not.toBeInTheDocument();
   });
 
-  it("ofrece enlaces de exportación XLSX y CSV", () => {
+  it("exporta XLSX y CSV con el cliente autenticado (no enlaces sin JWT)", async () => {
+    const user = userEvent.setup();
+    downloadMock.mockResolvedValue(undefined);
     render(<ExperimentStatsCards stats={baseStats} />);
-    const xlsx = screen.getByRole("link", { name: /Exportar XLSX/ });
-    const csv = screen.getByRole("link", { name: /Exportar CSV/ });
-    expect(xlsx).toHaveAttribute("href", "/api/v1/experiment/export.xlsx");
-    expect(csv).toHaveAttribute("href", "/api/v1/experiment/export.csv");
+
+    // Son botones, no enlaces: la exportación exige la cabecera Authorization.
+    const xlsx = screen.getByRole("button", { name: /Exportar XLSX/ });
+    const csv = screen.getByRole("button", { name: /Exportar CSV/ });
+    expect(xlsx).toHaveAttribute("type", "button");
+    expect(xlsx).not.toHaveAttribute("href");
+
+    await user.click(xlsx);
+    await waitFor(() => expect(downloadMock).toHaveBeenCalledTimes(1));
+    expect(downloadMock).toHaveBeenLastCalledWith(
+      "/api/v1/experiment/export.xlsx",
+      "experimento_tesis.xlsx",
+    );
+
+    await user.click(csv);
+    await waitFor(() => expect(downloadMock).toHaveBeenCalledTimes(2));
+    expect(downloadMock).toHaveBeenLastCalledWith(
+      "/api/v1/experiment/export.csv",
+      "experimento_tesis.csv",
+    );
+  });
+
+  it("informa cuando la exportación falla", async () => {
+    const user = userEvent.setup();
+    downloadMock.mockRejectedValue(
+      Object.assign(new Error("fallo"), {
+        isAxiosError: true,
+        response: { status: 403, data: { detail: "Sin permiso de exportación." } },
+      }),
+    );
+    render(<ExperimentStatsCards stats={baseStats} />);
+
+    await user.click(screen.getByRole("button", { name: /Exportar XLSX/ }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent("Sin permiso de exportación.");
   });
 });
